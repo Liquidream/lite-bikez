@@ -1,4 +1,5 @@
 main: main.lua
 title: Lite Bikez
 owner: liquidream
-
+multiplayer:
+    enabled: true
