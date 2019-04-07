@@ -1,4 +1,4 @@
-local state = require 'state'
+local state = require 'network/state'
 
 
 local enet = require 'enet' -- Network

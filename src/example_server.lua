@@ -1,5 +1,9 @@
-local cs = require 'cs'
+local cs = require 'network/cs'
 local server = cs.server
+
+require 'level'
+--local Level = require 'level'
+
 
 if USE_CASTLE_CONFIG then
     server.useCastleConfig()
@@ -29,7 +33,7 @@ end
 
 function server.disconnect(id) -- Called on disconnect from client with `id`
     print('client ' .. id .. ' disconnected')
-    share.mice[id] = nil
+    --share.mice[id] = nil
 end
 
 function server.receive(id, ...) -- Called when client with `id` does `client.send(...)`
@@ -40,11 +44,23 @@ end
 -- which are less commonly used)
 
 function server.load()
-    share.mice = {}
+    -- create level
+    share.level = Level:new(1,500)
+
+    --share.mice = {}
 end
 
 function server.update(dt)
+    -- TODO: Go through all players and update grid, based on their direction/state for this frame
     for id, home in pairs(server.homes) do -- Combine mouse info from clients into share
-        share.mice[id] = home.mouse
+        if home.x then
+            -- print("home.x="..home.x)
+            -- print("home.y="..home.y)
+            share.level:updatePlayer(home)
+        end
     end
+
+    -- for id, home in pairs(server.homes) do -- Combine mouse info from clients into share
+    --     share.mice[id] = home.mouse
+    -- end
 end
