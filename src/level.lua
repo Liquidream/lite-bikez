@@ -21,11 +21,20 @@ function Level:new(levelNum, levelSize)
     -- o.levelSize = levelSize
     
     -- Update grid state, based on player pos/direction/state
-    function this:updatePlayer(home)
+    function this:updatePlayer(playerShare, clientHome)
+        -- Update player pos, based on direction
+        playerShare.x = playerShare.x + clientHome.xDir
+        playerShare.y = playerShare.y + clientHome.yDir
+
+        print("x="..playerShare.x)
+        print("y="..playerShare.y)
+
+        self.grid[playerShare.x][playerShare.y] = 1
+
         -- print("home.x="..home.x)
         -- print("home.y="..home.y)
         -- print("grid size="..#self.grid)
-        self.grid[home.x][home.y] = 1
+        --self.grid[home.x][home.y] = 1
     end
 
     -- Can't do this with Share.lua (not too surprising)

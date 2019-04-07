@@ -1,5 +1,8 @@
 local cs = require 'network/cs'
 local gfx = require 'gfx'
+local Player = require 'player'
+require 'level'
+
 
 local client = cs.client
 
@@ -10,7 +13,6 @@ else
     client.start('127.0.0.1:22122') -- IP address ('127.0.0.1' is same computer) and port of server
 end
 
-require 'level'
 
 -- Client connects to server. It gets a unique `id` to identify it.
 --
@@ -25,16 +27,20 @@ local share = client.share -- Maps to `server.share` -- can read
 local home = client.home -- Maps to `server.homes[id]` with our `id` -- can write
 
 
+local player = nil
+
 function client.connect() -- Called on connect from server
 
+    -- Create player to control
+    player = Player:new(home, 1, {1,1,1} )
     
     -- Start at a random position
-    home.x = math.random(share.level.levelSize)  -- TODO: Base this on grid size!
-    home.y = math.random(share.level.levelSize)
+    -- home.x = math.random(share.level.levelSize)
+    -- home.y = math.random(share.level.levelSize)
 
-    print("home.x="..home.x)
-    print("home.y="..home.y)
-    
+    -- print("home.x="..home.x)
+    -- print("home.y="..home.y)
+
     -- home.mouse = {}
     -- home.mouse.x, home.mouse.y = love.mouse.getPosition()
 end
@@ -57,19 +63,23 @@ end
 
 function client.update(dt)
     if client.connected then
-        -- keyboard controls
-        if love.keyboard.isDown("right") then
-            home.x = home.x + 1
-        end
-        if love.keyboard.isDown("left") then
-            home.x = home.x - 1
-        end
-        if love.keyboard.isDown("up") then
-            home.y = home.y - 1
-        end
-        if love.keyboard.isDown("down") then
-            home.y = home.y + 1
-        end
+
+        -- update player (controls)
+        if player ~= nil then player:update() end
+
+        -- -- keyboard controls
+        -- if love.keyboard.isDown("right") then
+        --     home.x = home.x + 1
+        -- end
+        -- if love.keyboard.isDown("left") then
+        --     home.x = home.x - 1
+        -- end
+        -- if love.keyboard.isDown("up") then
+        --     home.y = home.y - 1
+        -- end
+        -- if love.keyboard.isDown("down") then
+        --     home.y = home.y + 1
+        -- end
 
         --home.x,home.y = 20,20
         --home.mouse.x, home.mouse.y = love.mouse.getPosition()
@@ -104,6 +114,19 @@ function client.draw()
 
     -- Draw the canvas to screen, scale and center
     gfx:postRender()
+end
+
+function love.keypressed( key, scancode, isrepeat )
+    -- Debug switch
+    -- if key=="d" then
+    --     constants.DEBUG_MODE = not constants.DEBUG_MODE
+    -- end
+
+    player:update(key)
+    
+    -- if key=="space" then
+    --     actionButtonPressed = true
+    -- end
 end
 
 -- Force recalc of render dimensions on resize

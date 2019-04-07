@@ -29,10 +29,18 @@ local homes = server.homes -- `homes[id]` maps to `client.home` for that `id` --
 
 function server.connect(id) -- Called on connect from client with `id`
     print('client ' .. id .. ' connected')
+
+    local newPlayer = {}
+    -- Start at a random position
+    newPlayer.x = math.random(share.level.levelSize)
+    newPlayer.y = math.random(share.level.levelSize)
+    share.players[id] = newPlayer
 end
 
 function server.disconnect(id) -- Called on disconnect from client with `id`
     print('client ' .. id .. ' disconnected')
+    
+    share.players[id]=nil
     --share.mice[id] = nil
 end
 
@@ -46,17 +54,20 @@ end
 function server.load()
     -- create level
     share.level = Level:new(1,500)
+    -- create players
+    share.players = {}
 
     --share.mice = {}
 end
 
 function server.update(dt)
     -- TODO: Go through all players and update grid, based on their direction/state for this frame
-    for id, home in pairs(server.homes) do -- Combine mouse info from clients into share
-        if home.x then
+    for id, home in pairs(server.homes) do
+        --print("xtype="..type(home.xDir))
+        if home.xDir then
             -- print("home.x="..home.x)
             -- print("home.y="..home.y)
-            share.level:updatePlayer(home)
+            share.level:updatePlayer(share.players[id], home)
         end
     end
 
