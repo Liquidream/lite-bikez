@@ -33,7 +33,7 @@ function server.connect(id) -- Called on connect from client with `id`
     local newPlayer = {}
     -- Start at a random position
     newPlayer.x = math.random(share.level.levelSize)
-    newPlayer.y = math.random(share.level.levelSize)
+    newPlayer.y = math.random(share.level.levelSize/2)
     share.players[id] = newPlayer
 end
 

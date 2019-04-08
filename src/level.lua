@@ -26,8 +26,8 @@ function Level:new(levelNum, levelSize)
         playerShare.x = playerShare.x + clientHome.xDir
         playerShare.y = playerShare.y + clientHome.yDir
 
-        print("x="..playerShare.x)
-        print("y="..playerShare.y)
+        -- print("x="..playerShare.x)
+        -- print("y="..playerShare.y)
 
         self.grid[playerShare.x][playerShare.y] = 1
 

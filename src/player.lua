@@ -40,7 +40,10 @@ function Player:update(key)
         self.home.xDir = 0
         self.home.yDir = 1
     end
-
+    if key == "space" then
+        self.home.xDir = 0
+        self.home.yDir = 0
+    end
     -- print("home.xdir="..self.home.xDir)
     -- print("home.ydir="..self.home.yDir)
     -- self.home.x = self.home.x + self.xDir
