@@ -34,6 +34,7 @@ function server.connect(id) -- Called on connect from client with `id`
     -- Start at a random position
     newPlayer.x = math.random(share.level.levelSize)
     newPlayer.y = math.random(share.level.levelSize/2)
+    newPlayer.col = { math.random(), math.random(), math.random()}
     share.players[id] = newPlayer
 end
 
@@ -53,7 +54,7 @@ end
 
 function server.load()
     -- create level
-    share.level = Level:new(1,500)
+    share.level = createLevel(1,500)
     -- create players
     share.players = {}
 
@@ -67,7 +68,7 @@ function server.update(dt)
         if home.xDir then
             -- print("home.x="..home.x)
             -- print("home.y="..home.y)
-            share.level:updatePlayer(share.players[id], home)
+            updateLevelPlayer(share.level, share.players[id], id, home)
         end
     end
 

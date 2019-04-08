@@ -93,10 +93,11 @@ function client.draw()
     -- Setup the drawing to canvas, etc.
     gfx:preRender()
 
+    love.graphics.clear()
+        
     if client.connected then
         -- Draw whole level
-        love.graphics.clear()
-        Level.draw(share)
+        drawLevel(share)
 
         -- Draw our own mouse in a special way (bigger radius)
         --love.graphics.circle('fill', home.mouse.x, home.mouse.y, 40, 40)
@@ -109,6 +110,7 @@ function client.draw()
         -- end
 
         -- Draw our ping
+        love.graphics.setColor(1,1,1)
         love.graphics.print('ping: ' .. client.getPing(), 2, 2)
     else
         love.graphics.print('not connected', 2, 2)

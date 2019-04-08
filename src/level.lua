@@ -1,56 +1,54 @@
 
-Level = {}
+--Level = {}
 
-function Level:new(levelNum, levelSize)
-    local this={
+function createLevel(levelNum, levelSize)
+    local level={
         levelSize = levelSize,
         grid = {}
     }
+
     -- TODO: Create new level "grid" for level specified
-    --local grid={}
 
     for r = 1,levelSize do
-        this.grid[r]={}
+        level.grid[r]={}
         for c = 1,levelSize do
-            this.grid[r][c]=0
+            level.grid[r][c]=0
         end  
     end
 
+    return level
+end
     -- Store the new level grid
     -- o.grid = grid
     -- o.levelSize = levelSize
     
-    -- Update grid state, based on player pos/direction/state
-    function this:updatePlayer(playerShare, clientHome)
-        -- Update player pos, based on direction
-        playerShare.x = playerShare.x + clientHome.xDir
-        playerShare.y = playerShare.y + clientHome.yDir
+-- Update grid state, based on player pos/direction/state
+function updateLevelPlayer(level, serverPlayer, id, clientHome)
+    -- Update player pos, based on direction
+    serverPlayer.x = serverPlayer.x + clientHome.xDir
+    serverPlayer.y = serverPlayer.y + clientHome.yDir
 
-        -- print("x="..playerShare.x)
-        -- print("y="..playerShare.y)
+    -- print("x="..playerShare.x)
+    -- print("y="..playerShare.y)
 
-        self.grid[playerShare.x][playerShare.y] = 1
+    level.grid[serverPlayer.x][serverPlayer.y] = id
 
-        -- print("home.x="..home.x)
-        -- print("home.y="..home.y)
-        -- print("grid size="..#self.grid)
-        --self.grid[home.x][home.y] = 1
-    end
-
-    -- Can't do this with Share.lua (not too surprising)
-    -- self.__index = self;
-    -- setmetatable(o, self);
-    return this;
+    -- print("home.x="..home.x)
+    -- print("home.y="..home.y)
+    -- print("grid size="..#self.grid)
+    --self.grid[home.x][home.y] = 1
 end
 
-function Level.draw(share)
+
+function drawLevel(share)
     if share.level.levelSize then
         -- draw the whole grid
         for r = 1,share.level.levelSize do
             for c = 1,share.level.levelSize do
                 if share.level.grid[c][r] > 0 then
                     --actually draw particle
-                    love.graphics.setColor({1,1,1}) --colour[col])
+                    love.graphics.setColor(share.players[share.level.grid[c][r]].col)
+                    --love.graphics.setColor({1,1,1})
                     love.graphics.points(c,r)    
                 end
             end  
