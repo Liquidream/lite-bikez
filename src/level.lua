@@ -31,7 +31,17 @@ function updateLevelPlayer(level, serverPlayer, id, clientHome)
     -- print("x="..playerShare.x)
     -- print("y="..playerShare.y)
 
-    level.grid[serverPlayer.x][serverPlayer.y] = id
+    if serverPlayer.x > 1
+     and serverPlayer.y > 1
+     and serverPlayer.x < level.levelSize
+     and serverPlayer.y < level.levelSize then
+        -- Valid movement
+        level.grid[serverPlayer.x][serverPlayer.y] = id
+    else
+        -- Player has hit boundary of game
+        killPlayer(serverPlayer)
+    end
+
 
     -- print("home.x="..home.x)
     -- print("home.y="..home.y)

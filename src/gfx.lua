@@ -159,8 +159,15 @@ return {
     -- updateParticles = updateParticles,
     -- drawParticles = drawParticles,
    
+    -- Camera related
+    
+
+    -- Camera shake
     shake = shake, --function
     shakeX = shakeX,
     shakeY = shakeY,
     updateShake = updateShake,
+
+
+
    }

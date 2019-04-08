@@ -19,6 +19,23 @@ local MOVE_SPEED = 1
 -- end
 
 
+function killPlayer(player)
+    -- 
+    print("player DIED ("..player.id..")")
+    player.dead = true
+
+    -- any more?
+
+end
+
+function resetPlayer(player, share)
+    -- Start at a random position
+    player.x = math.random(share.level.levelSize)
+    player.y = math.random(share.level.levelSize/2)
+    -- col based on id
+    math.randomseed(player.id)
+    player.col = { math.random(), math.random(), math.random()}
+end
 
 function updatePlayer(player, key)
     -- keyboard controls

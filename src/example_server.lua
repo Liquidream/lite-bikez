@@ -30,11 +30,9 @@ local homes = server.homes -- `homes[id]` maps to `client.home` for that `id` --
 function server.connect(id) -- Called on connect from client with `id`
     print('client ' .. id .. ' connected')
 
-    local newPlayer = {}
-    -- Start at a random position
-    newPlayer.x = math.random(share.level.levelSize)
-    newPlayer.y = math.random(share.level.levelSize/2)
-    newPlayer.col = { math.random(), math.random(), math.random()}
+    local newPlayer = { id = id }
+    resetPlayer(newPlayer, share)
+    
     share.players[id] = newPlayer
 end
 
@@ -64,11 +62,24 @@ end
 function server.update(dt)
     -- TODO: Go through all players and update grid, based on their direction/state for this frame
     for id, home in pairs(server.homes) do
-        --print("xtype="..type(home.xDir))
-        if home.xDir then
+        -- Current player
+        local player = share.players[id]
+
+        if not player.dead and home.xDir then
             -- print("home.x="..home.x)
             -- print("home.y="..home.y)
             updateLevelPlayer(share.level, share.players[id], id, home)
+            -- Check for deaths
+            if player.dead then
+                -- Remove all player trails
+                for r = 1,share.level.levelSize do
+                    for c = 1,share.level.levelSize do
+                        if share.level.grid[c][r] == player.id then
+                            share.level.grid[c][r] = 0
+                        end
+                    end
+                end
+            end
         end
     end
 
