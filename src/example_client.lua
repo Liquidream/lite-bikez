@@ -1,6 +1,6 @@
 local cs = require 'network/cs'
 local gfx = require 'gfx'
-local Player = require 'player'
+require 'player'
 require 'level'
 
 
@@ -27,12 +27,12 @@ local share = client.share -- Maps to `server.share` -- can read
 local home = client.home -- Maps to `server.homes[id]` with our `id` -- can write
 
 
-local player = nil
+--local player = nil
 
 function client.connect() -- Called on connect from server
 
     -- Create player to control
-    player = Player:new(home, 1, {1,1,1} )
+    --player = Player:new(home, 1, {1,1,1} )
     
     -- Start at a random position
     -- home.x = math.random(share.level.levelSize)
@@ -65,7 +65,9 @@ function client.update(dt)
     if client.connected then
 
         -- update player (controls)
-        if player ~= nil then player:update() end
+        local player = home
+        updatePlayer(player)
+        --if player ~= nil then player:update() end
 
         -- -- keyboard controls
         -- if love.keyboard.isDown("right") then
@@ -122,7 +124,7 @@ function love.keypressed( key, scancode, isrepeat )
     --     constants.DEBUG_MODE = not constants.DEBUG_MODE
     -- end
 
-    player:update(key)
+    updatePlayer(home, key)
     
     -- if key=="space" then
     --     actionButtonPressed = true

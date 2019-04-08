@@ -1,8 +1,8 @@
-local cs = require 'network/cs'
-local server = cs.server
+local cs = require("network/cs")
+require("player")
+require("level")
 
-require 'level'
---local Level = require 'level'
+local server = cs.server
 
 
 if USE_CASTLE_CONFIG then
