@@ -93,11 +93,11 @@ function client.draw()
     -- Setup the drawing to canvas, etc.
     gfx:preRender()
 
-    love.graphics.clear()
+    love.graphics.clear({0,0,0.1})
         
     if client.connected then
         -- Draw whole level
-        drawLevel(share)
+        drawLevel(share.level, share.players)
 
         -- Draw our own mouse in a special way (bigger radius)
         --love.graphics.circle('fill', home.mouse.x, home.mouse.y, 40, 40)

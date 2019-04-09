@@ -24,40 +24,65 @@ end
     
 -- Update grid state, based on player pos/direction/state
 function updateLevelPlayer(level, serverPlayer, id, clientHome)
-    -- Update player pos, based on direction
-    serverPlayer.x = serverPlayer.x + clientHome.xDir
-    serverPlayer.y = serverPlayer.y + clientHome.yDir
 
-    -- print("x="..playerShare.x)
-    -- print("y="..playerShare.y)
-
-    if serverPlayer.x > 1
-     and serverPlayer.y > 1
-     and serverPlayer.x < level.levelSize
-     and serverPlayer.y < level.levelSize then
-        -- Valid movement
-        level.grid[serverPlayer.x][serverPlayer.y] = id
-    else
-        -- Player has hit boundary of game
-        killPlayer(serverPlayer)
+    -- Check for player input
+    -- print("player.xDir="..clientHome.xDir)
+    -- print("player.xDir="..clientHome.lastXDir)
+    if clientHome.xDir 
+     and clientHome.yDir
+     and (clientHome.xDir ~= serverPlayer.xDir 
+     or clientHome.yDir ~= serverPlayer.yDir) then
+        serverPlayer.xDir = clientHome.xDir
+        serverPlayer.yDir = clientHome.yDir
     end
 
+    -- Update player pos, based on direction
+    serverPlayer.x = serverPlayer.x + serverPlayer.xDir
+    serverPlayer.y = serverPlayer.y + serverPlayer.yDir
 
-    -- print("home.x="..home.x)
-    -- print("home.y="..home.y)
-    -- print("grid size="..#self.grid)
-    --self.grid[home.x][home.y] = 1
+    --clientHome.xDir
+    --clientHome.yDir
+    
+    -- print("x="..serverPlayer.x)
+    -- print("y="..serverPlayer.y)
+
+    -- Abort if player is stationary
+    if clientHome.xDir == 0 and clientHome.yDir == 0 then
+        print("Player not moving")
+        return
+    end
+
+    -- Check if player has hit game boundary
+    if serverPlayer.x < 1
+     or serverPlayer.y < 1
+     or serverPlayer.x > level.levelSize
+     or serverPlayer.y > level.levelSize 
+    then
+        -- Player has hit boundary of game
+        killPlayer(serverPlayer)
+        return
+    end
+    
+    -- Check player has hit another Player's trail
+    if level.grid[serverPlayer.x][serverPlayer.y] > 0 then
+        -- Player hit something (someone)
+        killPlayer(serverPlayer)
+        return
+    end
+
+    -- Valid movement
+    level.grid[serverPlayer.x][serverPlayer.y] = id
 end
 
 
-function drawLevel(share)
-    if share.level.levelSize then
+function drawLevel(level, players)
+    if level.levelSize then
         -- draw the whole grid
-        for r = 1,share.level.levelSize do
-            for c = 1,share.level.levelSize do
-                if share.level.grid[c][r] > 0 then
+        for r = 1,level.levelSize do
+            for c = 1,level.levelSize do
+                if level.grid[c][r] > 0 then
                     --actually draw particle
-                    love.graphics.setColor(share.players[share.level.grid[c][r]].col)
+                    love.graphics.setColor(players[level.grid[c][r]].col)
                     --love.graphics.setColor({1,1,1})
                     love.graphics.points(c,r)    
                 end

@@ -87,8 +87,8 @@ end
 -- Draw the canvas to screen, scale and center
 local function postRender(self)
     -- Draw game bounds
-    love.graphics.setColor({0,1,0})
-    love.graphics.rectangle('line', 0, 0, self.GAME_WIDTH, self.GAME_HEIGHT)
+    -- love.graphics.setColor({0,1,0})
+    -- love.graphics.rectangle('line', 0, 0, self.GAME_WIDTH, self.GAME_HEIGHT)
 
     -- Pop camera translations (Shake)
     love.graphics.pop()
@@ -160,7 +160,7 @@ return {
     -- drawParticles = drawParticles,
    
     -- Camera related
-    
+
 
     -- Camera shake
     shake = shake, --function

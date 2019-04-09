@@ -29,40 +29,42 @@ function killPlayer(player)
 end
 
 function resetPlayer(player, share)
+    player.dead = false
     -- Start at a random position
     player.x = math.random(share.level.levelSize)
     player.y = math.random(share.level.levelSize/2)
+    player.xDir = math.random(2)-1
+    player.yDir = math.random(2)-1
+    print("player.xDir="..player.xDir)
     -- col based on id
     math.randomseed(player.id)
     player.col = { math.random(), math.random(), math.random()}
 end
 
-function updatePlayer(player, key)
+function updatePlayer(clientPlayer, key)
+
     -- keyboard controls
     if key == "right" then
-        player.xDir = 1
-        player.yDir = 0
+        clientPlayer.xDir = 1
+        clientPlayer.yDir = 0
     end
     if key == "left" then
-        player.xDir = -1
-        player.yDir = 0
+        clientPlayer.xDir = -1
+        clientPlayer.yDir = 0
     end
     if key == "up" then
-        player.xDir = 0
-        player.yDir = -1
+        clientPlayer.xDir = 0
+        clientPlayer.yDir = -1
     end
     if key == "down" then
-        player.xDir = 0
-        player.yDir = 1
+        clientPlayer.xDir = 0
+        clientPlayer.yDir = 1
     end
     if key == "space" then
-        player.xDir = 0
-        player.yDir = 0
+        clientPlayer.xDir = 0
+        clientPlayer.yDir = 0
     end
-    -- print("home.xdir="..self.home.xDir)
-    -- print("home.ydir="..self.home.yDir)
-    -- self.home.x = self.home.x + self.xDir
-    -- self.home.y = self.home.y + self.yDir
+   
 end
 
 function drawPlayer(player)

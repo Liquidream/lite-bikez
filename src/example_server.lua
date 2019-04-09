@@ -52,7 +52,7 @@ end
 
 function server.load()
     -- create level
-    share.level = createLevel(1,500)
+    share.level = createLevel(1,200)
     -- create players
     share.players = {}
 
@@ -65,7 +65,9 @@ function server.update(dt)
         -- Current player
         local player = share.players[id]
 
-        if not player.dead and home.xDir then
+        if not player.dead 
+            --and home.xDir
+        then
             -- print("home.x="..home.x)
             -- print("home.y="..home.y)
             updateLevelPlayer(share.level, share.players[id], id, home)
@@ -79,6 +81,8 @@ function server.update(dt)
                         end
                     end
                 end
+                -- Reset player
+                resetPlayer(player, share)
             end
         end
     end
