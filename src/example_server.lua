@@ -52,7 +52,7 @@ end
 
 function server.load()
     -- create level
-    share.level = createLevel(1,200)
+    share.level = createLevel(1, 512) --game size (square)
     -- create players
     share.players = {}
 

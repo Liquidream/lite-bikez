@@ -30,10 +30,17 @@ function updateLevelPlayer(level, serverPlayer, id, clientHome)
     -- print("player.xDir="..clientHome.lastXDir)
     if clientHome.xDir 
      and clientHome.yDir
-     and (clientHome.xDir ~= serverPlayer.xDir 
-     or clientHome.yDir ~= serverPlayer.yDir) then
+     and (clientHome.xDir ~= serverPlayer.lastClientXDir 
+     or clientHome.yDir ~= serverPlayer.lastClientYDir)
+     and (clientHome.xDir ~= 0 
+      or clientHome.yDir ~= 0)
+     then
+        -- Update player direction
         serverPlayer.xDir = clientHome.xDir
         serverPlayer.yDir = clientHome.yDir
+        -- Update cache of last player controls
+        serverPlayer.lastClientXDir = clientHome.xDir
+        serverPlayer.lastClientYDir = clientHome.yDir
     end
 
     -- Update player pos, based on direction

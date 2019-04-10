@@ -31,11 +31,16 @@ end
 function resetPlayer(player, share)
     player.dead = false
     -- Start at a random position
+    math.randomseed(os.time())
     player.x = math.random(share.level.levelSize)
     player.y = math.random(share.level.levelSize/2)
-    player.xDir = math.random(2)-1
-    player.yDir = math.random(2)-1
+    local dirs={
+        {1,0},{0,1},{-1,0},{0,-1}
+    }
+    local dir=math.random(4)
+    player.xDir,player.yDir = dirs[dir][1],dirs[dir][2]
     print("player.xDir="..player.xDir)
+
     -- col based on id
     math.randomseed(player.id)
     player.col = { math.random(), math.random(), math.random()}
