@@ -39,7 +39,7 @@ function resetPlayer(player, share)
     }
     local dir=math.random(4)
     player.xDir,player.yDir = dirs[dir][1],dirs[dir][2]
-    print("player.xDir="..player.xDir)
+    --print("player.xDir="..player.xDir)
 
     -- col based on id
     math.randomseed(player.id)
