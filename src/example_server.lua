@@ -1,4 +1,4 @@
-local cs = require("network/cs")
+local cs = require("src/network/cs")
 require("player")
 require("level")
 
