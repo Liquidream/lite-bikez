@@ -1,7 +1,7 @@
-local cs = require 'network/cs'
-local gfx = require 'gfx'
-require 'player'
-require 'level'
+local cs = require 'src/network/cs'
+local gfx = require 'src/gfx'
+require 'src/player'
+require 'src/level'
 
 
 local client = cs.client

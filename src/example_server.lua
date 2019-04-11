@@ -1,6 +1,6 @@
 local cs = require("src/network/cs")
-require("player")
-require("level")
+require("src/player")
+require("src/level")
 
 local server = cs.server
 

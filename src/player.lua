@@ -1,5 +1,5 @@
 
-require("common")
+require("src/common")
 
 --Player = {}
 
