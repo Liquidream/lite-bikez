@@ -26,8 +26,8 @@ if CASTLE_PREFETCH then
 -- This requests a cloud server from Castle
 
 USE_CASTLE_CONFIG = true
-require 'example_server'
-require 'example_client'
+require 'src/example_server'
+require 'src/example_client'
 
 
 -- local total_time_elapsed = 0
