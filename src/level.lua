@@ -23,8 +23,10 @@ end
     -- o.levelSize = levelSize
     
 -- Update grid state, based on player pos/direction/state
-function updateLevelPlayer(level, serverPlayer, id, clientHome)
+function updateLevelPlayer(share, id, clientHome)
 
+    local level = share.level
+    local serverPlayer = share.players[id]
     -- Check for player input
     -- print("player.xDir="..clientHome.xDir)
     -- print("player.xDir="..clientHome.lastXDir)
@@ -66,14 +68,14 @@ function updateLevelPlayer(level, serverPlayer, id, clientHome)
      or serverPlayer.y > level.levelSize 
     then
         -- Player has hit boundary of game
-        killPlayer(serverPlayer)
+        killPlayer(serverPlayer, share)
         return
     end
     
     -- Check player has hit another Player's trail
     if level.grid[serverPlayer.x][serverPlayer.y] > 0 then
         -- Player hit something (someone)
-        killPlayer(serverPlayer)
+        killPlayer(serverPlayer, share)
         return
     end
 
@@ -83,7 +85,7 @@ end
 
 
 function drawLevel(level, players)
-    if level.levelSize then
+    if level.levelSize and players then
         -- draw the whole grid
         for r = 1,level.levelSize do
             for c = 1,level.levelSize do

@@ -1,4 +1,5 @@
 
+require("common")
 
 --Player = {}
 
@@ -19,19 +20,30 @@ local MOVE_SPEED = 1
 -- end
 
 
-function killPlayer(player)
+function killPlayer(player, share)
     -- 
     print("player DIED ("..player.id..")")
     player.dead = true
 
     -- any more?
+    for r = 1,share.level.levelSize do
+        for c = 1,share.level.levelSize do
+            if share.level.grid[c][r] == player.id then
+                share.level.grid[c][r] = 0
+            end
+        end
+    end
 
 end
+
 
 function resetPlayer(player, share)
     player.dead = false
     -- Start at a random position
-    math.randomseed(os.time())
+    --local seed = resetRND()
+    resetRNG()
+    --print("Resetting player "..player.id)--..", seed="..seed)
+    --math.randomseed(seed)
     player.x = math.random(share.level.levelSize)
     player.y = math.random(share.level.levelSize/2)
     local dirs={

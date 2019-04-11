@@ -39,6 +39,7 @@ end
 function server.disconnect(id) -- Called on disconnect from client with `id`
     print('client ' .. id .. ' disconnected')
     
+    killPlayer(share.players[id], share)
     share.players[id]=nil
     --share.mice[id] = nil
 end
@@ -60,7 +61,13 @@ function server.load()
 end
 
 function server.update(dt)
-    -- TODO: Go through all players and update grid, based on their direction/state for this frame
+    -- Player info
+    for clientId, player in pairs(share.players) do
+        player.me = homes[clientId].me
+    end
+
+    -- Go through all players and update level grid, 
+    -- based on their direction/state for this frame
     for id, home in pairs(server.homes) do
         -- Current player
         local player = share.players[id]
@@ -70,17 +77,9 @@ function server.update(dt)
         then
             -- print("home.x="..home.x)
             -- print("home.y="..home.y)
-            updateLevelPlayer(share.level, share.players[id], id, home)
+            updateLevelPlayer(share, id, home)
             -- Check for deaths
             if player.dead then
-                -- Remove all player trails
-                for r = 1,share.level.levelSize do
-                    for c = 1,share.level.levelSize do
-                        if share.level.grid[c][r] == player.id then
-                            share.level.grid[c][r] = 0
-                        end
-                    end
-                end
                 -- Reset player
                 resetPlayer(player, share)
             end

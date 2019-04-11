@@ -31,18 +31,11 @@ local home = client.home -- Maps to `server.homes[id]` with our `id` -- can writ
 
 function client.connect() -- Called on connect from server
 
-    -- Create player to control
-    --player = Player:new(home, 1, {1,1,1} )
-    
-    -- Start at a random position
-    -- home.x = math.random(share.level.levelSize)
-    -- home.y = math.random(share.level.levelSize)
-
-    -- print("home.x="..home.x)
-    -- print("home.y="..home.y)
-
-    -- home.mouse = {}
-    -- home.mouse.x, home.mouse.y = love.mouse.getPosition()
+    -- Initialise Player state
+    -- home.xDir = 0
+    -- home.yDir = 0
+    -- Grab Player info (photo)
+    home.me = castle.user.getMe and castle.user.getMe()
 end
 
 function client.disconnect() -- Called on disconnect from server
@@ -108,17 +101,76 @@ function client.draw()
         --         love.graphics.circle('fill', mouse.x, mouse.y, 30, 30)
         --     end
         -- end
+    end
+    
+    drawUI(share.players)
 
+        
+  --  else
+  --      love.graphics.print('not connected', 2, 2)
+  --  end
+
+    -- Draw the canvas to screen, scale and center
+    gfx:postRender()
+end
+
+function drawUI(players)
+    -- Draw UI (inc. Player info)
+    
+
+    -- Players    
+    if players then
+        local playerPos = 1
+        local xoff=100
+        for clientId, player in pairs(players) do
+            -- Obtain photo
+            if player.me then
+                if not player.photoRequested then
+                    player.photoRequested = true
+                    network.async(function()
+                        player.photo = love.graphics.newImage(player.me.photoUrl)
+                    end)
+                end
+            end
+
+            -- Draw photo
+            if player.photo then
+                local G=25
+                local x=xoff+(playerPos-1)*(G+10)
+                local y=2--gfx.GAME_HEIGHT-player.photo:getHeight()-5
+                if player.photo then
+                    love.graphics.setColor(player.col)
+                    love.graphics.rectangle(
+                        'fill',  x-2, y-2, 
+                        G+4,G+4)
+                    
+                    love.graphics.setColor(1,1,1)
+                    love.graphics.draw(
+                        player.photo, 
+                        x, y, 0, 
+                        G / player.photo:getWidth(), G / player.photo:getHeight())
+                else
+                    love.graphics.circle('fill', x + 0.5 * G, y + 0.5 * G, 0.5 * G)
+                    if isOwn then
+                        love.graphics.setLineWidth(4)
+                        love.graphics.setColor(1, 1, 1)
+                        love.graphics.circle('line', x + 0.5 * G, y + 0.5 * G, 0.5 * G - 2)
+                    end
+                end
+            end
+            playerPos = playerPos + 1
+        end
+    end
+
+    if client.connected then
         -- Draw our ping
         love.graphics.setColor(1,1,1)
         love.graphics.print('ping: ' .. client.getPing(), 2, 2)
     else
         love.graphics.print('not connected', 2, 2)
     end
-
-    -- Draw the canvas to screen, scale and center
-    gfx:postRender()
 end
+
 
 function love.keypressed( key, scancode, isrepeat )
     -- Debug switch
