@@ -14,7 +14,6 @@ if CASTLE_PREFETCH then
     'src/common.lua',
     'src/example_castle.lua',
     'src/example_client.lua',
-    'src/example_server.lua',
     'src/example_local.lua',
     'src/example_server.lua',
     'src/gfx.lua',
