@@ -5,6 +5,24 @@
 -- https://love2d-community.github.io/love-api/
 
 
+if CASTLE_PREFETCH then
+  CASTLE_PREFETCH({
+    'main.lua',
+    'src/cs.lua',
+    'src/state.lua',
+    'src/tests.lua',
+    'common.lua',
+    'example_castle.lua',
+    'example_client.lua',
+    'example_server.lua',
+    'example_local.lua',
+    'example_server.lua',
+    'gfx.lua',
+    'level.lua',
+    'player.lua',
+  })
+ end
+
 -- This requests a cloud server from Castle
 
 USE_CASTLE_CONFIG = true
