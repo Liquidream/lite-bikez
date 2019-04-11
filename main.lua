@@ -8,18 +8,18 @@
 if CASTLE_PREFETCH then
   CASTLE_PREFETCH({
     'main.lua',
-    'src/cs.lua',
-    'src/state.lua',
-    'src/tests.lua',
-    'common.lua',
-    'example_castle.lua',
-    'example_client.lua',
-    'example_server.lua',
-    'example_local.lua',
-    'example_server.lua',
-    'gfx.lua',
-    'level.lua',
-    'player.lua',
+    'src/network/cs.lua',
+    'src/network/state.lua',
+    'src/network/tests.lua',
+    'src/common.lua',
+    'src/example_castle.lua',
+    'src/example_client.lua',
+    'src/example_server.lua',
+    'src/example_local.lua',
+    'src/example_server.lua',
+    'src/gfx.lua',
+    'src/level.lua',
+    'src/player.lua',
   })
  end
 
