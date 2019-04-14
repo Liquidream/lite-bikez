@@ -65,7 +65,7 @@ function server.update(dt)
     -- Is it time to update the 'frame' of the game yet?
     frameTime = frameTime + dt
     print(frameTime)
-    if frameTime < FPS then
+    if frameTime < 1/FPS then
         -- bail out now, not time to update yet
         return
     end
