@@ -3,7 +3,8 @@ require("src/player")
 require("src/level")
 
 local server = cs.server
-
+local frameTime = 0
+local FPS = 60
 
 if USE_CASTLE_CONFIG then
     server.useCastleConfig()
@@ -61,6 +62,17 @@ function server.load()
 end
 
 function server.update(dt)
+    -- Is it time to update the 'frame' of the game yet?
+    frameTime = frameTime + dt
+    print(frameTime)
+    if frameTime < FPS then
+        -- bail out now, not time to update yet
+        return
+    end
+    -- Must be time to do update
+    frameTime = frameTime - FPS
+    print("UPDATE!")
+
     -- Player info
     for clientId, player in pairs(share.players) do
         player.me = homes[clientId].me
