@@ -58,8 +58,8 @@ function client.update(dt)
     if client.connected then
 
         -- update player (controls)
-        local player = home
-        updatePlayer(player)
+        -- local player = home
+        -- updatePlayer(player)
         --if player ~= nil then player:update() end
 
         -- -- keyboard controls
@@ -90,7 +90,7 @@ function client.draw()
         
     if client.connected then
         -- Draw whole level
-        drawLevel(share.level, share.players)
+        drawLevel(share.levelSize, share.players)
 
         -- Draw our own mouse in a special way (bigger radius)
         --love.graphics.circle('fill', home.mouse.x, home.mouse.y, 40, 40)
@@ -178,12 +178,36 @@ function love.keypressed( key, scancode, isrepeat )
     --     constants.DEBUG_MODE = not constants.DEBUG_MODE
     -- end
 
-    updatePlayer(home, key)
+    --updatePlayer(home, key)d
+
+    local xDir = 0
+    local yDir = 0
+    -- keyboard controls
+    if key == "right" then
+        xDir = 1
+        yDir = 0
+    end
+    if key == "left" then
+        xDir = -1
+        yDir = 0
+    end
+    if key == "up" then
+        xDir = 0
+        yDir = -1
+    end
+    if key == "down" then
+        xDir = 0
+        yDir = 1
+    end
+    if key == "space" then
+        xDir = 0
+        yDir = 0
+    end
     
     -- test to try to reduce latency
     -- (Sends the player's input directly to server
     --  seems a *bit* faster/more responsive)
-    client.send(home.xDir, home.yDir)
+    client.send(xDir, yDir)
 
 end
 

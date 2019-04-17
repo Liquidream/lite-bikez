@@ -26,13 +26,13 @@ function killPlayer(player, share)
     player.dead = true
 
     -- any more?
-    for r = 1,share.level.levelSize do
-        for c = 1,share.level.levelSize do
-            if share.level.grid[c][r] == player.id then
-                share.level.grid[c][r] = 0
-            end
-        end
-    end
+    -- for r = 1,share.level.levelSize do
+    --     for c = 1,share.level.levelSize do
+    --         if share.level.grid[c][r] == player.id then
+    --             share.level.grid[c][r] = 0
+    --         end
+    --     end
+    -- end
 
 end
 
@@ -44,45 +44,58 @@ function resetPlayer(player, share)
     resetRNG()
     --print("Resetting player "..player.id)--..", seed="..seed)
     --math.randomseed(seed)
-    player.x = math.random(share.level.levelSize)
-    player.y = math.random(share.level.levelSize/2)
+    player.x = math.random(share.levelSize)
+    player.y = math.random(share.levelSize/2)
     local dirs={
         {1,0},{0,1},{-1,0},{0,-1}
     }
     local dir=math.random(4)
     player.xDir,player.yDir = dirs[dir][1],dirs[dir][2]
-    --print("player.xDir="..player.xDir)
+    player.waypoints={}
+    player.pointCount=0
+    -- Add starting waypoint
+    addWaypoint(player)
 
     -- col based on id
     math.randomseed(player.id)
     player.col = { math.random(), math.random(), math.random()}
 end
 
-function updatePlayer(clientPlayer, key)
-
-    -- keyboard controls
-    if key == "right" then
-        clientPlayer.xDir = 1
-        clientPlayer.yDir = 0
-    end
-    if key == "left" then
-        clientPlayer.xDir = -1
-        clientPlayer.yDir = 0
-    end
-    if key == "up" then
-        clientPlayer.xDir = 0
-        clientPlayer.yDir = -1
-    end
-    if key == "down" then
-        clientPlayer.xDir = 0
-        clientPlayer.yDir = 1
-    end
-    if key == "space" then
-        clientPlayer.xDir = 0
-        clientPlayer.yDir = 0
-    end
-   
+function addWaypoint(player)
+    local point={        
+        x=player.x,
+        y=player.y,
+    }
+    --print(type(player.waypoints))
+    player.pointCount = player.pointCount + 1
+    player.waypoints[player.pointCount] = point
 end
+
+-- function updatePlayer(clientPlayer, key)
+
+--     -- keyboard controls
+--     if key == "right" then
+--         clientPlayer.xDir = 1
+--         clientPlayer.yDir = 0
+--     end
+--     if key == "left" then
+--         clientPlayer.xDir = -1
+--         clientPlayer.yDir = 0
+--     end
+--     if key == "up" then
+--         clientPlayer.xDir = 0
+--         clientPlayer.yDir = -1
+--     end
+--     if key == "down" then
+--         clientPlayer.xDir = 0
+--         clientPlayer.yDir = 1
+--     end
+--     if key == "space" then
+--         clientPlayer.xDir = 0
+--         clientPlayer.yDir = 0
+--     end
+   
+-- end
 
 function drawPlayer(player)
     --self.sourc 

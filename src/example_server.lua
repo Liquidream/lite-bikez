@@ -27,6 +27,7 @@ end
 local share = server.share -- Maps to `client.share` -- can write
 local homes = server.homes -- `homes[id]` maps to `client.home` for that `id` -- can read
 
+local serverPrivate = {}   -- Data private to the server
 
 function server.connect(id) -- Called on connect from client with `id`
     print('client ' .. id .. ' connected')
@@ -48,11 +49,14 @@ end
 function server.receive(id, ...) -- Called when client with `id` does `client.send(...)`
     --print("id="..id)
     
-    -- Trying this as a way to reduce latency with controls
-    -- (TODO: Will need to do either this OR client.home method!)
+    -- Doing it this way to reduce latency with player movement
     local arg = {...}
-    share.players[id].xDir = arg[1]
-    share.players[id].yDir = arg[2]
+    local player = share.players[id]
+    player.xDir = arg[1]
+    player.yDir = arg[2]
+
+    -- Now record player pos-change
+    addWaypoint(player)
 end
 
 
@@ -61,7 +65,8 @@ end
 
 function server.load()
     -- create level
-    share.level = createLevel(1, 512) --game size (square)
+    serverPrivate.level = createLevel(1, 512) --game size (square)
+    share.levelSize = serverPrivate.level.levelSize
     -- create players
     share.players = {}
 
@@ -96,7 +101,7 @@ function server.update(dt)
         then
             -- print("home.x="..home.x)
             -- print("home.y="..home.y)
-            updateLevelPlayer(share, id, home)
+            updateLevelPlayer(share, share.players[id], serverPrivate.level)
             -- Check for deaths
             if player.dead then
                 -- Reset player

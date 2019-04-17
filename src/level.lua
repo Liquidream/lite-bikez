@@ -23,40 +23,29 @@ end
     -- o.levelSize = levelSize
     
 -- Update grid state, based on player pos/direction/state
-function updateLevelPlayer(share, id, clientHome)
-
-    local level = share.level
-    local serverPlayer = share.players[id]
+function updateLevelPlayer(share, serverPlayer, level)
     -- Check for player input
-    -- print("player.xDir="..clientHome.xDir)
-    -- print("player.xDir="..clientHome.lastXDir)
-    if clientHome.xDir 
-     and clientHome.yDir
-     and (clientHome.xDir ~= serverPlayer.lastClientXDir 
-     or clientHome.yDir ~= serverPlayer.lastClientYDir)
-     and (clientHome.xDir ~= 0 
-      or clientHome.yDir ~= 0)
-     then
-        -- Update player direction
-        serverPlayer.xDir = clientHome.xDir
-        serverPlayer.yDir = clientHome.yDir
-        -- Update cache of last player controls
-        serverPlayer.lastClientXDir = clientHome.xDir
-        serverPlayer.lastClientYDir = clientHome.yDir
-    end
+    -- if clientHome.xDir 
+    --  and clientHome.yDir
+    --  and (clientHome.xDir ~= serverPlayer.lastClientXDir 
+    --  or clientHome.yDir ~= serverPlayer.lastClientYDir)
+    --  and (clientHome.xDir ~= 0 
+    --   or clientHome.yDir ~= 0)
+    --  then
+    --     -- Update player direction
+    --     serverPlayer.xDir = clientHome.xDir
+    --     serverPlayer.yDir = clientHome.yDir
+    --     -- Update cache of last player controls
+    --     serverPlayer.lastClientXDir = clientHome.xDir
+    --     serverPlayer.lastClientYDir = clientHome.yDir
+    -- end
 
     -- Update player pos, based on direction
     serverPlayer.x = serverPlayer.x + serverPlayer.xDir
     serverPlayer.y = serverPlayer.y + serverPlayer.yDir
 
-    --clientHome.xDir
-    --clientHome.yDir
-    
-    -- print("x="..serverPlayer.x)
-    -- print("y="..serverPlayer.y)
-
     -- Abort if player is stationary
-    if clientHome.xDir == 0 and clientHome.yDir == 0 then
+    if serverPlayer.xDir == 0 and serverPlayer.yDir == 0 then
         print("Player not moving")
         return
     end
@@ -84,19 +73,34 @@ function updateLevelPlayer(share, id, clientHome)
 end
 
 
-function drawLevel(level, players)
-    if level.levelSize and players then
-        -- draw the whole grid
-        for r = 1,level.levelSize do
-            for c = 1,level.levelSize do
-                if level.grid[c][r] > 0 then
-                    --actually draw particle
-                    love.graphics.setColor(players[level.grid[c][r]].col)
-                    --love.graphics.setColor({1,1,1})
-                    love.graphics.points(c,r)    
-                end
-            end  
+function drawLevel(levelSize, players)
+    if levelSize and players then
+        -- draw the waypoints
+        for id, player in pairs(players) do
+            local lastPoint = player.waypoints[1]
+            -- set colour
+            love.graphics.setColor(player.col)
+            -- draw path
+            for _, point in pairs(player.waypoints) do
+                love.graphics.line(
+                    lastPoint.x, lastPoint.y,
+                    point.x, point.y)
+                -- remember
+                lastPoint = point
+            end
         end
+
+        -- -- draw the whole grid
+        -- for r = 1,level.levelSize do
+        --     for c = 1,level.levelSize do
+        --         if level.grid[c][r] > 0 then
+        --             --actually draw particle
+        --             love.graphics.setColor(players[level.grid[c][r]].col)
+        --             --love.graphics.setColor({1,1,1})
+        --             love.graphics.points(c,r)    
+        --         end
+        --     end  
+        -- end
     end
 end
 
