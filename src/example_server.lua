@@ -46,6 +46,13 @@ function server.disconnect(id) -- Called on disconnect from client with `id`
 end
 
 function server.receive(id, ...) -- Called when client with `id` does `client.send(...)`
+    --print("id="..id)
+    
+    -- Trying this as a way to reduce latency with controls
+    -- (TODO: Will need to do either this OR client.home method!)
+    local arg = {...}
+    share.players[id].xDir = arg[1]
+    share.players[id].yDir = arg[2]
 end
 
 
@@ -64,14 +71,14 @@ end
 function server.update(dt)
     -- Is it time to update the 'frame' of the game yet?
     frameTime = frameTime + dt
-    print(">>>"..frameTime)
+    --print(">>>"..frameTime)
     if frameTime < 1/FPS then
         -- bail out now, not time to update yet
         return
     end
     -- Must be time to do update
     frameTime = frameTime - (1/FPS)
-    print("UPDATE!")
+    --print("UPDATE!")
 
     -- Player info
     for clientId, player in pairs(share.players) do

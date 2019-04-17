@@ -180,9 +180,11 @@ function love.keypressed( key, scancode, isrepeat )
 
     updatePlayer(home, key)
     
-    -- if key=="space" then
-    --     actionButtonPressed = true
-    -- end
+    -- test to try to reduce latency
+    -- (Sends the player's input directly to server
+    --  seems a *bit* faster/more responsive)
+    client.send(home.xDir, home.yDir)
+
 end
 
 -- Force recalc of render dimensions on resize
