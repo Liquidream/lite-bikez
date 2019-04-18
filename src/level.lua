@@ -57,14 +57,14 @@ function updateLevelPlayer(share, serverPlayer, level)
      or serverPlayer.y > level.levelSize 
     then
         -- Player has hit boundary of game
-        killPlayer(serverPlayer, share)
+        killPlayer(serverPlayer, level, share)
         return
     end
     
     -- Check player has hit another Player's trail
     if level.grid[serverPlayer.x][serverPlayer.y] > 0 then
         -- Player hit something (someone)
-        killPlayer(serverPlayer, share)
+        killPlayer(serverPlayer, level, share)
         return
     end
 

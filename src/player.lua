@@ -20,16 +20,16 @@ local MOVE_SPEED = 1
 -- end
 
 
-function killPlayer(player, share)
+function killPlayer(player, level, share)
     -- 
     print("player DIED ("..player.id..")")
     player.dead = true
 
     -- clear player's data form grid
-    for r = 1,share.level.levelSize do
-        for c = 1,share.level.levelSize do
-            if share.level.grid[c][r] == player.id then
-                share.level.grid[c][r] = 0
+    for r = 1,level.levelSize do
+        for c = 1,level.levelSize do
+            if level.grid[c][r] == player.id then
+                level.grid[c][r] = 0
             end
         end
     end

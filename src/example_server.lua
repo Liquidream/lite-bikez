@@ -41,7 +41,7 @@ end
 function server.disconnect(id) -- Called on disconnect from client with `id`
     print('client ' .. id .. ' disconnected')
     
-    killPlayer(share.players[id], share)
+    killPlayer(share.players[id], serverPrivate.level, share)
     share.players[id]=nil
     --share.mice[id] = nil
 end
