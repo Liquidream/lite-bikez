@@ -25,14 +25,14 @@ function killPlayer(player, share)
     print("player DIED ("..player.id..")")
     player.dead = true
 
-    -- any more?
-    -- for r = 1,share.level.levelSize do
-    --     for c = 1,share.level.levelSize do
-    --         if share.level.grid[c][r] == player.id then
-    --             share.level.grid[c][r] = 0
-    --         end
-    --     end
-    -- end
+    -- clear player's data form grid
+    for r = 1,share.level.levelSize do
+        for c = 1,share.level.levelSize do
+            if share.level.grid[c][r] == player.id then
+                share.level.grid[c][r] = 0
+            end
+        end
+    end
 
 end
 
