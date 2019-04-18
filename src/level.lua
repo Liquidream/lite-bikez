@@ -69,7 +69,7 @@ function updateLevelPlayer(share, serverPlayer, level)
     end
 
     -- Valid movement
-    level.grid[serverPlayer.x][serverPlayer.y] = id
+    level.grid[serverPlayer.x][serverPlayer.y] = serverPlayer.id
 end
 
 
@@ -81,13 +81,18 @@ function drawLevel(levelSize, players)
             -- set colour
             love.graphics.setColor(player.col)
             -- draw path
-            for _, point in pairs(player.waypoints) do
+            for i=1,player.pointCount do
+                local point = player.waypoints[i]
                 love.graphics.line(
                     lastPoint.x, lastPoint.y,
                     point.x, point.y)
                 -- remember
                 lastPoint = point
             end
+            -- draw to player current pos
+            love.graphics.line(
+                    lastPoint.x, lastPoint.y,
+                    player.x, player.y)
         end
 
         -- -- draw the whole grid

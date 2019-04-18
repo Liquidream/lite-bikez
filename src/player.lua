@@ -42,7 +42,7 @@ function resetPlayer(player, share)
     -- Start at a random position
     --local seed = resetRND()
     resetRNG()
-    --print("Resetting player "..player.id)--..", seed="..seed)
+    print("Resetting player "..player.id)--..", seed="..seed)
     --math.randomseed(seed)
     player.x = math.random(share.levelSize)
     player.y = math.random(share.levelSize/2)
