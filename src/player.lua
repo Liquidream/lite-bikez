@@ -1,64 +1,66 @@
 
 require("src/common")
 
---Player = {}
 
 local MOVE_SPEED = 1
 
--- function Player:new(home, id, col, xDir, yDir)
---     local o = {}
---     o.home = home   -- writable n/w data
---     o.id = id
---     o.col = col
---     o.speed = MOVE_SPEED
---     o.home.xDir = xDir or 0
---     o.home.yDir = yDir or 0
---     --
---     self.__index = self;
---     setmetatable(o, self);
---     return o;
--- end
-
-
 function killPlayer(player, level, share)
     -- 
-    print("player DIED ("..player.id..")")
+    print("player DIED ("..(player.id or "<no id>")..")")
     player.dead = true
 
-    -- clear player's data form grid
-    for r = 1,level.levelSize do
-        for c = 1,level.levelSize do
-            if level.grid[c][r] == player.id then
-                level.grid[c][r] = 0
+  --  if IS_SERVER then 
+        print("clear the player grid data...")
+
+        -- clear player's data form grid
+        for r = 1,level.levelSize do
+            for c = 1,level.levelSize do
+                if level.grid[c][r] == player.id then
+                    level.grid[c][r] = 0
+                end
             end
         end
-    end
-
+  --  end
 end
 
 
-function resetPlayer(player, share)
+function resetPlayer(player, share, IS_SERVER)
+    
     player.dead = false
+    
     -- Start at a random position
-    --local seed = resetRND()
     resetRNG()
-    print("Resetting player "..player.id)--..", seed="..seed)
-    --math.randomseed(seed)
-    player.x = math.random(share.levelSize)
-    player.y = math.random(share.levelSize/2)
-    local dirs={
-        {1,0},{0,1},{-1,0},{0,-1}
-    }
-    local dir=math.random(4)
-    player.xDir,player.yDir = dirs[dir][1],dirs[dir][2]
+    print("Resetting player "..(player.id or "<new>").."IS_SERVER="..tostring(IS_SERVER))--..", seed="..seed)
+    
     player.waypoints={}
     player.pointCount=0
+    player.last_xDir, player.last_yDir = -2,-2
+    
+    if IS_SERVER then
+        -- the server decides the random start position
+        -- (and tells the client)
+        local dirs={
+            {1,0},{0,1},{-1,0},{0,-1}
+        }
+        local dir=math.random(4)
+        player.xDir,player.yDir = dirs[dir][1],dirs[dir][2]
+        player.x = math.random(share.levelSize)
+        player.y = math.random(share.levelSize/2)
+
+        -- col based on id
+        math.randomseed(player.id)
+        player.col1 = math.random()
+        player.col2 = math.random()
+        player.col3 = math.random()
+    end
+
+    print("player pos = "..player.x..","..player.y)
+
     -- Add starting waypoint
     addWaypoint(player)
 
-    -- col based on id
-    math.randomseed(player.id)
-    player.col = { math.random(), math.random(), math.random()}
+
+    print("#player.waypoints "..#player.waypoints)
 end
 
 function addWaypoint(player)
@@ -66,41 +68,39 @@ function addWaypoint(player)
         x=player.x,
         y=player.y,
     }
-    --print(type(player.waypoints))
+    print("addWaypoint("..(player.id or "<nil>")..") ="..point.x..","..point.y)
     player.pointCount = player.pointCount + 1
     player.waypoints[player.pointCount] = point
 end
 
--- function updatePlayer(clientPlayer, key)
-
---     -- keyboard controls
---     if key == "right" then
---         clientPlayer.xDir = 1
---         clientPlayer.yDir = 0
---     end
---     if key == "left" then
---         clientPlayer.xDir = -1
---         clientPlayer.yDir = 0
---     end
---     if key == "up" then
---         clientPlayer.xDir = 0
---         clientPlayer.yDir = -1
---     end
---     if key == "down" then
---         clientPlayer.xDir = 0
---         clientPlayer.yDir = 1
---     end
---     if key == "space" then
---         clientPlayer.xDir = 0
---         clientPlayer.yDir = 0
---     end
-   
--- end
 
 function drawPlayer(player)
-    --self.sourc 
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.circle('fill', player.x, player.y, 5)
+    local lastPoint = player.waypoints[1]
+
+    -- Bail out if no colours
+    if player.col1==nil then 
+        print("no col !!")
+        return 
+    end
+
+    -- set colour
+    love.graphics.setColor({ player.col1, player.col2, player.col3 })
+    
+    -- draw path
+    for i=1,player.pointCount do
+        local point = player.waypoints[i]
+    --    print(">>> "..point.x..","..point.y)
+        love.graphics.line(
+            lastPoint.x, lastPoint.y,
+            point.x, point.y)
+        -- remember
+        lastPoint = point
+    end
+    -- draw to player current pos
+    love.graphics.line(
+            lastPoint.x, lastPoint.y,
+            player.x, player.y)
+
 end
 
 return Player

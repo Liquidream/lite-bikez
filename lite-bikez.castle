@@ -1,5 +1,7 @@
 main: main.lua
-title: Lite Bikez
+title: Lite Bikez (WIP)
 owner: liquidream
+description: Not much to see here... yet!
+coverImage: cover-image.png
 multiplayer:
     - enabled: true

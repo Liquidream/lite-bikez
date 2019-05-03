@@ -1,10 +1,13 @@
-local cs = require("src/network/cs")
+local cs = require 'https://raw.githubusercontent.com/castle-games/share.lua/b94c77cacc9e842877e7d8dd71c17792bd8cbc32/cs.lua'
+--local cs = require("src/network/cs")
 require("src/player")
 require("src/level")
 
 local server = cs.server
 local frameTime = 0
 local FPS = 60
+
+local IS_SERVER = true
 
 if USE_CASTLE_CONFIG then
     server.useCastleConfig()
@@ -27,13 +30,17 @@ end
 local share = server.share -- Maps to `client.share` -- can write
 local homes = server.homes -- `homes[id]` maps to `client.home` for that `id` -- can read
 
-local serverPrivate = {}   -- Data private to the server
+local serverPrivate = share --{}   -- Data private to the server
 
 function server.connect(id) -- Called on connect from client with `id`
     print('client ' .. id .. ' connected')
 
     local newPlayer = { id = id }
-    resetPlayer(newPlayer, share)
+    print("server reset")
+    resetPlayer(newPlayer, share, IS_SERVER)
+    -- tell client start pos
+    server.send(id, "player_start", newPlayer.xDir, newPlayer.yDir, newPlayer.x, newPlayer.y, 
+                 newPlayer.col1, newPlayer.col2, newPlayer.col3)
     
     share.players[id] = newPlayer
 end
@@ -43,20 +50,31 @@ function server.disconnect(id) -- Called on disconnect from client with `id`
     
     killPlayer(share.players[id], serverPrivate.level, share)
     share.players[id]=nil
-    --share.mice[id] = nil
 end
 
 function server.receive(id, ...) -- Called when client with `id` does `client.send(...)`
-    --print("id="..id)
     
     -- Doing it this way to reduce latency with player movement
     local arg = {...}
     local player = share.players[id]
-    player.xDir = arg[1]
-    player.yDir = arg[2]
+    local msg = arg[1]
+    print("server msg = "..msg.."(id="..id..")")
 
-    -- Now record player pos-change
-    addWaypoint(player)
+    if msg == "player_update" then
+        player.xDir = arg[2]
+        player.yDir = arg[3]
+        player.x = arg[4]
+        player.y = arg[5]
+        -- Now record player pos-change
+        addWaypoint(player)
+
+    elseif msg == "player_dead" then
+        killPlayer(player, serverPrivate.level, share)
+        resetPlayer(player, share, IS_SERVER)
+        -- tell client start pos
+        server.send(id, "player_start", player.xDir, player.yDir, player.x, player.y,
+            player.col1, player.col2, player.col3)
+    end
 end
 
 
@@ -69,21 +87,17 @@ function server.load()
     share.levelSize = serverPrivate.level.levelSize
     -- create players
     share.players = {}
-
-    --share.mice = {}
 end
 
 function server.update(dt)
     -- Is it time to update the 'frame' of the game yet?
     frameTime = frameTime + dt
-    --print(">>>"..frameTime)
     if frameTime < 1/FPS then
         -- bail out now, not time to update yet
         return
     end
     -- Must be time to do update
     frameTime = frameTime - (1/FPS)
-    --print("UPDATE!")
 
     -- Player info
     for clientId, player in pairs(share.players) do
@@ -96,21 +110,33 @@ function server.update(dt)
         -- Current player
         local player = share.players[id]
 
-        if not player.dead 
-            --and home.xDir
-        then
+        if player and not player.dead then
             -- print("home.x="..home.x)
             -- print("home.y="..home.y)
-            updateLevelPlayer(share, share.players[id], serverPrivate.level)
-            -- Check for deaths
-            if player.dead then
-                -- Reset player
-                resetPlayer(player, share)
+
+            -- update with latest position
+            -- (if not too big a change - else rely on server value
+            --  as could be after a player restart and still getting old player pos msg)
+            -- IDEA: maybe have a "lifecount" to check against!
+            if home.x 
+            and math.abs(player.x-home.x)<10
+            and math.abs(player.y-home.y)<10
+            then
+                player.x = home.x
+                player.y = home.y
             end
+
+            -- Have to do this on the server,
+            -- as it's a collation of all player trails
+            -- (but also doing it at )
+            updateLevelGrid(share.players[id], share.level)
+
+            -- -- Check for deaths
+            -- if player.dead then
+            --     -- Reset player
+            --     resetPlayer(player, share)
+            -- end
         end
     end
 
-    -- for id, home in pairs(server.homes) do -- Combine mouse info from clients into share
-    --     share.mice[id] = home.mouse
-    -- end
 end

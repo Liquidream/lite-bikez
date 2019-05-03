@@ -7,7 +7,7 @@
 --
 -- Globals
 --
-
+DEBUG_MODE = false
 
 
 
