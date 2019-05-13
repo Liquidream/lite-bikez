@@ -124,7 +124,7 @@ function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel, draw_z
     -- draw entire level
     if levelData then 
         --sugar.gfx.spritesheet("leveldata")
-        spr_sheet("leveldata", 0,0)
+        spr_sheet("leveldata", 0,0, level.levelSize*draw_zoom_scale,level.levelSize*draw_zoom_scale)
     end
     
     if levelSize and otherPlayers and homePlayer then

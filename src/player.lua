@@ -91,8 +91,11 @@ function drawPlayer(player, draw_zoom_scale)
     for i=1,player.pointCount do
         local point = player.waypoints[i]
         rectfill(
-            lastPoint.x, lastPoint.y,
-            point.x+draw_zoom_scale, point.y+draw_zoom_scale, player.col)
+            lastPoint.x*draw_zoom_scale, lastPoint.y*draw_zoom_scale,
+            (point.x*draw_zoom_scale)+draw_zoom_scale, (point.y*draw_zoom_scale)+draw_zoom_scale, player.col)
+        -- rectfill(
+        --     lastPoint.x, lastPoint.y,
+        --     point.x+draw_zoom_scale, point.y+draw_zoom_scale, player.col)
         -- line(
         --     lastPoint.x, lastPoint.y,
         --     point.x, point.y, player.col)
@@ -101,9 +104,16 @@ function drawPlayer(player, draw_zoom_scale)
     end
     -- draw to player current pos
     rectfill(
-            lastPoint.x, lastPoint.y,
-            player.x+draw_zoom_scale, player.y+draw_zoom_scale, player.col)
+            lastPoint.x*draw_zoom_scale, lastPoint.y*draw_zoom_scale,
+            (player.x*draw_zoom_scale)+draw_zoom_scale, (player.y*draw_zoom_scale)+draw_zoom_scale, player.col)
+    -- rectfill(
+    --         lastPoint.x, lastPoint.y,
+    --         player.x+draw_zoom_scale, player.y+draw_zoom_scale, player.col)
 
+    -- "Head"
+    rectfill(
+        player.x*draw_zoom_scale, player.y*draw_zoom_scale,
+            (player.x*draw_zoom_scale)+draw_zoom_scale, (player.y*draw_zoom_scale)+draw_zoom_scale, 7)
 end
 
 return Player

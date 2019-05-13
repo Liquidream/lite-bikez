@@ -35,7 +35,7 @@ local homePlayer = home
 local clientPrivate = {}    -- data private to the client (not synced)
 local playerPhotos = {}
 local camx,camy = 0,0       --
-local zoom_scale = 2
+local zoom_scale = 2        -- 2
 
 
 function client.connect() -- Called on connect from serverfo
@@ -158,14 +158,15 @@ function client.draw()
     -- Draw game to canvas/screen
     cls(1)
 
-    -- Update camera pos
-    camx = homePlayer.x - flr(GAME_WIDTH/2)
-    camy = homePlayer.y - flr(GAME_HEIGHT/2)
-    camx = mid(0, camx, clientPrivate.level.levelSize-GAME_WIDTH)
-    camy = mid(0, camy, clientPrivate.level.levelSize-GAME_HEIGHT)
-    camera(camx, camy)
-        
+    
     if client.connected then
+        -- Update camera pos
+        camx = homePlayer.x - flr(GAME_WIDTH/(2*zoom_scale))
+        camy = homePlayer.y - flr(GAME_HEIGHT/(2*zoom_scale))
+        camx = mid(0, camx, clientPrivate.level.levelSize-(GAME_WIDTH/zoom_scale))
+        camy = mid(0, camy, clientPrivate.level.levelSize-(GAME_HEIGHT/zoom_scale))
+        camera(camx*zoom_scale, camy*zoom_scale)
+        
         -- Draw whole level
         drawLevel(share.levelSize, share.players, homePlayer, share.level, clientPrivate.level, zoom_scale)
     end
