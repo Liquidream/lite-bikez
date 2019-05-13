@@ -75,7 +75,7 @@ function addWaypoint(player)
 end
 
 
-function drawPlayer(player)
+function drawPlayer(player, draw_zoom_scale)
     local lastPoint = player.waypoints[1]
 
     -- Bail out if no colours
@@ -90,17 +90,19 @@ function drawPlayer(player)
     -- draw path
     for i=1,player.pointCount do
         local point = player.waypoints[i]
-    --    log(">>> "..point.x..","..point.y)
-        line(
+        rectfill(
             lastPoint.x, lastPoint.y,
-            point.x, point.y, player.col)
+            point.x+draw_zoom_scale, point.y+draw_zoom_scale, player.col)
+        -- line(
+        --     lastPoint.x, lastPoint.y,
+        --     point.x, point.y, player.col)
         -- remember
         lastPoint = point
     end
     -- draw to player current pos
-    line(
+    rectfill(
             lastPoint.x, lastPoint.y,
-            player.x, player.y, player.col)
+            player.x+draw_zoom_scale, player.y+draw_zoom_scale, player.col)
 
 end
 

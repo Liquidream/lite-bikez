@@ -35,6 +35,7 @@ local homePlayer = home
 local clientPrivate = {}    -- data private to the client (not synced)
 local playerPhotos = {}
 local camx,camy = 0,0       --
+local zoom_scale = 2
 
 
 function client.connect() -- Called on connect from serverfo
@@ -166,7 +167,7 @@ function client.draw()
         
     if client.connected then
         -- Draw whole level
-        drawLevel(share.levelSize, share.players, homePlayer, share.level, clientPrivate.level)
+        drawLevel(share.levelSize, share.players, homePlayer, share.level, clientPrivate.level, zoom_scale)
     end
     
     -- Reset camera for UI

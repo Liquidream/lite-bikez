@@ -119,7 +119,7 @@ function checkLevelPlayer(share, player, level)
 end
 
 
-function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel)
+function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel, draw_zoom_scale)
     
     -- draw entire level
     if levelData then 
@@ -134,14 +134,14 @@ function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel)
             if player.id ~= homePlayer.id
             and player.x
             and not player.dead then
-                drawPlayer(player)
+                drawPlayer(player, draw_zoom_scale)
           end
         end
 
         -- now draw local player
         -- (done so that local movement is snappy)
         if not homePlayer.dead then
-            drawPlayer(homePlayer)
+            drawPlayer(homePlayer, draw_zoom_scale)
         end
 
         -- DEBUG grid collision data!
@@ -151,10 +151,11 @@ function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel)
             for r = 1,level.levelSize do
                 for c = 1,level.levelSize do
                     if level.grid[c][r] > 0 then
-                        --actually draw particle
-                        --love.graphics.setColor({0,0,1})
-                        --love.graphics.setColor(players[level.grid[c][r]].col)                        
-                        pset(c+1,r+1, 12)
+                        --actually draw "block"
+                        local x=(c+1)*draw_zoom_scale
+                        local y=(r+1)*draw_zoom_scale
+                        rectfill(x,y, x+draw_zoom_scale, y+draw_zoom_scale, 12)
+                        --pset(c+1,r+1, 12)
                     end
                 end  
             end
@@ -166,7 +167,11 @@ function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel)
                         --actually draw particle
                         --love.graphics.setColor({0,0.5,0})
                         --love.graphics.setColor(players[level.grid[c][r]].col)                        
-                        pset(c+1,r+1,11)
+                        --actually draw "block"
+                        local x=(c+1)*draw_zoom_scale
+                        local y=(r+1)*draw_zoom_scale
+                        rectfill(x,y, x+draw_zoom_scale, y+draw_zoom_scale, 11)
+                        --pset(c+1,r+1, 12)
                     end
                 end  
             end
