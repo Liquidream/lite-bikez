@@ -15,11 +15,9 @@ if CASTLE_PREFETCH then
     'network/tests.lua',
     'common.lua',
     --sugarcoat lib?
-    'example_castle.lua',
     'example_client.lua',
     'example_local.lua',
     'example_server.lua',
-  --  'gfx.lua',
     'level.lua',
     'player.lua',
   })

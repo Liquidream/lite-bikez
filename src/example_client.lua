@@ -29,11 +29,12 @@ end
 -- Client can also send or receive individual messages to or from server.
 
 
-local share = client.share -- Maps to `server.share` -- can read
-local home = client.home -- Maps to `server.homes[id]` with our `id` -- can write
+local share = client.share  -- Maps to `server.share` -- can read
+local home = client.home    -- Maps to `server.homes[id]` with our `id` -- can write
 local homePlayer = home
-local clientPrivate = {}  -- data private to the client (not synced)
+local clientPrivate = {}    -- data private to the client (not synced)
 local playerPhotos = {}
+local camx,camy = 0,0       --
 
 
 function client.connect() -- Called on connect from serverfo
@@ -155,13 +156,21 @@ end
 function client.draw()
     -- Draw game to canvas/screen
     cls(1)
-    --rectfill(0, 0, GAME_WIDTH, GAME_HEIGHT, 1) -- temp fix for CLS(1)
+
+    -- Update camera pos
+    camx = homePlayer.x - flr(GAME_WIDTH/2)
+    camy = homePlayer.y - flr(GAME_HEIGHT/2)
+    camx = mid(0, camx, clientPrivate.level.levelSize-GAME_WIDTH)
+    camy = mid(0, camy, clientPrivate.level.levelSize-GAME_HEIGHT)
+    camera(camx, camy)
         
     if client.connected then
         -- Draw whole level
         drawLevel(share.levelSize, share.players, homePlayer, share.level, clientPrivate.level)
     end
     
+    -- Reset camera for UI
+    camera(0,0)
     drawUI(share.players)
 end
 
@@ -267,19 +276,27 @@ function love.keypressed( key, scancode, isrepeat )
     if not homePlayer.dead then
 
         -- keyboard controls
-        if key == "right" then
+        if key == "right" 
+         and (homePlayer.xDir ~= -1
+         and homePlayer.yDir ~= 0) then
             homePlayer.xDir = 1
             homePlayer.yDir = 0
         end
-        if key == "left" then
+        if key == "left" 
+         and (homePlayer.xDir ~= 1
+         and homePlayer.yDir ~= 0) then
             homePlayer.xDir = -1
             homePlayer.yDir = 0
         end
-        if key == "up" then
+        if key == "up" 
+         and (homePlayer.xDir ~= 0
+         and homePlayer.yDir ~= 1) then
             homePlayer.xDir = 0
             homePlayer.yDir = -1
         end
-        if key == "down" then
+        if key == "down" 
+         and (homePlayer.xDir ~= 0
+         and homePlayer.yDir ~= -1) then
             homePlayer.xDir = 0
             homePlayer.yDir = 1
         end
