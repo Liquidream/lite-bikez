@@ -8,9 +8,8 @@
 -- Globals
 --
 DEBUG_MODE = false
-
-
-
+GAME_WIDTH = 512  -- 16:9 aspect ratio that fits nicely
+GAME_HEIGHT = 288 -- within the default Castle window size
 
 
 --
@@ -26,4 +25,13 @@ function resetRNG()
     local seed=os.time() + _incSeed
     math.randomseed(seed)
     --print("Re-seeding RNG="..seed)
+end
+
+-- https://helloacm.com/split-a-string-in-lua/
+function split(s, delimiter)
+    result = {};
+    for match in (s..delimiter):gmatch("(.-)"..delimiter) do
+        table.insert(result, match);
+    end
+    return result;
 end

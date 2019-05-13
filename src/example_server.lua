@@ -1,13 +1,20 @@
+print("server start...")
+
+
 local cs = require 'https://raw.githubusercontent.com/castle-games/share.lua/b94c77cacc9e842877e7d8dd71c17792bd8cbc32/cs.lua'
---local cs = require("src/network/cs")
-require("src/player")
-require("src/level")
+--local cs = require("network/cs")
+
+require("player")
+require("level")
 
 local server = cs.server
 local frameTime = 0
 local FPS = 60
 
 local IS_SERVER = true
+SUGAR_SERVER_MODE = USE_CASTLE_CONFIG --true
+-- Sugarcoat alias
+log = print
 
 if USE_CASTLE_CONFIG then
     server.useCastleConfig()
@@ -33,32 +40,31 @@ local homes = server.homes -- `homes[id]` maps to `client.home` for that `id` --
 local serverPrivate = share --{}   -- Data private to the server
 
 function server.connect(id) -- Called on connect from client with `id`
-    print('client ' .. id .. ' connected')
+    log('client ' .. id .. ' connected')
 
     local newPlayer = { id = id }
-    print("server reset")
+    log("server reset")
     resetPlayer(newPlayer, share, IS_SERVER)
     -- tell client start pos
     server.send(id, "player_start", newPlayer.xDir, newPlayer.yDir, newPlayer.x, newPlayer.y, 
-                 newPlayer.col1, newPlayer.col2, newPlayer.col3)
+                 newPlayer.col)
     
     share.players[id] = newPlayer
 end
 
 function server.disconnect(id) -- Called on disconnect from client with `id`
-    print('client ' .. id .. ' disconnected')
+    log('client ' .. id .. ' disconnected')
     
     killPlayer(share.players[id], serverPrivate.level, share)
     share.players[id]=nil
 end
 
 function server.receive(id, ...) -- Called when client with `id` does `client.send(...)`
-    
     -- Doing it this way to reduce latency with player movement
     local arg = {...}
     local player = share.players[id]
     local msg = arg[1]
-    print("server msg = "..msg.."(id="..id..")")
+    log("server msg = "..msg.."(id="..id..")")
 
     if msg == "player_update" then
         player.xDir = arg[2]
@@ -72,8 +78,7 @@ function server.receive(id, ...) -- Called when client with `id` does `client.se
         killPlayer(player, serverPrivate.level, share)
         resetPlayer(player, share, IS_SERVER)
         -- tell client start pos
-        server.send(id, "player_start", player.xDir, player.yDir, player.x, player.y,
-            player.col1, player.col2, player.col3)
+        server.send(id, "player_start", player.xDir, player.yDir, player.x, player.y, player.col)
     end
 end
 
@@ -82,8 +87,10 @@ end
 -- which are less commonly used)
 
 function server.load()
+    log("server load...")
+    
     -- create level
-    serverPrivate.level = createLevel(1, 512) --game size (square)
+    serverPrivate.level = createLevel(1, 512, IS_SERVER) --game size (square)
     share.levelSize = serverPrivate.level.levelSize
     -- create players
     share.players = {}
@@ -111,9 +118,6 @@ function server.update(dt)
         local player = share.players[id]
 
         if player and not player.dead then
-            -- print("home.x="..home.x)
-            -- print("home.y="..home.y)
-
             -- update with latest position
             -- (if not too big a change - else rely on server value
             --  as could be after a player restart and still getting old player pos msg)

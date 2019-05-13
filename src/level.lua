@@ -1,18 +1,28 @@
 
 
-function createLevel(levelNum, levelSize)
+function createLevel(levelNum, levelSize, IS_SERVER)
     local level={
         levelSize = levelSize,
         grid = {}
     }
 
     -- TODO: Create new level "grid" for level specified
-
     for r = 1,levelSize do
         level.grid[r]={}
         for c = 1,levelSize do
             level.grid[r][c]=0
         end  
+    end
+
+    if not IS_SERVER then
+        -- Load level collision data
+        -- TODO: This needs to be dynamic - based on current level
+        local levelDataPath = "assets/level-1.png"
+
+        network.async(function()
+            load_png("leveldata", levelDataPath, nil, true)
+            levelData = love.image.newImageData(levelDataPath)
+        end)
     end
 
     return level
@@ -75,7 +85,7 @@ function checkLevelPlayer(share, player, level)
     
     -- Abort if player is stationary
     if player.xDir == 0 and player.yDir == 0 then
-        print("Player not moving")
+        log("Player not moving")
         return
     end
 
@@ -90,6 +100,15 @@ function checkLevelPlayer(share, player, level)
         return
     end
     
+    -- Check if player has hit level object/boundary
+    local r, g, b = levelData:getPixel(player.x, player.y)
+    local hitObstacle = r > 0 -- red means level obstacles/boundary
+    if hitObstacle then
+        -- Player has hit obstacle/boundary of game
+        killPlayer(player, level, share)
+        return
+    end
+
     -- Check player has hit another Player's trail
     if level.grid[player.x][player.y] > 0 then
         -- Player hit something (someone)
@@ -101,6 +120,12 @@ end
 
 
 function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel)
+    
+    -- draw entire level
+    if levelData then 
+        --sugar.gfx.spritesheet("leveldata")
+        spr_sheet("leveldata", 0,0)
+    end
     
     if levelSize and otherPlayers and homePlayer then
         -- draw the waypoints
@@ -127,9 +152,9 @@ function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel)
                 for c = 1,level.levelSize do
                     if level.grid[c][r] > 0 then
                         --actually draw particle
-                        love.graphics.setColor({0,0,1})
+                        --love.graphics.setColor({0,0,1})
                         --love.graphics.setColor(players[level.grid[c][r]].col)                        
-                        love.graphics.points(c+1,r+1)    
+                        pset(c+1,r+1, 12)
                     end
                 end  
             end
@@ -139,9 +164,9 @@ function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel)
                 for c = 1,homeLevel.levelSize do
                     if homeLevel.grid[c][r] > 0 then
                         --actually draw particle
-                        love.graphics.setColor({0,0.5,0})
+                        --love.graphics.setColor({0,0.5,0})
                         --love.graphics.setColor(players[level.grid[c][r]].col)                        
-                        love.graphics.points(c+1,r+1)    
+                        pset(c+1,r+1,11)
                     end
                 end  
             end

@@ -1,16 +1,18 @@
 
-require("src/common")
+require("common")
 
 
 local MOVE_SPEED = 1
 
 function killPlayer(player, level, share)
     -- 
-    print("player DIED ("..(player.id or "<no id>")..")")
-    player.dead = true
+    if (player ~= nil) then
+        log("player DIED ("..(player.id or "<no id>")..")")
+        player.dead = true
 
-  --  if IS_SERVER then 
-        print("clear the player grid data...")
+    --  if IS_SERVER then 
+    
+        log("clear the player grid data...")
 
         -- clear player's data form grid
         for r = 1,level.levelSize do
@@ -20,7 +22,10 @@ function killPlayer(player, level, share)
                 end
             end
         end
-  --  end
+
+    --  end
+
+    end
 end
 
 
@@ -30,7 +35,7 @@ function resetPlayer(player, share, IS_SERVER)
     
     -- Start at a random position
     resetRNG()
-    print("Resetting player "..(player.id or "<new>").."IS_SERVER="..tostring(IS_SERVER))--..", seed="..seed)
+    log("Resetting player "..(player.id or "<new>").."IS_SERVER="..tostring(IS_SERVER))--..", seed="..seed)
     
     player.waypoints={}
     player.pointCount=0
@@ -46,21 +51,17 @@ function resetPlayer(player, share, IS_SERVER)
         player.xDir,player.yDir = dirs[dir][1],dirs[dir][2]
         player.x = math.random(share.levelSize)
         player.y = math.random(share.levelSize/2)
-
         -- col based on id
-        math.randomseed(player.id)
-        player.col1 = math.random()
-        player.col2 = math.random()
-        player.col3 = math.random()
+        player.col = player.id + 1
     end
 
-    print("player pos = "..player.x..","..player.y)
+    log("player pos = "..player.x..","..player.y)
 
     -- Add starting waypoint
     addWaypoint(player)
 
 
-    print("#player.waypoints "..#player.waypoints)
+    log("#player.waypoints "..#player.waypoints)
 end
 
 function addWaypoint(player)
@@ -68,7 +69,7 @@ function addWaypoint(player)
         x=player.x,
         y=player.y,
     }
-    print("addWaypoint("..(player.id or "<nil>")..") ="..point.x..","..point.y)
+    log("addWaypoint("..(player.id or "<nil>")..") ="..point.x..","..point.y)
     player.pointCount = player.pointCount + 1
     player.waypoints[player.pointCount] = point
 end
@@ -78,28 +79,28 @@ function drawPlayer(player)
     local lastPoint = player.waypoints[1]
 
     -- Bail out if no colours
-    if player.col1==nil then 
-        print("no col !!")
+    if player.col==nil then 
+        log("no col !!")
         return 
     end
 
     -- set colour
-    love.graphics.setColor({ player.col1, player.col2, player.col3 })
+    --love.graphics.setColor({ player.col1, player.col2, player.col3 })
     
     -- draw path
     for i=1,player.pointCount do
         local point = player.waypoints[i]
-    --    print(">>> "..point.x..","..point.y)
-        love.graphics.line(
+    --    log(">>> "..point.x..","..point.y)
+        line(
             lastPoint.x, lastPoint.y,
-            point.x, point.y)
+            point.x, point.y, player.col)
         -- remember
         lastPoint = point
     end
     -- draw to player current pos
-    love.graphics.line(
+    line(
             lastPoint.x, lastPoint.y,
-            player.x, player.y)
+            player.x, player.y, player.col)
 
 end
 

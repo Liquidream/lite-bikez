@@ -1,8 +1,12 @@
 local cs = require 'https://raw.githubusercontent.com/castle-games/share.lua/b94c77cacc9e842877e7d8dd71c17792bd8cbc32/cs.lua'
---local cs = require 'src/network/cs'
-local gfx = require 'src/gfx'
-require 'src/player'
-require 'src/level'
+
+--local gfx = require 'src/gfx'
+require("sugarcoat/sugarcoat")
+sugar.utility.using_package(sugar.S, true)
+
+require("common")
+require("player")
+require("level")
 
 
 local client = cs.client
@@ -13,6 +17,7 @@ else
     client.enabled = true
     client.start('127.0.0.1:22122') -- IP address ('127.0.0.1' is same computer) and port of server
 end
+
 
 
 -- Client connects to server. It gets a unique `id` to identify it.
@@ -26,20 +31,27 @@ end
 
 local share = client.share -- Maps to `server.share` -- can read
 local home = client.home -- Maps to `server.homes[id]` with our `id` -- can write
-
 local homePlayer = home
-
-local clientPrivate = {}
+local clientPrivate = {}  -- data private to the client (not synced)
+local playerPhotos = {}
 
 
 function client.connect() -- Called on connect from serverfo
     homePlayer.id = client.id
 
     -- home.col = serverPlayer.col
-    --print("col type:"..type(homePlayer.col))
+    --log("col type:"..type(homePlayer.col))
     
     -- Photo
     home.me = castle.user.getMe and castle.user.getMe()
+
+    -- Name
+    local parts = split(home.me.name," ")
+    if #parts>0 then
+        home.me.shortname = parts[1]
+    else
+        home.me.shortname = home.me.name
+    end
 end
 
 function client.disconnect() -- Called on disconnect from server
@@ -49,34 +61,35 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
      -- Doing it this way to reduce latency with player movement
      local arg = {...}
      local msg = arg[1]
-     print("client receive msg = "..msg)
+     log("client receive msg = "..msg)
 
      if msg == "player_start" then
-        print("client reset")        
+        log("client reset")        
         homePlayer.xDir = arg[2]
         homePlayer.yDir = arg[3]
         homePlayer.x = arg[4]
         homePlayer.y = arg[5]
-        homePlayer.col1 = arg[6]
-        homePlayer.col2 = arg[7]
-        homePlayer.col3 = arg[8]
+        homePlayer.col = arg[6]
         --homePlayer.col= { arg[6][1], arg[6][2], arg[6][3] }
-        -- print("-----------------")
-        -- print(">>> ".. type(arg[6][1]))
-        -- print(">>> ".. arg[6][2])
-        -- print(">>> ".. arg[6][3])
+        -- log("-----------------")
+        -- log(">>> ".. type(arg[6][1]))
+        -- log(">>> ".. arg[6][2])
+        -- log(">>> ".. arg[6][3])
 
         resetPlayer(homePlayer, share, false)
 
-        clientPrivate.level=createLevel(1, 512) --game size (square)
+        -- TODO: Review this, as only needs to be created once (on connection)
+        if clientPrivate.level == nil then
+            clientPrivate.level=createLevel(1, 512, false) --game size (square)
+        end
 
-        print("size="..clientPrivate.level.levelSize)
+        log("size="..clientPrivate.level.levelSize)
 
         -- if not USE_CASTLE_CONFIG then 
         --     -- Give player a fake ID when playing locally
         --     homePlayer.id=0
         -- end
-        -- print("player id="..homePlayer.id)
+        -- log("player id="..homePlayer.id)
      end
 
 end
@@ -86,17 +99,23 @@ end
 
 function client.load()
     -- initialise and update the gfx display
-    gfx:init()
-    gfx:updateDisplay()
+    init_sugar("Lite Bikez", GAME_WIDTH, GAME_HEIGHT, 3)
+
+    set_frame_waiting(60)
+
+    use_palette(palettes.pico8)
+    --set_background_color(0)
 
     -- default player to dead
     homePlayer.dead = true
+
+    log("Game initialized.")
 end
 
 function client.update(dt)
     
     -- if DEBUG_MODE then
-    --     print(love.timer.getTime().." - player.dead="..tostring(homePlayer.dead))
+    --     log(love.timer.getTime().." - player.dead="..tostring(homePlayer.dead))
     -- end
 
     if client.connected
@@ -134,11 +153,9 @@ function client.update(dt)
 end
 
 function client.draw()
-
-    -- Setup the drawing to canvas, etc.
-    gfx:preRender()
-
-    love.graphics.clear({0,0,0.1})
+    -- Draw game to canvas/screen
+    cls(1)
+    --rectfill(0, 0, GAME_WIDTH, GAME_HEIGHT, 1) -- temp fix for CLS(1)
         
     if client.connected then
         -- Draw whole level
@@ -146,9 +163,25 @@ function client.draw()
     end
     
     drawUI(share.players)
+end
 
-    -- Draw the canvas to screen, scale and center
-    gfx:postRender()
+function checkAndGetPlayerPhoto(playerId, photoUrl)
+    if playerPhotos[playerId] == nil then
+        -- go and download the player photo
+        playerPhotos[playerId]="pending..."
+        network.async(function()
+            local key = "photo_"..playerId
+            -- create a spritesheet/surface for player photo
+            load_png(key, photoUrl)
+            
+            -- Remy's suggestion to try to resolve BSOD
+            love.graphics.setCanvas()
+
+            -- ...and store reference to it
+            playerPhotos[playerId] = key
+        end)
+    end
+    -- else do nothing, as we already got it
 end
 
 function drawUI(players)
@@ -159,51 +192,64 @@ function drawUI(players)
         local playerPos = 1
         local xoff=100
         for clientId, player in pairs(players) do
-            -- Obtain photo
-            if player.me then
-                if not player.photoRequested then
-                    player.photoRequested = true
-                    network.async(function()
-                        player.photo = love.graphics.newImage(player.me.photoUrl)
-                    end)
-                end
+            -- Does player have a photo?
+            if player.me 
+             and player.me.photoUrl then               
+                -- Go get the photo (if we haven't already)
+                checkAndGetPlayerPhoto(player.id, player.me.photoUrl)
+            --    if not player.photoRequested then
+                    --player.photoRequested = true
+                    --network.async(function()
+                        --player.photo = love.graphics.newImage(player.me.photoUrl)
+
+                --         log("url="..player.me.photoUrl)
+                --         load_png("photo", player.me.photoUrl)
+                --         player.photo=true
+                --     end)
+                -- end
             end
 
-            -- Draw photo
-            if player.photo then
-                local G=25
-                local x=xoff+(playerPos-1)*(G+10)
-                local y=2--gfx.GAME_HEIGHT-player.photo:getHeight()-5
-                if player.photo then
-                    love.graphics.setColor( { player.col1, player.col2, player.col3 } )
-                    love.graphics.rectangle(
-                        'fill',  x-2, y-2, 
-                        G+4,G+4)
-                    
-                    love.graphics.setColor(1,1,1)
-                    love.graphics.draw(
-                        player.photo, 
-                        x, y, 0, 
-                        G / player.photo:getWidth(), G / player.photo:getHeight())
-                else
-                    love.graphics.circle('fill', x + 0.5 * G, y + 0.5 * G, 0.5 * G)
-                    if isOwn then
-                        love.graphics.setLineWidth(4)
-                        love.graphics.setColor(1, 1, 1)
-                        love.graphics.circle('line', x + 0.5 * G, y + 0.5 * G, 0.5 * G - 2)
-                    end
+
+            local G=25
+            local x=xoff+(playerPos-1)*(G+10)
+            local y=2
+            --
+            -- Draw photo (if we have one?)
+            --
+            if playerPhotos[player.id] ~= nil 
+            and playerPhotos[player.id] ~= "pending..." then
+                -- draw bg frame in player's colour
+                rectfill(x-2, y-2, x+G+2, y+G+2, player.col)
+                -- draw the actual photo
+                sugar.gfx.spritesheet(playerPhotos[player.id])
+                local w,h = sugar.gfx.surface_size(playerPhotos[player.id])
+                sugar.gfx.sspr(0, 0, w, h, x, y,  G, G)
+
+
+                print(string.sub(player.me.shortname,1,8),
+                        x+12-((#player.me.shortname/2)*7), G+6, 7)
+            else
+                -- ...otherwise, draw a shape with player col
+                love.graphics.circle('fill', x + 0.5 * G, y + 0.5 * G, 0.5 * G)
+                if isOwn then
+                    love.graphics.setLineWidth(4)
+                    love.graphics.setColor(1, 1, 1)
+                    love.graphics.circle('line', x + 0.5 * G, y + 0.5 * G, 0.5 * G - 2)
                 end
             end
+            
+
+
             playerPos = playerPos + 1
         end
     end
 
     if client.connected then
         -- Draw our ping
-        love.graphics.setColor(1,1,1)
-        love.graphics.print('ping: ' .. client.getPing(), 2, 2)
+        --love.graphics.setColor(1,1,1)
+        print('ping: ' .. client.getPing(), 2, 2, 7)
     else
-        love.graphics.print('not connected', 2, 2)
+        print('not connected', 2, 2, 7)
     end
 end
 
@@ -212,7 +258,7 @@ function love.keypressed( key, scancode, isrepeat )
     -- Debug switch
     if key=="d" then
         DEBUG_MODE = not DEBUG_MODE
-        print("Debug mode: "..(DEBUG_MODE and "Enabled" or "Disabled"))
+        log("Debug mode: "..(DEBUG_MODE and "Enabled" or "Disabled"))
         return
     end
 
@@ -253,7 +299,7 @@ function love.keypressed( key, scancode, isrepeat )
             -- test to try to reduce latency
             -- (Sends the player's input DIRECTLY to server
             --  seems a *bit* faster/more responsive)
-            print("send player update...")
+            log("send player update...")
             client.send("player_update", homePlayer.xDir, homePlayer.yDir, homePlayer.x, homePlayer.y)
         end
 
@@ -266,5 +312,5 @@ end
 -- Force recalc of render dimensions on resize
 -- (especially on Fullscreen switch)
 function love.resize(w,h)
-    gfx:updateDisplay()
+    --gfx:updateDisplay()
 end
