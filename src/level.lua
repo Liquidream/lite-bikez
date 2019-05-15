@@ -85,7 +85,7 @@ function checkLevelPlayer(share, player, level)
     
     -- Abort if player is stationary
     if player.xDir == 0 and player.yDir == 0 then
-        log("Player not moving")
+        --log("Player not moving")
         return
     end
 
@@ -96,7 +96,7 @@ function checkLevelPlayer(share, player, level)
      or player.y > level.levelSize-1
     then
         -- Player has hit boundary of game
-        killPlayer(player, level, share)
+        killPlayer(player, level, share, false)
         return
     end
     
@@ -105,14 +105,14 @@ function checkLevelPlayer(share, player, level)
     local hitObstacle = r > 0 -- red means level obstacles/boundary
     if hitObstacle then
         -- Player has hit obstacle/boundary of game
-        killPlayer(player, level, share)
+        killPlayer(player, level, share, false)
         return
     end
 
     -- Check player has hit another Player's trail
     if level.grid[player.x][player.y] > 0 then
         -- Player hit something (someone)
-        killPlayer(player, level, share)
+        killPlayer(player, level, share, false)
         return
     end
 
@@ -168,8 +168,8 @@ function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel, draw_z
                         --love.graphics.setColor({0,0.5,0})
                         --love.graphics.setColor(players[level.grid[c][r]].col)                        
                         --actually draw "block"
-                        local x=(c+1)*draw_zoom_scale
-                        local y=(r+1)*draw_zoom_scale
+                        local x=(c+2)*draw_zoom_scale
+                        local y=(r+2)*draw_zoom_scale
                         rectfill(x,y, x+draw_zoom_scale, y+draw_zoom_scale, 11)
                         --pset(c+1,r+1, 12)
                     end

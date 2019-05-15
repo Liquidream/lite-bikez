@@ -55,7 +55,7 @@ end
 function server.disconnect(id) -- Called on disconnect from client with `id`
     log('client ' .. id .. ' disconnected')
     
-    killPlayer(share.players[id], serverPrivate.level, share)
+    killPlayer(share.players[id], serverPrivate.level, share, true)
     share.players[id]=nil
 end
 
@@ -75,7 +75,7 @@ function server.receive(id, ...) -- Called when client with `id` does `client.se
         addWaypoint(player)
 
     elseif msg == "player_dead" then
-        killPlayer(player, serverPrivate.level, share)
+        killPlayer(player, serverPrivate.level, share, true)
         resetPlayer(player, share, IS_SERVER)
         -- tell client start pos
         server.send(id, "player_start", player.xDir, player.yDir, player.x, player.y, player.col)

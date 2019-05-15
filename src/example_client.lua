@@ -140,11 +140,17 @@ function client.update(dt)
 
             -- Now check against remote collisions
             -- (e.g. have we hit another player)
-            checkLevelPlayer(share, homePlayer, share.level)
+            if not homePlayer.dead then
+             -- NOTE: Can't reset the level data here
+             -- (even though it'll try)
+             -- Server will do it tho when receives "dead" message
+             checkLevelPlayer(share, homePlayer, share.level)
+            
 
-            -- Update local player grid status, for collisions
-            -- (As can be a lag getting it from the server)
-            updateLevelGrid(homePlayer, clientPrivate.level)
+             -- Update local player grid status, for collisions
+             -- (As can be a lag getting it from the server)
+             updateLevelGrid(homePlayer, clientPrivate.level)
+            end
 
             if homePlayer.dead then
                 -- tell the server we died

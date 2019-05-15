@@ -4,10 +4,12 @@ require("common")
 
 local MOVE_SPEED = 1
 
-function killPlayer(player, level, share)
+function killPlayer(player, level, share, IS_SERVER)
     -- 
     if (player ~= nil) then
         log("player DIED ("..(player.id or "<no id>")..")")
+        log(">IS_SERVER="..tostring(IS_SERVER))
+
         player.dead = true
 
     --  if IS_SERVER then 
@@ -18,7 +20,7 @@ function killPlayer(player, level, share)
         for r = 1,level.levelSize do
             for c = 1,level.levelSize do
                 if level.grid[c][r] == player.id then
-                    level.grid[c][r] = 0
+                    level.grid[c][r] = 0                    
                 end
             end
         end
