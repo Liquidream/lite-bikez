@@ -34,7 +34,7 @@ local home = client.home    -- Maps to `server.homes[id]` with our `id` -- can w
 local homePlayer = home
 local clientPrivate = {}    -- data private to the client (not synced)
 local playerPhotos = {}
-local camx,camy = 0,0       --
+camx,camy = 0,0       -- made it global, so "level" can access
 local zoom_scale = 2        -- 2
 
 

@@ -123,8 +123,13 @@ function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel, draw_z
     
     -- draw entire level
     if levelData then 
-        --sugar.gfx.spritesheet("leveldata")
-        spr_sheet("leveldata", 0,0, level.levelSize*draw_zoom_scale,level.levelSize*draw_zoom_scale)
+        --spr_sheet("leveldata", 0,0, level.levelSize*draw_zoom_scale,level.levelSize*draw_zoom_scale)
+        sugar.gfx.spritesheet("leveldata")
+        -- draw fake-3d level        
+        for i=1,1.5,.01 do
+            sspr(0, 0, level.levelSize, level.levelSize, 
+                camx/i, camy/i, level.levelSize*draw_zoom_scale*i, level.levelSize*draw_zoom_scale*i)
+        end
     end
     
     if levelSize and otherPlayers and homePlayer then
