@@ -100,6 +100,11 @@ end
 -- Client gets all Love events
 
 function client.load()
+
+    -- Test for Nikki
+    local width, height = love.graphics.getDimensions()
+    log(">>>> Nikki: "..width..","..height)
+
     -- initialise and update the gfx display
     init_sugar("Lite Bikez", GAME_WIDTH, GAME_HEIGHT, 3)
 

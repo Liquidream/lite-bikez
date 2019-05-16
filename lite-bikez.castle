@@ -6,5 +6,4 @@ coverImage: cover-image.png
 multiplayer:
     enabled: true
     serverMain: src/example_server.lua
-dimensions: 512x288
-scaling: step
+dimensions: full
