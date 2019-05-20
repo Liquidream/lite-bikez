@@ -11,8 +11,6 @@ function killPlayer(player, level, share, IS_SERVER)
         log(">IS_SERVER="..tostring(IS_SERVER))
 
         player.dead = true
-
-    --  if IS_SERVER then 
     
         log("clear the player grid data...")
 
@@ -24,8 +22,6 @@ function killPlayer(player, level, share, IS_SERVER)
                 end
             end
         end
-
-    --  end
 
     end
 end
@@ -86,21 +82,12 @@ function drawPlayer(player, draw_zoom_scale)
         return 
     end
 
-    -- set colour
-    --love.graphics.setColor({ player.col1, player.col2, player.col3 })
-    
     -- draw path
     for i=1,player.pointCount do
         local point = player.waypoints[i]
         rectfill(
             lastPoint.x*draw_zoom_scale, lastPoint.y*draw_zoom_scale,
             (point.x*draw_zoom_scale)+draw_zoom_scale, (point.y*draw_zoom_scale)+draw_zoom_scale, player.col)
-        -- rectfill(
-        --     lastPoint.x, lastPoint.y,
-        --     point.x+draw_zoom_scale, point.y+draw_zoom_scale, player.col)
-        -- line(
-        --     lastPoint.x, lastPoint.y,
-        --     point.x, point.y, player.col)
         -- remember
         lastPoint = point
     end
@@ -108,9 +95,6 @@ function drawPlayer(player, draw_zoom_scale)
     rectfill(
             lastPoint.x*draw_zoom_scale, lastPoint.y*draw_zoom_scale,
             (player.x*draw_zoom_scale)+draw_zoom_scale, (player.y*draw_zoom_scale)+draw_zoom_scale, player.col)
-    -- rectfill(
-    --         lastPoint.x, lastPoint.y,
-    --         player.x+draw_zoom_scale, player.y+draw_zoom_scale, player.col)
 
     -- "Head"
     rectfill(

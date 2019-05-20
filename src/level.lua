@@ -158,10 +158,7 @@ function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel, draw_z
              -- draw local collision data
              for r = 1,homeLevel.levelSize do
                 for c = 1,homeLevel.levelSize do
-                    if homeLevel.grid[c][r] > 0 then
-                        --actually draw particle
-                        --love.graphics.setColor({0,0.5,0})
-                        --love.graphics.setColor(players[level.grid[c][r]].col)                        
+                    if homeLevel.grid[c][r] > 0 then                   
                         --actually draw "block"
                         local x=(c+2)*draw_zoom_scale
                         local y=(r+2)*draw_zoom_scale
