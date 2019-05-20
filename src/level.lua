@@ -129,8 +129,8 @@ function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel, draw_z
         -- draw fake-3d level
 
         -- calc fake 3d
-        local xpos = camx + (GAME_WIDTH/2)
-        local ypos = camy + (GAME_HEIGHT/2)
+        local xpos = camx*draw_zoom_scale + (GAME_WIDTH /2) 
+        local ypos = camy*draw_zoom_scale + (GAME_HEIGHT /2)
         local csx,csy = xpos, ypos
         local sf=1
 
@@ -153,6 +153,8 @@ function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel, draw_z
         --     sspr(0, 0, level.levelSize, level.levelSize, 
         --         camx/i, camy/i, level.levelSize*draw_zoom_scale*i, level.levelSize*draw_zoom_scale*i)
         -- end
+
+        --spr_sheet("leveldata", 0,0, level.levelSize*draw_zoom_scale,level.levelSize*draw_zoom_scale)
     end
     
     if levelSize and otherPlayers and homePlayer then
