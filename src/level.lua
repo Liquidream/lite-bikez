@@ -143,7 +143,7 @@ function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel, draw_z
             local d3x = (csx-cmx) - ((xpos - (level.levelSize/2)) * sf)
             local d3y = (csy-cmy) - ((ypos - (level.levelSize/2)) * sf)
 
-            sspr(0, 0, level.levelSize, level.levelSize, d3x,d3y, wx,wy)
+            sspr(0, 0, level.levelSize, level.levelSize, d3x,d3y, wx*draw_zoom_scale, wy*draw_zoom_scale)
 
             sf = sf + .04
             --sf*=1.03
