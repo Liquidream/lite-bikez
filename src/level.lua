@@ -121,42 +121,7 @@ end
 
 function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel, draw_zoom_scale)
     
-    -- draw entire level
-    if levelData then 
-        --spr_sheet("leveldata", 0,0, level.levelSize*draw_zoom_scale,level.levelSize*draw_zoom_scale)
-        sugar.gfx.spritesheet("leveldata")
-
-        -- draw fake-3d level
-
-        -- calc fake 3d
-        local xpos = camx*draw_zoom_scale + (GAME_WIDTH /2) 
-        local ypos = camy*draw_zoom_scale + (GAME_HEIGHT /2)
-        local csx,csy = xpos, ypos
-        local sf=1
-
-        for i=1,10 do  
-            local wx = level.levelSize * sf
-            local wy = level.levelSize * sf
-
-            local cmx,cmy = wx/2, wy/2
-            
-            local d3x = (csx-cmx) - ((xpos - (level.levelSize/2)) * sf)
-            local d3y = (csy-cmy) - ((ypos - (level.levelSize/2)) * sf)
-
-            sspr(0, 0, level.levelSize, level.levelSize, d3x,d3y, wx*draw_zoom_scale, wy*draw_zoom_scale)
-
-            sf = sf + .04
-            --sf*=1.03
-        end
-
-        -- for i=1,1.5,.01 do
-        --     sspr(0, 0, level.levelSize, level.levelSize, 
-        --         camx/i, camy/i, level.levelSize*draw_zoom_scale*i, level.levelSize*draw_zoom_scale*i)
-        -- end
-
-        --spr_sheet("leveldata", 0,0, level.levelSize*draw_zoom_scale,level.levelSize*draw_zoom_scale)
-    end
-    
+    -- draw players
     if levelSize and otherPlayers and homePlayer then
         -- draw the waypoints
         for id, player in pairs(otherPlayers) do
@@ -207,6 +172,36 @@ function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel, draw_z
             end
         end
     end
+
+     -- draw entire level
+     if levelData then 
+        --spr_sheet("leveldata", 0,0, level.levelSize*draw_zoom_scale,level.levelSize*draw_zoom_scale)
+        sugar.gfx.spritesheet("leveldata")
+
+        -- draw fake-3d level
+
+        -- calc fake 3d
+        local xpos = camx*draw_zoom_scale + (GAME_WIDTH /2) 
+        local ypos = camy*draw_zoom_scale + (GAME_HEIGHT /2)
+        local csx,csy = xpos, ypos
+        local sf=1
+
+        for i=1,10 do  
+            local wx = level.levelSize * sf
+            local wy = level.levelSize * sf
+
+            local cmx,cmy = wx/2, wy/2
+            
+            local d3x = (csx-cmx) - ((xpos - (level.levelSize/2)) * sf)
+            local d3y = (csy-cmy) - ((ypos - (level.levelSize/2)) * sf)
+
+            sspr(0, 0, level.levelSize, level.levelSize, d3x,d3y, wx*draw_zoom_scale, wy*draw_zoom_scale)
+
+            sf = sf + .06
+            --sf*=1.03
+        end
+    end
+    
 end
 
 
