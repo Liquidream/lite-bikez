@@ -137,7 +137,7 @@ function client.update(dt)
             home.y = homePlayer.y
                  
             -- move player
-            updatePlayerPos(homePlayer)
+            updatePlayerPos(homePlayer, dt)
 
             -- Now check against local collisions 
             -- (e.g. have we hit ourselves - as that lag-free)

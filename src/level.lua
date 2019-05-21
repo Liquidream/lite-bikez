@@ -66,7 +66,7 @@ function updateLevelGrid(player, level)
 end
 
 -- Update player pos/direction/state
-function updatePlayerPos(player)
+function updatePlayerPos(player, dt)
     
     --local level = share.level
 
@@ -76,6 +76,9 @@ function updatePlayerPos(player)
     end
 
     -- Update player pos, based on direction
+    -- player.diff_x = lerp(player.diff_x, 0, (0.01) * 10 * dt)
+    -- player.diff_y = lerp(player.diff_y, 0, (0.01) * 10 * dt)
+
     player.x = player.x + player.xDir
     player.y = player.y + player.yDir
 end

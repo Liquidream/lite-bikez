@@ -53,6 +53,11 @@ function resetPlayer(player, share, IS_SERVER)
         player.col = player.id + 1
     end
 
+    -- smoothing out network lag
+    -- player.diff_x = 0
+    -- player.diff_y = 0
+
+
     log("player pos = "..player.x..","..player.y)
 
     -- Add starting waypoint
@@ -91,15 +96,33 @@ function drawPlayer(player, draw_zoom_scale)
         -- remember
         lastPoint = point
     end
+
+
+    --
     -- draw to player current pos
+    --
+
+    -- apply client-side player postion "smoothing"
+    local x, y = player.x, player.y
+    if not player.smoothX then
+        player.smoothX = player.x
+    end
+    if not player.smoothY then
+        player.smoothY = player.y
+    end
+    player.smoothX = player.smoothX + 0.4 * (player.x - player.smoothX)
+    player.smoothY = player.smoothY + 0.4 * (player.y - player.smoothY)
+    player.smoothX = player.smoothX + 0.2 * (x - player.smoothX)
+    player.smoothY = player.smoothY + 0.2 * (y - player.smoothY)
+    
     rectfill(
-            lastPoint.x*draw_zoom_scale, lastPoint.y*draw_zoom_scale,
-            (player.x*draw_zoom_scale)+draw_zoom_scale, (player.y*draw_zoom_scale)+draw_zoom_scale, player.col)
+        lastPoint.x*draw_zoom_scale, lastPoint.y*draw_zoom_scale,
+            (player.smoothX*draw_zoom_scale)+draw_zoom_scale, (player.smoothY*draw_zoom_scale)+draw_zoom_scale, player.col)
 
     -- "Head"
     rectfill(
-        player.x*draw_zoom_scale, player.y*draw_zoom_scale,
-            (player.x*draw_zoom_scale)+draw_zoom_scale, (player.y*draw_zoom_scale)+draw_zoom_scale, 7)
+        player.smoothX*draw_zoom_scale, player.smoothY*draw_zoom_scale,
+            (player.smoothX*draw_zoom_scale)+draw_zoom_scale, (player.smoothY*draw_zoom_scale)+draw_zoom_scale, 7)
 end
 
 return Player
