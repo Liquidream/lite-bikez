@@ -194,8 +194,9 @@ function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel, draw_z
 
             sspr(0, 0, level.levelSize, level.levelSize, d3x,d3y, wx*draw_zoom_scale, wy*draw_zoom_scale)
 
+            --sf = sf * 1.03
             sf = sf + .06
-            --sf*=1.03
+            --sf = sf * 1.03
         end
     end
     
