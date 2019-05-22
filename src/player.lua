@@ -123,7 +123,7 @@ function drawPlayer(player, draw_zoom_scale)
     player.smoothY = player.smoothY + 0.4 * (player.y - player.smoothY)
     player.smoothX = player.smoothX + 0.2 * (x - player.smoothX)
     player.smoothY = player.smoothY + 0.2 * (y - player.smoothY)
-    
+
     --"corner"
     rectfill(
         lastPoint.x*draw_zoom_scale, lastPoint.y*draw_zoom_scale,
@@ -136,7 +136,7 @@ function drawPlayer(player, draw_zoom_scale)
     -- "Head"
     rectfill(
         player.smoothX*draw_zoom_scale, player.smoothY*draw_zoom_scale,
-            (player.smoothX*draw_zoom_scale)+draw_zoom_scale, (player.smoothY*draw_zoom_scale)+draw_zoom_scale, 7)
+            (player.smoothX*draw_zoom_scale)+draw_zoom_scale, (player.smoothY*draw_zoom_scale)+draw_zoom_scale, 46)
 end
 
 return Player

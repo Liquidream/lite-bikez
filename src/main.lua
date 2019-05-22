@@ -9,7 +9,9 @@
 -- ------------------------------------------------------------
 if CASTLE_PREFETCH then
   CASTLE_PREFETCH({
-    'assets/level-1.png',
+    'assets/level-1-data.png',
+    'assets/level-1-bg.png',
+    'assets/level-1-gfx.png',
     'network/cs.lua',
     'network/state.lua',
     'network/tests.lua',

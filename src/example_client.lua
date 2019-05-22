@@ -110,7 +110,8 @@ function client.load()
 
     set_frame_waiting(60)
 
-    use_palette(amstradCPC)
+    use_palette(ak54)
+    --use_palette(amstradCPC)
     --use_palette(palettes.pico8)
     --set_background_color(0)
 
@@ -174,10 +175,11 @@ function client.draw()
     
     if client.connected then
         -- Update camera pos
+        local cam_edge=20
         camx = homePlayer.x - flr(GAME_WIDTH/(2*zoom_scale))
         camy = homePlayer.y - flr(GAME_HEIGHT/(2*zoom_scale))
-        camx = mid(0, camx, clientPrivate.level.levelSize-(GAME_WIDTH/zoom_scale))
-        camy = mid(0, camy, clientPrivate.level.levelSize-(GAME_HEIGHT/zoom_scale))
+        camx = mid(-cam_edge, camx, clientPrivate.level.levelSize-(GAME_WIDTH/zoom_scale)+cam_edge)
+        camy = mid(-cam_edge, camy, clientPrivate.level.levelSize-(GAME_HEIGHT/zoom_scale)+cam_edge)
         camera(camx*zoom_scale, camy*zoom_scale)
         
         -- Draw whole level

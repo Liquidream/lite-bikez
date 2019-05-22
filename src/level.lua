@@ -17,11 +17,15 @@ function createLevel(levelNum, levelSize, IS_SERVER)
     if not IS_SERVER then
         -- Load level collision data
         -- TODO: This needs to be dynamic - based on current level
-        local levelDataPath = "assets/level-1.png"
+        local levelDataPath = "assets/level-1-data.png"
 
         network.async(function()
+            -- load collision data
             load_png("leveldata", levelDataPath, nil, true)
             levelData = love.image.newImageData(levelDataPath)
+            -- load drawing data
+            load_png("levelgfx-bg", "assets/level-1-bg.png", nil, true)
+            load_png("levelgfx-1", "assets/level-1-gfx.png", nil, true)
         end)
     end
 
@@ -124,6 +128,9 @@ end
 
 function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel, draw_zoom_scale)
     
+    -- draw background gfx
+    spr_sheet("levelgfx-bg", 0,0, level.levelSize*draw_zoom_scale,level.levelSize*draw_zoom_scale)
+       
     -- draw players
     if levelSize and otherPlayers and homePlayer then
         -- draw the waypoints
@@ -175,11 +182,9 @@ function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel, draw_z
 
      -- draw entire level
      if levelData then 
-        --spr_sheet("leveldata", 0,0, level.levelSize*draw_zoom_scale,level.levelSize*draw_zoom_scale)
-        sugar.gfx.spritesheet("leveldata")
-
         -- draw fake-3d level
-
+        sugar.gfx.spritesheet("levelgfx-1")
+        
         -- calc fake 3d
         local xpos = camx*draw_zoom_scale + (GAME_WIDTH /2) 
         local ypos = camy*draw_zoom_scale + (GAME_HEIGHT /2)
