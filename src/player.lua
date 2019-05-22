@@ -11,6 +11,8 @@ function killPlayer(player, level, share, IS_SERVER)
         log(">IS_SERVER="..tostring(IS_SERVER))
 
         player.dead = true
+        player.smoothX = 0
+        player.smoothY = 0
     
         log("clear the player grid data...")
 
@@ -54,8 +56,8 @@ function resetPlayer(player, share, IS_SERVER)
     end
 
     -- smoothing out network lag
-    -- player.diff_x = 0
-    -- player.diff_y = 0
+    player.smoothX = 0
+    player.smoothY = 0
 
 
     log("player pos = "..player.x..","..player.y)
@@ -75,6 +77,8 @@ function addWaypoint(player)
     log("addWaypoint("..(player.id or "<nil>")..") ="..point.x..","..point.y)
     player.pointCount = player.pointCount + 1
     player.waypoints[player.pointCount] = point
+    player.smoothX = player.x
+    player.smoothY = player.y
 end
 
 
@@ -90,6 +94,11 @@ function drawPlayer(player, draw_zoom_scale)
     -- draw path
     for i=1,player.pointCount do
         local point = player.waypoints[i]
+        --"corner"
+        rectfill(
+            lastPoint.x*draw_zoom_scale, lastPoint.y*draw_zoom_scale,
+            lastPoint.x*draw_zoom_scale+draw_zoom_scale, lastPoint.y*draw_zoom_scale+draw_zoom_scale, player.col)
+        --"line"
         rectfill(
             lastPoint.x*draw_zoom_scale, lastPoint.y*draw_zoom_scale,
             (point.x*draw_zoom_scale)+draw_zoom_scale, (point.y*draw_zoom_scale)+draw_zoom_scale, player.col)
@@ -115,6 +124,11 @@ function drawPlayer(player, draw_zoom_scale)
     player.smoothX = player.smoothX + 0.2 * (x - player.smoothX)
     player.smoothY = player.smoothY + 0.2 * (y - player.smoothY)
     
+    --"corner"
+    rectfill(
+        lastPoint.x*draw_zoom_scale, lastPoint.y*draw_zoom_scale,
+        lastPoint.x*draw_zoom_scale+draw_zoom_scale, lastPoint.y*draw_zoom_scale+draw_zoom_scale, player.col)
+    -- "line"
     rectfill(
         lastPoint.x*draw_zoom_scale, lastPoint.y*draw_zoom_scale,
             (player.smoothX*draw_zoom_scale)+draw_zoom_scale, (player.smoothY*draw_zoom_scale)+draw_zoom_scale, player.col)

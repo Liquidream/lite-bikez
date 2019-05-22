@@ -110,7 +110,8 @@ function client.load()
 
     set_frame_waiting(60)
 
-    use_palette(palettes.pico8)
+    use_palette(amstradCPC)
+    --use_palette(palettes.pico8)
     --set_background_color(0)
 
     -- default player to dead
@@ -167,7 +168,8 @@ end
 
 function client.draw()
     -- Draw game to canvas/screen
-    cls(1)
+    cls()
+    --cls(1)
 
     
     if client.connected then
