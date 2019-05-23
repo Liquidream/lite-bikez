@@ -4,9 +4,6 @@
 -- See here for some useful Love2D documentation:
 -- https://love2d-community.github.io/love-api/
 
--- ------------------------------------------------------------
--- (PN) Temporarily disabled until server issues resolved
--- ------------------------------------------------------------
 if CASTLE_PREFETCH then
   CASTLE_PREFETCH({
     'assets/level-1-data.png',
@@ -24,7 +21,6 @@ if CASTLE_PREFETCH then
     'player.lua',
   })
  end
--- ------------------------------------------------------------
 
 -- This requests a cloud server from Castle
 
