@@ -282,7 +282,7 @@ end
 
 function love.keypressed( key, scancode, isrepeat )
     -- Debug switch
-    if key=="d" then
+    if key=="d" and love.keyboard.isDown('lctrl') then
         DEBUG_MODE = not DEBUG_MODE
         log("Debug mode: "..(DEBUG_MODE and "Enabled" or "Disabled"))
         return
