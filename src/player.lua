@@ -52,7 +52,9 @@ function resetPlayer(player, share, IS_SERVER)
         player.x = math.random(share.levelSize)
         player.y = math.random(share.levelSize/2)
         -- col based on id
-        player.col = player.id + 1
+        player.col = player.id * 2
+        player.col2 = player.id * 2 + 1
+        --player.col = player.id + 1
     end
 
     -- smoothing out network lag
@@ -136,7 +138,7 @@ function drawPlayer(player, draw_zoom_scale)
     -- "Head"
     rectfill(
         player.smoothX*draw_zoom_scale, player.smoothY*draw_zoom_scale,
-            (player.smoothX*draw_zoom_scale)+draw_zoom_scale, (player.smoothY*draw_zoom_scale)+draw_zoom_scale, 46)
+            (player.smoothX*draw_zoom_scale)+draw_zoom_scale, (player.smoothY*draw_zoom_scale)+draw_zoom_scale, 1)
 end
 
 return Player

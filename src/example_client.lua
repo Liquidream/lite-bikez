@@ -110,7 +110,8 @@ function client.load()
 
     set_frame_waiting(60)
 
-    use_palette(ak54)
+    use_palette(ak54Paired)
+    --use_palette(ak54)
     --use_palette(amstradCPC)
     --use_palette(palettes.pico8)
     --set_background_color(0)
@@ -201,7 +202,7 @@ function checkAndGetPlayerPhoto(playerId, photoUrl)
             load_png(key, photoUrl)
             
             -- Remy's suggestion to try to resolve BSOD
-            love.graphics.setCanvas()
+            --love.graphics.setCanvas()
 
             -- ...and store reference to it
             playerPhotos[playerId] = key
@@ -212,6 +213,8 @@ end
 
 function drawUI(players)
     -- Draw UI (inc. Player info)
+    --pal()
+    palt(0,false)
     
     -- Players    
     if players then
@@ -223,16 +226,6 @@ function drawUI(players)
              and player.me.photoUrl then               
                 -- Go get the photo (if we haven't already)
                 checkAndGetPlayerPhoto(player.id, player.me.photoUrl)
-            --    if not player.photoRequested then
-                    --player.photoRequested = true
-                    --network.async(function()
-                        --player.photo = love.graphics.newImage(player.me.photoUrl)
-
-                --         log("url="..player.me.photoUrl)
-                --         load_png("photo", player.me.photoUrl)
-                --         player.photo=true
-                --     end)
-                -- end
             end
 
 
@@ -253,7 +246,7 @@ function drawUI(players)
 
 
                 print(string.sub(player.me.shortname,1,8),
-                        x+12-((#player.me.shortname/2)*7), G+6, 7)
+                        x+12-((#player.me.shortname/2)*7), G+6, 1)
             else
                 -- ...otherwise, draw a shape with player col
                 love.graphics.circle('fill', x + 0.5 * G, y + 0.5 * G, 0.5 * G)
@@ -273,10 +266,13 @@ function drawUI(players)
     if client.connected then
         -- Draw our ping
         --love.graphics.setColor(1,1,1)
-        print('ping: ' .. client.getPing(), 2, 2, 7)
+        print('ping: ' .. client.getPing(), 2, 2, 51)
     else
-        print('not connected', 2, 2, 7)
+        print('not connected', 2, 2, 51)
     end
+
+    -- reset trans again
+    palt(0,true)
 end
 
 
