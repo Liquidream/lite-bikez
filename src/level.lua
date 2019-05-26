@@ -103,7 +103,7 @@ function checkLevelPlayer(share, player, level)
      or player.y > level.levelSize-1
     then
         -- Player has hit boundary of game
-        killPlayer(player, level, share, false)
+        killPlayer(player, level, share, 0, false)
         return
     end
     
@@ -112,14 +112,16 @@ function checkLevelPlayer(share, player, level)
     local hitObstacle = r > 0 -- red means level obstacles/boundary
     if hitObstacle then
         -- Player has hit obstacle/boundary of game
-        killPlayer(player, level, share, false)
+        killPlayer(player, level, share, 0, false)
         return
     end
 
     -- Check player has hit another Player's trail
-    if level.grid[player.x][player.y] > 0 then
+    local blockOwner = level.grid[player.x][player.y]
+    if blockOwner > 0 then
         -- Player hit something (someone)
-        killPlayer(player, level, share, false)
+        log("test > "..type(blockOwner))
+        killPlayer(player, level, share, blockOwner, false)
         return
     end
 

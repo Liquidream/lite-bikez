@@ -4,13 +4,17 @@ require("common")
 
 local MOVE_SPEED = 1
 
-function killPlayer(player, level, share, IS_SERVER)
+function killPlayer(player, level, share, killed_by, IS_SERVER)
     -- 
     if (player ~= nil) then
         log("player DIED ("..(player.id or "<no id>")..")")
         log(">IS_SERVER="..tostring(IS_SERVER))
 
         player.dead = true
+        
+        player.killed_by = killed_by
+        log("Player killed by: "..tonumber(player.killed_by))
+
         player.smoothX = 0
         player.smoothY = 0
     

@@ -162,7 +162,7 @@ function client.update(dt)
 
             if homePlayer.dead then
                 -- tell the server we died
-                client.send("player_dead")
+                client.send("player_dead", homePlayer.killed_by)
             end
         end
     end
