@@ -162,7 +162,7 @@ function client.update(dt)
 
             if homePlayer.dead then
                 -- tell the server we died
-                client.send("player_dead", homePlayer.killed_by)
+                client.send("player_dead", homePlayer.killedBy)
             end
         end
     end
@@ -270,6 +270,22 @@ function drawUI(players)
     else
         print('not connected', 2, 2, 51)
     end
+
+    -- did we die?
+    if homePlayer.dead then
+        -- display info about our "killer"
+        print('YOU DIED', GAME_WIDTH/2, GAME_HEIGHT/2, 51)
+        log ("num players:"..#share.players)
+        local msg = ""
+        if homePlayer.killedBy > 0 then
+            msg = share.players[homePlayer.killedBy].me.shortname.." squished you!"
+        else
+            msg = "You hit a wall!"
+        end
+        print(msg, GAME_WIDTH/2-(#msg/2*4), GAME_HEIGHT/2+20, 51)
+
+    end
+
 
     -- reset trans again
     palt(0,true)

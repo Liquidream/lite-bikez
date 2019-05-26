@@ -75,11 +75,13 @@ function server.receive(id, ...) -- Called when client with `id` does `client.se
         addWaypoint(player)
 
     elseif msg == "player_dead" then
-        local killed_by = arg[2]
-        killPlayer(player, serverPrivate.level, share, killed_by, true)
-        resetPlayer(player, share, IS_SERVER)
+        local killedBy = arg[2]
+        killPlayer(player, serverPrivate.level, share, killedBy, true)
+
+        -- TODO: Stagger this after a cooldown!
+        --resetPlayer(player, share, IS_SERVER)        
         -- tell client start pos
-        server.send(id, "player_start", player.xDir, player.yDir, player.x, player.y, player.col)
+        --server.send(id, "player_start", player.xDir, player.yDir, player.x, player.y, player.col)
     end
 end
 
