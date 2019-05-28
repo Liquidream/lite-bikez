@@ -4,6 +4,8 @@ local cs = require 'https://raw.githubusercontent.com/castle-games/share.lua/b94
 require("sugarcoat/sugarcoat")
 sugar.utility.using_package(sugar.S, true)
 
+local moonshine = require("moonshine")
+
 require("common")
 require("player")
 require("level")
@@ -109,7 +111,12 @@ end
 
 function sugar.after_render()
     -- apply moonshine here with:
-    love.graphics.draw(rendercanvas, 0, 0)
+    love.graphics.setCanvas()
+    
+    bgEffect(function()
+        love.graphics.draw(rendercanvas, 0, 0)
+    end)
+    --love.graphics.draw(rendercanvas, 0, 0)
 end
   
 
@@ -122,14 +129,19 @@ function client.load()
     log(">>>> Nikki: "..width..","..height)
 
     -- initialise and update the gfx display
-    init_sugar("Lite Bikez", GAME_WIDTH, GAME_HEIGHT, 3)
-
+    init_sugar("Lite Bikez", GAME_WIDTH, GAME_HEIGHT, GAME_SCALE)
+    
+    --screen_render_stretch(true)
+    --screen_render_integer_scale(true)
 
     rendercanvas = love.graphics.newCanvas()
     render_to_canvas(rendercanvas)
 
      -- TODO: init moonshine stuff here
-
+    local sugar_w, sugar_h = screen_size()
+    log("sugar screen = "..sugar_w..","..sugar_h)
+    bgEffect = moonshine(width, height, 
+                            moonshine.effects.glow)
      
 
     set_frame_waiting(60)
