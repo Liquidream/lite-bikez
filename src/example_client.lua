@@ -96,6 +96,22 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
 
 end
 
+-- function love.load()
+  
+--     rendercanvas = love.graphics.newCanvas()
+--     render_to_canvas(rendercanvas)
+  
+--     -- TODO: init moonshine stuff here
+
+
+--     client.load()
+-- end
+
+function sugar.after_render()
+    -- apply moonshine here with:
+    love.graphics.draw(rendercanvas, 0, 0)
+end
+  
 
 -- Client gets all Love events
 
@@ -107,6 +123,14 @@ function client.load()
 
     -- initialise and update the gfx display
     init_sugar("Lite Bikez", GAME_WIDTH, GAME_HEIGHT, 3)
+
+
+    rendercanvas = love.graphics.newCanvas()
+    render_to_canvas(rendercanvas)
+
+     -- TODO: init moonshine stuff here
+
+     
 
     set_frame_waiting(60)
 

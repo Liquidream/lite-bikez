@@ -88,6 +88,9 @@ end
 
 -- Server only gets `.load`, `.update`, `.quit` Love events (also `.lowmemory` and `.threaderror`
 -- which are less commonly used)
+-- function love.load()
+--     server.load()
+-- end
 
 function server.load()
     log("server load...")
