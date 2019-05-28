@@ -98,26 +98,26 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
 
 end
 
--- function love.load()
-  
---     rendercanvas = love.graphics.newCanvas()
---     render_to_canvas(rendercanvas)
-  
---     -- TODO: init moonshine stuff here
-
-
---     client.load()
--- end
-
 function sugar.after_render()
     -- apply moonshine here with:
     love.graphics.setCanvas()
     
-    bgEffect(function()
-        love.graphics.draw(rendercanvas, 0, 0)
-    end)
+    -- if moonshine init'd
+    if bgEffect then 
+        -- draw canvas with shaders
+        bgEffect(function()
+            love.graphics.draw(rendercanvas, 0, 0)
+        end)
+    end
+
+    -- Straight draw to screen
     --love.graphics.draw(rendercanvas, 0, 0)
 end
+
+-- function on_resize()
+--     rendercanvas = love.graphics.newCanvas(window_size())
+--     render_to_canvas(rendercanvas)
+-- end
   
 
 -- Client gets all Love events
@@ -134,15 +134,14 @@ function client.load()
     --screen_render_stretch(true)
     --screen_render_integer_scale(true)
 
-    rendercanvas = love.graphics.newCanvas()
+    rendercanvas = love.graphics.newCanvas(width, height)
     render_to_canvas(rendercanvas)
 
      -- TODO: init moonshine stuff here
-    local sugar_w, sugar_h = screen_size()
-    log("sugar screen = "..sugar_w..","..sugar_h)
-    bgEffect = moonshine(width, height, 
+    network.async(function()
+        bgEffect = moonshine(width, height, 
                             moonshine.effects.glow)
-     
+    end)
 
     set_frame_waiting(60)
 
