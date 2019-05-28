@@ -272,7 +272,7 @@ function drawUI(players)
     end
 
     -- did we die?
-    if homePlayer.dead then
+    if homePlayer.dead and homePlayer.killedBy then
         -- display info about our "killer"
         print('YOU DIED', GAME_WIDTH/2, GAME_HEIGHT/2, 51)
         local msg = ""

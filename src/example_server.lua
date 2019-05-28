@@ -120,36 +120,37 @@ function server.update(dt)
         -- Current player
         local player = share.players[id]
 
-        if player and not player.dead then
-            -- update with latest position
-            -- (if not too big a change - else rely on server value
-            --  as could be after a player restart and still getting old player pos msg)
-            -- IDEA: maybe have a "lifecount" to check against!
-            if home.x 
-            and math.abs(player.x-home.x)<10
-            and math.abs(player.y-home.y)<10
-            then
-                player.x = home.x
-                player.y = home.y
+        if player then
+            if not player.dead then
+                -- update with latest position
+                -- (if not too big a change - else rely on server value
+                --  as could be after a player restart and still getting old player pos msg)
+                -- IDEA: maybe have a "lifecount" to check against!
+                if home.x 
+                and math.abs(player.x-home.x)<10
+                and math.abs(player.y-home.y)<10
+                then
+                    player.x = home.x
+                    player.y = home.y
+                end
+
+                -- Have to do this on the server,
+                -- as it's a collation of all player trails
+                -- (but also doing it at )
+                updateLevelGrid(share.players[id], share.level)
+
+                -- -- Check for deaths
+                -- if player.dead then
+                --     -- Reset player
+                --     resetPlayer(player, share)
+                -- end
+            elseif (love.timer.getTime()-player.killedAt) >= 3 then
+                -- Respawn player
+                resetPlayer(player, share, IS_SERVER)        
+                -- tell client start pos
+                server.send(id, "player_start", player.xDir, player.yDir, player.x, player.y, player.col)
+
             end
-
-            -- Have to do this on the server,
-            -- as it's a collation of all player trails
-            -- (but also doing it at )
-            updateLevelGrid(share.players[id], share.level)
-
-            -- -- Check for deaths
-            -- if player.dead then
-            --     -- Reset player
-            --     resetPlayer(player, share)
-            -- end
-        elseif player.dead 
-         and (love.timer.getTime()-player.killedAt) >= 3 then
-            -- Respawn player
-            resetPlayer(player, share, IS_SERVER)        
-            -- tell client start pos
-            server.send(id, "player_start", player.xDir, player.yDir, player.x, player.y, player.col)
-
         end
     end
 
