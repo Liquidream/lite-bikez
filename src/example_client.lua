@@ -275,7 +275,6 @@ function drawUI(players)
     if homePlayer.dead then
         -- display info about our "killer"
         print('YOU DIED', GAME_WIDTH/2, GAME_HEIGHT/2, 51)
-        log ("num players:"..#share.players)
         local msg = ""
         if homePlayer.killedBy > 0 then
             msg = share.players[homePlayer.killedBy].me.shortname.." squished you!"

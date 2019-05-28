@@ -143,6 +143,13 @@ function server.update(dt)
             --     -- Reset player
             --     resetPlayer(player, share)
             -- end
+        elseif player.dead 
+         and (love.timer.getTime()-player.killedAt) >= 3 then
+            -- Respawn player
+            resetPlayer(player, share, IS_SERVER)        
+            -- tell client start pos
+            server.send(id, "player_start", player.xDir, player.yDir, player.x, player.y, player.col)
+
         end
     end
 
