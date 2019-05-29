@@ -114,10 +114,10 @@ function sugar.after_render()
     --love.graphics.draw(rendercanvas, 0, 0)
 end
 
--- function on_resize()
---     rendercanvas = love.graphics.newCanvas(window_size())
---     render_to_canvas(rendercanvas)
--- end
+function on_resize()
+    rendercanvas = love.graphics.newCanvas(window_size())
+    render_to_canvas(rendercanvas)
+end
   
 
 -- Client gets all Love events
@@ -131,15 +131,17 @@ function client.load()
     -- initialise and update the gfx display
     init_sugar("Lite Bikez", GAME_WIDTH, GAME_HEIGHT, GAME_SCALE)
     
-    --screen_render_stretch(true)
+    screen_render_stretch(true)
+    screen_render_integer_scale(false)
     --screen_render_integer_scale(true)
 
-    rendercanvas = love.graphics.newCanvas(width, height)
+    local sugar_w,sugar_h = screen_size()
+    rendercanvas = love.graphics.newCanvas(sugar_w, sugar_h)
     render_to_canvas(rendercanvas)
 
      -- TODO: init moonshine stuff here
     network.async(function()
-        bgEffect = moonshine(width, height, 
+        bgEffect = moonshine(sugar_w, sugar_h, 
                             moonshine.effects.glow)
     end)
 
