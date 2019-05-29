@@ -98,20 +98,43 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
 
 end
 
-function sugar.after_render()
+function sugar.after_render()    
+    local width, height = love.graphics.getDimensions()
+    local sugar_w,sugar_h = screen_size()
+    
+   
     -- apply moonshine here with:
     love.graphics.setCanvas()
     
-    -- if moonshine init'd
-    if bgEffect then 
-        -- draw canvas with shaders
-        bgEffect(function()
-            love.graphics.draw(rendercanvas, 0, 0)
-        end)
-    end
+    -- Center everything within Castle window
+    love.graphics.push()
+        
+        -- Apply "Center to Window" transformations
+        -- love.graphics.translate(
+        --     width/2 - sugar_w/2, 
+        --     height/2 - sugar_h/2 )
+
+            
+        -- if moonshine init'd
+        if fxShader then 
+            -- draw canvas with shaders
+            fxShader(function()
+                love.graphics.draw(rendercanvas,0,0)
+                    -- width/2 - sugar_w/2, 
+                    -- height/2 - sugar_h/2 )
+            end)
+        end
+        
+        --love.graphics.draw(rendercanvas, 0,0)
+
+    -- Pop centering within Castle window
+    love.graphics.pop()
 
     -- Straight draw to screen
-    --love.graphics.draw(rendercanvas, 0, 0)
+    --love.graphics.draw(rendercanvas, 0,0)
+    -- love.graphics.draw(rendercanvas, 
+    --     width/2 - sugar_w/2, 
+    --     height/2 - sugar_h/2 )
 end
 
 function on_resize()
@@ -139,10 +162,18 @@ function client.load()
     rendercanvas = love.graphics.newCanvas(sugar_w, sugar_h)
     render_to_canvas(rendercanvas)
 
-     -- TODO: init moonshine stuff here
+    -- Moonshine
     network.async(function()
-        bgEffect = moonshine(sugar_w, sugar_h, 
-                            moonshine.effects.glow)
+        -- Initialise moonshine
+        fxShader = moonshine(
+            sugar_w, sugar_h, 
+            moonshine.effects.glow)
+            .chain(moonshine.effects.scanlines)
+        -- 80's glow baby!
+        fxShader.glow.strength = 3
+        fxShader.glow.min_luma = 0--0.5
+        -- Bit of the ol' arcade too!
+        fxShader.scanlines.opacity = 0.1
     end)
 
     set_frame_waiting(60)
