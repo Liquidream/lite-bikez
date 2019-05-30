@@ -265,19 +265,40 @@ function checkAndGetPlayerPhoto(playerId, photoUrl)
         -- go and download the player photo
         playerPhotos[playerId]="pending..."
         network.async(function()
+            
+            -- Nikki's code to pause Castle rendering
+            network.paused()
+
             local key = "photo_"..playerId
             -- create a spritesheet/surface for player photo
             load_png(key, photoUrl)
             
+            -- Nikki's code to resume Castle rendering
+            network.resumed()
+
             -- Remy's suggestion to try to resolve BSOD
             --love.graphics.setCanvas()
 
             -- ...and store reference to it
             playerPhotos[playerId] = key
+
         end)
     end
     -- else do nothing, as we already got it
 end
+
+local savedCanvas
+
+function network.paused()
+  savedCanvas = love.graphics.getCanvas()
+  love.graphics.setCanvas()
+end
+
+function network.resumed()
+  love.graphics.setCanvas(savedCanvas)
+end
+
+
 
 function drawUI(players)
     -- Draw UI (inc. Player info)
@@ -311,10 +332,11 @@ function drawUI(players)
                 sugar.gfx.spritesheet(playerPhotos[player.id])
                 local w,h = sugar.gfx.surface_size(playerPhotos[player.id])
                 sugar.gfx.sspr(0, 0, w, h, x, y,  G, G)
-
-
+                -- draw a shortened version of player name (if longer than 1 chars)
                 print(string.sub(player.me.shortname,1,8),
                         x+12-((#player.me.shortname/2)*7), G+6, 1)
+                -- draw player score
+                print(player.score, x+4, G+16, 1)
             else
                 -- ...otherwise, draw a shape with player col
                 love.graphics.circle('fill', x + 0.5 * G, y + 0.5 * G, 0.5 * G)
@@ -342,14 +364,14 @@ function drawUI(players)
     -- did we die?
     if homePlayer.dead and homePlayer.killedBy then
         -- display info about our "killer"
-        print('YOU DIED', GAME_WIDTH/2, GAME_HEIGHT/2, 51)
+        print('YOU DIED', GAME_WIDTH/2, GAME_HEIGHT/2, 1)
         local msg = ""
         if homePlayer.killedBy > 0 then
             msg = share.players[homePlayer.killedBy].me.shortname.." squished you!"
         else
             msg = "You hit a wall!"
         end
-        print(msg, GAME_WIDTH/2-(#msg/2*4), GAME_HEIGHT/2+20, 51)
+        print(msg, GAME_WIDTH/2-(#msg/2*4), GAME_HEIGHT/2+20, 1)
 
     end
 

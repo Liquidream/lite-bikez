@@ -42,7 +42,10 @@ local serverPrivate = share --{}   -- Data private to the server
 function server.connect(id) -- Called on connect from client with `id`
     log('client ' .. id .. ' connected')
 
-    local newPlayer = { id = id }
+    local newPlayer = { 
+        id = id,
+        score = 0 
+    }
     log("server reset")
     resetPlayer(newPlayer, share, IS_SERVER)
     -- tell client start pos
@@ -77,11 +80,6 @@ function server.receive(id, ...) -- Called when client with `id` does `client.se
     elseif msg == "player_dead" then
         local killedBy = arg[2]
         killPlayer(player, serverPrivate.level, share, killedBy, true)
-
-        -- TODO: Stagger this after a cooldown!
-        --resetPlayer(player, share, IS_SERVER)        
-        -- tell client start pos
-        --server.send(id, "player_start", player.xDir, player.yDir, player.x, player.y, player.col)
     end
 end
 

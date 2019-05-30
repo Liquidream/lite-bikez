@@ -15,6 +15,17 @@ function killPlayer(player, level, share, killedBy, IS_SERVER)
         player.killedBy = killedBy
         log("Player killed by: "..tonumber(player.killedBy))
 
+        -- Update score
+        if IS_SERVER then
+            player.score = player.score - 1
+            if player.killedBy ~= 0 
+            and player.killedBy ~= player.id then
+                -- Increase "killer's" score 
+                -- (if not ourselves!)
+                share.players[player.killedBy].score = share.players[player.killedBy].score + 1
+            end
+        end
+
         player.smoothX = 0
         player.smoothY = 0
     
@@ -43,8 +54,8 @@ function resetPlayer(player, share, IS_SERVER)
     
     player.waypoints={}
     player.pointCount=0
-    player.last_xDir, player.last_yDir = -2,-2
-    
+    player.last_xDir, player.last_yDir = -2,-2    
+
     if IS_SERVER then
         -- the server decides the random start position
         -- (and tells the client)
