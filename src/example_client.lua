@@ -99,57 +99,50 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
 end
 
 function sugar.after_render()    
+    love.graphics.setScissor()
     local width, height = love.graphics.getDimensions()
-    local sugar_w,sugar_h = screen_size()
+    local sugar_w, sugar_h = rendercanvas:getDimensions()
     
-   
-    -- apply moonshine here with:
     love.graphics.setCanvas()
-    
-    -- Center everything within Castle window
-    love.graphics.push()
-        
-        -- Apply "Center to Window" transformations
-        -- love.graphics.translate(
-        --     width/2 - sugar_w/2, 
-        --     height/2 - sugar_h/2 )
 
-            
-        -- if moonshine init'd
-        if fxShader then 
-            -- draw canvas with shaders
-            fxShader(function()
-                love.graphics.draw(rendercanvas,0,0)
-                    -- width/2 - sugar_w/2, 
-                    -- height/2 - sugar_h/2 )
-            end)
-        end
-        
-        --love.graphics.draw(rendercanvas, 0,0)
+      if fxShader then 
+          fxShader(function()
+              love.graphics.draw(rendercanvas,
+                   width/2 - sugar_w/2, 
+                   height/2 - sugar_h/2 )
+          end)
+      end
 
-    -- Pop centering within Castle window
-    love.graphics.pop()
-
-    -- Straight draw to screen
-    --love.graphics.draw(rendercanvas, 0,0)
-    -- love.graphics.draw(rendercanvas, 
-    --     width/2 - sugar_w/2, 
-    --     height/2 - sugar_h/2 )
 end
 
-function sugar.on_resize()
-    log("> on_resize()...");
-    -- local width, height = love.graphics.getDimensions()
-    -- log(">>>> getDimensions: "..width..","..height)
-    -- local width, height = window_size()
-    -- log(">>>> window_size: "..width..","..height)
 
-    --#### This makes an infinite loop to on_resize!
-    -- rendercanvas = love.graphics.newCanvas(window_size())
-    -- render_to_canvas(rendercanvas)
 
-    -- Will I need to do something like this too?
-   -- fxShader.resize()
+local savedCanvas
+
+function network.paused()
+  savedCanvas = love.graphics.getCanvas()
+  love.graphics.setCanvas()
+end
+
+function network.resumed()
+  love.graphics.setCanvas(savedCanvas)
+end
+
+
+function love.resize(w,h)
+    log("in love.resize...")
+    if not w then w,h = window_size() end
+    rendercanvas = love.graphics.newCanvas(w,h)
+    render_to_canvas(rendercanvas)
+    
+    fxShader = moonshine(
+            moonshine.effects.glow)
+            .chain(moonshine.effects.scanlines)
+        -- 80's glow baby!
+        fxShader.glow.strength = 3
+        fxShader.glow.min_luma = 0--0.5
+        -- Bit of the ol' arcade too!
+        fxShader.scanlines.opacity = 0.1
 end
   
 
@@ -161,37 +154,14 @@ function client.load()
     local width, height = love.graphics.getDimensions()
     log(">>>> Nikki: "..width..","..height)
 
-    -- screen_render_stretch(true)
-    -- screen_render_integer_scale(false)
-    --screen_render_integer_scale(true)
-    
-    -- Moonshine
-    -- Nikki's code to pause Castle rendering
-    network.paused()
-    
-    
-    --network.async(function()
-    -- Initialise moonshine
-    fxShader = moonshine(moonshine.effects.glow)
-        .chain(moonshine.effects.scanlines)
-        -- 80's glow baby!
-        fxShader.glow.strength = 10
-        fxShader.glow.min_luma = 0
-        -- Bit of the ol' arcade too!
-        fxShader.scanlines.opacity = 0.1
-        --end)
-        
-    -- Nikki's code to resume Castle rendering
-    network.resumed()
-    
-        
     -- initialise and update the gfx display
     init_sugar("Lite Bikez", GAME_WIDTH, GAME_HEIGHT, GAME_SCALE)
     
-    local sugar_w,sugar_h = screen_size()
-    rendercanvas = love.graphics.newCanvas()--sugar_w, sugar_h)
-    render_to_canvas(rendercanvas)
+    screen_render_stretch(true)
+    screen_render_integer_scale(false)
+    --screen_render_integer_scale(true)
 
+    love.resize(width, height) -- it does all the work anyway
 
     set_frame_waiting(60)
 
@@ -206,6 +176,8 @@ function client.load()
 
     log("Game initialized.")
 end
+
+
 
 function client.update(dt)
     
@@ -302,17 +274,6 @@ function checkAndGetPlayerPhoto(playerId, photoUrl)
         end)
     end
     -- else do nothing, as we already got it
-end
-
-local savedCanvas
-
-function network.paused()
-  savedCanvas = love.graphics.getCanvas()
-  love.graphics.setCanvas()
-end
-
-function network.resumed()
-  love.graphics.setCanvas(savedCanvas)
 end
 
 
@@ -463,6 +424,6 @@ end
 
 -- Force recalc of render dimensions on resize
 -- (especially on Fullscreen switch)
-function love.resize(w,h)
-    --gfx:updateDisplay()
-end
+-- function love.resize(w,h)
+--     --gfx:updateDisplay()
+-- end
