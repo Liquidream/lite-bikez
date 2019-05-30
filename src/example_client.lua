@@ -20,7 +20,7 @@ else
     client.start('127.0.0.1:22122') -- IP address ('127.0.0.1' is same computer) and port of server
 end
 
-
+local useShader = true
 
 -- Client connects to server. It gets a unique `id` to identify it.
 --
@@ -133,10 +133,7 @@ function love.resize(w,h)
     rendercanvas = love.graphics.newCanvas(w,h)
     render_to_canvas(rendercanvas)
     
-   -- if fxShader then
-   --   fxShader.resize(w,h)
-   -- end
-    
+   if useShader then
     fxShader = moonshine(
             moonshine.effects.glow)
             .chain(moonshine.effects.scanlines)
@@ -145,6 +142,7 @@ function love.resize(w,h)
         fxShader.glow.min_luma = 0--0.5
         -- Bit of the ol' arcade too!
         fxShader.scanlines.opacity = 0.1
+   end
 end
   
 
@@ -168,7 +166,7 @@ function client.load()
     render_to_canvas(rendercanvas)
 
     -- Moonshine
-    --network.async(function()
+    if useShader then
         -- Initialise moonshine
         fxShader = moonshine(
             moonshine.effects.glow)
@@ -178,7 +176,7 @@ function client.load()
         fxShader.glow.min_luma = 0--0.5
         -- Bit of the ol' arcade too!
         fxShader.scanlines.opacity = 0.1
-    --end)
+    end
 
     set_frame_waiting(60)
 
@@ -383,6 +381,18 @@ function love.keypressed( key, scancode, isrepeat )
         return
     end
 
+    -- shader switch
+    if key=="s" then
+        useShader = not useShader
+        log("Shader mode: "..(useShader and "Enabled" or "Disabled"))
+        if useShader then 
+            fxShader.enable("glow", "scanlines")
+        else
+            fxShader.disable("glow", "scanlines")
+        end
+        return
+    end
+
     --updatePlayer(home, key)
 
     if not homePlayer.dead then
@@ -437,9 +447,3 @@ function love.keypressed( key, scancode, isrepeat )
     homePlayer.last_xDir = homePlayer.xDir
     homePlayer.last_yDir = homePlayer.yDir
 end
-
--- Force recalc of render dimensions on resize
--- (especially on Fullscreen switch)
--- function love.resize(w,h)
---     --gfx:updateDisplay()
--- end
