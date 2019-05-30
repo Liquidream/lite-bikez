@@ -17,7 +17,7 @@ function killPlayer(player, level, share, killedBy, IS_SERVER)
 
         -- Update score
         if IS_SERVER then
-            player.score = player.score - 1
+            player.score = max(player.score - 1, 0)
             if player.killedBy ~= 0 
             and player.killedBy ~= player.id then
                 -- Increase "killer's" score 
