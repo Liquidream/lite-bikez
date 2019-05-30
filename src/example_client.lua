@@ -118,7 +118,6 @@ end
 
 
 local savedCanvas
-
 function network.paused()
   savedCanvas = love.graphics.getCanvas()
   love.graphics.setCanvas()
@@ -128,18 +127,21 @@ function network.resumed()
   love.graphics.setCanvas(savedCanvas)
 end
 
-
 function love.resize(w,h)
-    log("in love.resize...")
-    if not w then w,h = window_size() end
+    log("hello, resizing")
+
     rendercanvas = love.graphics.newCanvas(w,h)
     render_to_canvas(rendercanvas)
+    
+   -- if fxShader then
+   --   fxShader.resize(w,h)
+   -- end
     
     fxShader = moonshine(
             moonshine.effects.glow)
             .chain(moonshine.effects.scanlines)
         -- 80's glow baby!
-        fxShader.glow.strength = 3
+        fxShader.glow.strength = 10
         fxShader.glow.min_luma = 0--0.5
         -- Bit of the ol' arcade too!
         fxShader.scanlines.opacity = 0.1
@@ -157,11 +159,26 @@ function client.load()
     -- initialise and update the gfx display
     init_sugar("Lite Bikez", GAME_WIDTH, GAME_HEIGHT, GAME_SCALE)
     
-    screen_render_stretch(true)
+    screen_render_stretch(false)
     screen_render_integer_scale(false)
     --screen_render_integer_scale(true)
 
-    love.resize(width, height) -- it does all the work anyway
+    local sugar_w,sugar_h = screen_size()
+    rendercanvas = love.graphics.newCanvas(width, height)
+    render_to_canvas(rendercanvas)
+
+    -- Moonshine
+    --network.async(function()
+        -- Initialise moonshine
+        fxShader = moonshine(
+            moonshine.effects.glow)
+            .chain(moonshine.effects.scanlines)
+        -- 80's glow baby!
+        fxShader.glow.strength = 10
+        fxShader.glow.min_luma = 0--0.5
+        -- Bit of the ol' arcade too!
+        fxShader.scanlines.opacity = 0.1
+    --end)
 
     set_frame_waiting(60)
 
@@ -176,7 +193,6 @@ function client.load()
 
     log("Game initialized.")
 end
-
 
 
 function client.update(dt)
