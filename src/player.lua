@@ -15,10 +15,11 @@ function killPlayer(player, level, share, killedBy, IS_SERVER)
         player.killedBy = killedBy
         log("Player killed by: "..tonumber(player.killedBy))
 
+   -- ### this seems to break the clearing of player sync data!
         -- Update score
         if IS_SERVER then
-            player.score = max(player.score - 1, 0)
-            if player.killedBy ~= 0 
+            player.score = math.max(player.score - 1, 0)
+            if player.killedBy > 0 
             and player.killedBy ~= player.id then
                 -- Increase "killer's" score 
                 -- (if not ourselves!)
@@ -31,11 +32,11 @@ function killPlayer(player, level, share, killedBy, IS_SERVER)
     
         log("clear the player grid data...")
 
-        -- clear player's data form grid
+        -- clear player's data from grid
         for r = 1,level.levelSize do
             for c = 1,level.levelSize do
                 if level.grid[c][r] == player.id then
-                    level.grid[c][r] = 0                    
+                    level.grid[c][r] = 0
                 end
             end
         end

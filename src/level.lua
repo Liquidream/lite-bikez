@@ -103,7 +103,7 @@ function checkLevelPlayer(share, player, level)
      or player.y > level.levelSize-1
     then
         -- Player has hit boundary of game
-        killPlayer(player, level, share, 0, false)
+        killPlayer(player, level, share, -1, false)
         return
     end
     
@@ -112,7 +112,7 @@ function checkLevelPlayer(share, player, level)
     local hitObstacle = r > 0 -- red means level obstacles/boundary
     if hitObstacle then
         -- Player has hit obstacle/boundary of game
-        killPlayer(player, level, share, 0, false)
+        killPlayer(player, level, share, -1, false)
         return
     end
 
@@ -121,6 +121,7 @@ function checkLevelPlayer(share, player, level)
     if blockOwner > 0 then
         -- Player hit something (someone)
         log("test > "..type(blockOwner))
+        log("test > "..blockOwner)
         killPlayer(player, level, share, blockOwner, false)
         return
     end
@@ -160,8 +161,8 @@ function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel, draw_z
                     if level.grid[c][r] > 0 then
                         --actually draw "block"
                         local x=(c+1)*draw_zoom_scale
-                        local y=(r+1)*draw_zoom_scale
-                        rectfill(x,y, x+draw_zoom_scale, y+draw_zoom_scale, 12)
+                        local y=(r+1)*draw_zoom_scale                        
+                        rectfill(x,y, x+draw_zoom_scale, y+draw_zoom_scale, level.grid[c][r])
                         --pset(c+1,r+1, 12)
                     end
                 end  
