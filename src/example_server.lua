@@ -11,7 +11,7 @@ local server = cs.server
 local frameTime = 0
 local FPS = 60
 
-local IS_SERVER = true
+--local IS_SERVER = true
 SUGAR_SERVER_MODE = USE_CASTLE_CONFIG --true
 -- Sugarcoat alias
 log = print
@@ -47,7 +47,7 @@ function server.connect(id) -- Called on connect from client with `id`
         score = 0 
     }
     log("server reset")
-    resetPlayer(newPlayer, share, IS_SERVER)
+    resetPlayer(newPlayer, share, true)
     -- tell client start pos
     server.send(id, "player_start", newPlayer.xDir, newPlayer.yDir, newPlayer.x, newPlayer.y, 
                  newPlayer.col)
@@ -94,7 +94,7 @@ function server.load()
     log("server load...")
     
     -- create level
-    serverPrivate.level = createLevel(1, 512, IS_SERVER) --game size (square)
+    serverPrivate.level = createLevel(1, 512, true) --game size (square)
     share.levelSize = serverPrivate.level.levelSize
     -- create players
     share.players = {}
@@ -147,7 +147,7 @@ function server.update(dt)
                 -- end
             elseif (love.timer.getTime()-player.killedAt) >= 3 then
                 -- Respawn player
-                resetPlayer(player, share, IS_SERVER)        
+                resetPlayer(player, share, true)        
                 -- tell client start pos
                 server.send(id, "player_start", player.xDir, player.yDir, player.x, player.y, player.col)
 

@@ -138,8 +138,8 @@ function love.resize(w,h)
             moonshine.effects.glow)
             .chain(moonshine.effects.scanlines)
         -- 80's glow baby!
-        fxShader.glow.strength = 10
-        fxShader.glow.min_luma = 0--0.5
+        fxShader.glow.strength = 5 --10
+        fxShader.glow.min_luma = 0
         -- Bit of the ol' arcade too!
         fxShader.scanlines.opacity = 0.1
    end
@@ -172,8 +172,8 @@ function client.load()
             moonshine.effects.glow)
             .chain(moonshine.effects.scanlines)
         -- 80's glow baby!
-        fxShader.glow.strength = 10
-        fxShader.glow.min_luma = 0--0.5
+        fxShader.glow.strength = 5 --10
+        fxShader.glow.min_luma = 0
         -- Bit of the ol' arcade too!
         fxShader.scanlines.opacity = 0.1
     end

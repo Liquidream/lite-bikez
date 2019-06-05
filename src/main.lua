@@ -6,6 +6,8 @@
 
 if CASTLE_PREFETCH then
   CASTLE_PREFETCH({
+    'moonshine/glow.lua',
+    'moonshine/scanlines.lua',
     'assets/level-1-data.png',
     'assets/level-1-bg.png',
     'assets/level-1-gfx.png',

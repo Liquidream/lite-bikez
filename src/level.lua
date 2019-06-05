@@ -13,21 +13,23 @@ function createLevel(levelNum, levelSize, IS_SERVER)
             level.grid[r][c]=0
         end  
     end
-
-    if not IS_SERVER then
-        -- Load level collision data
+    
+    network.async(function()            
+        -- load level collision data (Client AND Server)
         -- TODO: This needs to be dynamic - based on current level
+        log("loading level collision data...")
         local levelDataPath = "assets/level-1-data.png"
+        levelData = love.image.newImageData(levelDataPath)
 
-        network.async(function()
-            -- load collision data
-            load_png("leveldata", levelDataPath, nil, true)
-            levelData = love.image.newImageData(levelDataPath)
+        if not IS_SERVER then
             -- load drawing data
+            log("loading level asset images...")
             load_png("levelgfx-bg", "assets/level-1-bg.png", nil, true)
             load_png("levelgfx-1", "assets/level-1-gfx.png", nil, true)
-        end)
-    end
+            log("done loading level asset images.")
+        end
+    end)
+    
 
     return level
 end
@@ -83,8 +85,8 @@ function updatePlayerPos(player, dt)
     -- player.diff_x = lerp(player.diff_x, 0, (0.01) * 10 * dt)
     -- player.diff_y = lerp(player.diff_y, 0, (0.01) * 10 * dt)
 
-    player.x = player.x + player.xDir
-    player.y = player.y + player.yDir
+    player.x = player.x + player.xDir --* dt --(Can't do until floor position on grid-check)
+    player.y = player.y + player.yDir --* dt
 end
 
 -- Update player pos/direction/state
