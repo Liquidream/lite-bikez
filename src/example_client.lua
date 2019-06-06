@@ -4,8 +4,6 @@ local cs = require 'https://raw.githubusercontent.com/castle-games/share.lua/b94
 require("sugarcoat/sugarcoat")
 sugar.utility.using_package(sugar.S, true)
 
-local moonshine = require("moonshine")
-
 require("common")
 require("player")
 require("level")
@@ -117,57 +115,6 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
 
 end
 
-function sugar.after_render()    
-    love.graphics.setScissor()
-    local width, height = love.graphics.getDimensions()
-    local sugar_w, sugar_h = rendercanvas:getDimensions()
-    
-    love.graphics.setCanvas()
-
-    if fxShader then 
-        fxShader(function()
-            love.graphics.draw(rendercanvas,
-                width/2 - sugar_w/2, 
-                height/2 - sugar_h/2 )
-        end)
-    -- else
-    --     love.graphics.draw(rendercanvas,
-    --         width/2 - sugar_w/2, 
-    --         height/2 - sugar_h/2 )
-    end
-
-end
-
-
-
-local savedCanvas
-function network.paused()
-  savedCanvas = love.graphics.getCanvas()
-  love.graphics.setCanvas()
-end
-
-function network.resumed()
-  love.graphics.setCanvas(savedCanvas)
-end
-
-function love.resize(w,h)
-    log("hello, resizing")
-
-    rendercanvas = love.graphics.newCanvas(w,h)
-    render_to_canvas(rendercanvas)
-    
-   if useShader then
-    fxShader = moonshine(
-            moonshine.effects.glow)
-            .chain(moonshine.effects.scanlines)
-        -- 80's glow baby!
-        fxShader.glow.strength = 5 --10
-        fxShader.glow.min_luma = 0
-        -- Bit of the ol' arcade too!
-        fxShader.scanlines.opacity = 0.1
-   end
-end
-  
 
 -- Client gets all Love events
 
@@ -184,21 +131,97 @@ function client.load()
     screen_render_integer_scale(false)
     --screen_render_integer_scale(true)
 
-    local sugar_w,sugar_h = screen_size()
-    rendercanvas = love.graphics.newCanvas(width, height)
-    render_to_canvas(rendercanvas)
+    if useShader then  -- Trasevol_Dog was here! B)
+  screen_shader([[
+    varying vec2 v_vTexcoord;
+    varying vec4 v_vColour;
+    
+    extern float time;
+    
+    const float PI = 3.1415926535897932384626433832795;
+    
+    float get_line_k(float y){
+      //return (abs(sin(y * SCREEN_SIZE.y * PI)) - 0.25) / 0.75;
+      return abs(sin(y * SCREEN_SIZE.y * PI));
+    }
+    
+    float sqr(float a){
+      return a*a;
+    }
+    
+    vec4 effect(vec4 color, Image texture, vec2 coords, vec2 screen_coords)
+    {
+      coords = coords * 2.0 - vec2(1.0, 1.0);
+      coords += (coords.yx * coords.yx) * coords * 0.025;
+      
+      float mask = min(sign(1.0 - abs(coords.x)), sign(1.0 - abs(coords.y)));
+      mask = max(mask, 0.0);
 
-    -- Moonshine
-    if useShader then
-        -- Initialise moonshine
-        fxShader = moonshine(
-            moonshine.effects.glow)
-            .chain(moonshine.effects.scanlines)
-        -- 80's glow baby!
-        fxShader.glow.strength = 5 --10
-        fxShader.glow.min_luma = 0
-        -- Bit of the ol' arcade too!
-        fxShader.scanlines.opacity = 0.1
+      coords = coords * 0.5 + vec2(0.5, 0.5);
+      
+      float distor_k = sqr(cos(-time*4.23 - coords.y*73.456)) * sin(0.4*cos(-time*49.23 + coords.y*12.345 + 0.6543)*cos(-time*62.0 - coords.y*45.785 + 0.127654));
+      coords.x += 0.002 * distor_k;
+    
+      vec4 col = Texel_color(texture, coords);
+      
+      float yk = get_line_k(coords.y);
+      col.rgb *= yk;
+      
+      vec4 colb = Texel_color(texture, coords + vec2(0.005*distor_k, 0.0));
+      col.rgb += (0.05 + 0.1 * distor_k) * vec3(
+        colb.r + colb.b,
+        colb.g + colb.r,
+        colb.b + colb.g
+      );
+      
+      float n = 1.15;
+      vec2 tca = vec2(0.98 * n, 0.2 * n) / SCREEN_SIZE;
+      vec2 tcb = vec2(-0.98 * n, 0.2 * n) / SCREEN_SIZE;
+      vec2 tcc = vec2(0.2 * n, 0.98 * n) / SCREEN_SIZE;
+      vec2 tcd = vec2(-0.2 * n, 0.98 * n) / SCREEN_SIZE;
+      
+      col += 0.15 * (
+        Texel_color(texture, coords + tca) +
+        Texel_color(texture, coords - tca) +
+        Texel_color(texture, coords + tcb) +
+        Texel_color(texture, coords - tcb) +
+        Texel_color(texture, coords + tcc) +
+        Texel_color(texture, coords - tcc) +
+        Texel_color(texture, coords + tcd) +
+        Texel_color(texture, coords - tcd)
+      );
+      
+      tca *= 2.0;
+      tcb *= 2.0;
+      
+      col += 0.1 * (
+        Texel_color(texture, coords + tca) +
+        Texel_color(texture, coords - tca) +
+        Texel_color(texture, coords + tcb) +
+        Texel_color(texture, coords - tcb) +
+        Texel_color(texture, coords + tcc) +
+        Texel_color(texture, coords - tcc) +
+        Texel_color(texture, coords + tcd) +
+        Texel_color(texture, coords - tcd)
+      );
+      
+      tca *= 1.5;
+      tcb *= 1.5;
+      
+      col += 0.05 * (
+        Texel_color(texture, coords + tca) +
+        Texel_color(texture, coords - tca) +
+        Texel_color(texture, coords + tcb) +
+        Texel_color(texture, coords - tcb) +
+        Texel_color(texture, coords + tcc) +
+        Texel_color(texture, coords - tcc) +
+        Texel_color(texture, coords + tcd) +
+        Texel_color(texture, coords - tcd)
+      );
+      
+      return col * mask;
+    }
+  ]])
     end
 
     set_frame_waiting(60)
@@ -209,6 +232,10 @@ function client.load()
     --use_palette(palettes.pico8)
     --set_background_color(0)
 
+
+    -- new font!
+    load_font ('assets/Rematch.ttf', 16, 'rematch', true)
+
     -- default player to dead
     homePlayer.dead = true
 
@@ -217,6 +244,7 @@ end
 
 
 function client.update(dt)
+    screen_shader_input({ time = t() })
     
     -- if DEBUG_MODE then
     --     log(love.timer.getTime().." - player.dead="..tostring(homePlayer.dead))
@@ -340,9 +368,9 @@ function drawUI(players)
                 sugar.gfx.sspr(0, 0, w, h, x, y,  G, G)
                 -- draw a shortened version of player name (if longer than 1 chars)
                 print(string.sub(player.me.shortname,1,8),
-                        x+12-((#player.me.shortname/2)*7), G+6, 1)
+                        x+12-((#player.me.shortname/2)*7), G+6, 51)
                 -- draw player score
-                print(player.score, x+4, G+16, 1)
+                print(player.score, x+4, G+16, 51)
             else
                 -- ...otherwise, draw a shape with player col
                 love.graphics.circle('fill', x + 0.5 * G, y + 0.5 * G, 0.5 * G)
@@ -362,7 +390,7 @@ function drawUI(players)
     if client.connected then
         -- Draw our ping
         --love.graphics.setColor(1,1,1)
-        print('ping: ' .. client.getPing(), 2, 2, 51)
+      --  print('ping: ' .. client.getPing(), 2, 2, 51)
     else
         print('not connected', 2, 2, 24)
     end
@@ -370,14 +398,14 @@ function drawUI(players)
     -- did we die?
     if homePlayer.dead and homePlayer.killedBy then
         -- display info about our "killer"
-        print('YOU DIED', GAME_WIDTH/2, GAME_HEIGHT/2, 1)
+        print('YOU DIED', GAME_WIDTH/2, GAME_HEIGHT/2, 51)
         local msg = ""
         if homePlayer.killedBy > 0 then
             msg = share.players[homePlayer.killedBy].me.shortname.." squished you!"
         else
             msg = "You hit a wall!"
         end
-        print(msg, GAME_WIDTH/2-(#msg/2*4), GAME_HEIGHT/2+20, 1)
+        print(msg, GAME_WIDTH/2-(#msg/2*4), GAME_HEIGHT/2+20, 51)
 
     end
 
@@ -401,11 +429,6 @@ function love.keypressed( key, scancode, isrepeat )
     if key=="s" then
         useShader = not useShader
         log("Shader mode: "..(useShader and "Enabled" or "Disabled"))
-        if useShader then 
-            fxShader.enable("glow", "scanlines")
-        else
-            fxShader.disable("glow", "scanlines")
-        end
         return
     end
 

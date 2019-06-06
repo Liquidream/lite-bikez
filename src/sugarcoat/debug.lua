@@ -65,11 +65,13 @@ local function r_log(str)
   _log("ERR", str)
 end
 
--- local function assert(condition, str)
---   if not condition then
---     abort("Assert Failed: "..str)
---   end
--- end
+local function assert(condition, str)
+  if not condition then
+    abort("Assert Failed: "..str)
+  end
+  
+  return condition
+end
 
 local function abort(str)
   if str then
@@ -108,7 +110,7 @@ sugar.debug = {
   abort           = abort,
   abort_brutal    = abort_brutal,
   
-  write_clipboard = write_clipbaord,
+  write_clipboard = write_clipboard,
   read_clipboard  = read_clipboard
 }
 
