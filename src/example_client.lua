@@ -9,9 +9,10 @@ local moonshine = require("moonshine")
 require("common")
 require("player")
 require("level")
+require("ui_input")
 
-
-local client = cs.client
+-- made client global so UI and others can use
+client = cs.client
 
 if USE_CASTLE_CONFIG then
     client.useCastleConfig()
@@ -74,6 +75,24 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
         homePlayer.x = arg[4]
         homePlayer.y = arg[5]
         homePlayer.col = arg[6]
+        
+        log(">>> arg 7 = ".. arg[7])
+        log(">>> arg 8 =".. arg[8])
+        log(">>> arg 9 =".. arg[9])
+
+        -- new level?
+        if arg[7] ~= levelDataPath then
+            -- level changed!
+            levelName = arg[7]
+            levelDataPath = arg[8]
+            levelGfxPath = arg[9]
+
+            log(">>> ".. levelDataPath)
+            log(">>> ".. levelGfxPath)
+
+            clientPrivate.level=createLevel(1, 512, false) --game size (square)
+        end
+
         --homePlayer.col= { arg[6][1], arg[6][2], arg[6][3] }
         -- log("-----------------")
         -- log(">>> ".. type(arg[6][1]))
@@ -105,13 +124,17 @@ function sugar.after_render()
     
     love.graphics.setCanvas()
 
-      if fxShader then 
-          fxShader(function()
-              love.graphics.draw(rendercanvas,
-                   width/2 - sugar_w/2, 
-                   height/2 - sugar_h/2 )
-          end)
-      end
+    if fxShader then 
+        fxShader(function()
+            love.graphics.draw(rendercanvas,
+                width/2 - sugar_w/2, 
+                height/2 - sugar_h/2 )
+        end)
+    -- else
+    --     love.graphics.draw(rendercanvas,
+    --         width/2 - sugar_w/2, 
+    --         height/2 - sugar_h/2 )
+    end
 
 end
 
@@ -241,7 +264,7 @@ end
 
 function client.draw()
     -- Draw game to canvas/screen
-    cls()
+    cls() --53
     --cls(1)
 
     
@@ -269,19 +292,10 @@ function checkAndGetPlayerPhoto(playerId, photoUrl)
         playerPhotos[playerId]="pending..."
         network.async(function()
             
-            -- Nikki's code to pause Castle rendering
-            network.paused()
-
             local key = "photo_"..playerId
             -- create a spritesheet/surface for player photo
             load_png(key, photoUrl)
-            
-            -- Nikki's code to resume Castle rendering
-            network.resumed()
-
-            -- Remy's suggestion to try to resolve BSOD
-            --love.graphics.setCanvas()
-
+                        
             -- ...and store reference to it
             playerPhotos[playerId] = key
 
@@ -350,7 +364,7 @@ function drawUI(players)
         --love.graphics.setColor(1,1,1)
         print('ping: ' .. client.getPing(), 2, 2, 51)
     else
-        print('not connected', 2, 2, 51)
+        print('not connected', 2, 2, 24)
     end
 
     -- did we die?
@@ -366,6 +380,8 @@ function drawUI(players)
         print(msg, GAME_WIDTH/2-(#msg/2*4), GAME_HEIGHT/2+20, 1)
 
     end
+
+    print('FPS: ' .. love.timer.getFPS(), 10, GAME_HEIGHT-20, 51)
 
 
     -- reset trans again

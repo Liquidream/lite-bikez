@@ -60,6 +60,20 @@ GAME_WIDTH = 512  -- 16:9 aspect ratio that fits nicely
 GAME_HEIGHT = 288 -- within the default Castle window size
 GAME_SCALE = 3
 
+LEVEL_LIST = {
+    "Pillars of Doom",
+    "Corridors of Chaos"
+}
+
+
+LEVEL_DATA_LIST = {
+    ["Pillars of Doom"] = {
+        imgData="assets/level-1-data.png",
+        imgGfx="assets/level-1-gfx.png" },
+    ["Corridors of Chaos"] = {
+        imgData="assets/level-2-data.png",
+        imgGfx="assets/level-2-gfx.png" },    
+}
 --
 -- Helper Functions
 --

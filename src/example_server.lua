@@ -49,8 +49,10 @@ function server.connect(id) -- Called on connect from client with `id`
     log("server reset")
     resetPlayer(newPlayer, share, true)
     -- tell client start pos
-    server.send(id, "player_start", newPlayer.xDir, newPlayer.yDir, newPlayer.x, newPlayer.y, 
-                 newPlayer.col)
+    server.send(id, "player_start", 
+        newPlayer.xDir, newPlayer.yDir, 
+        newPlayer.x, newPlayer.y, newPlayer.col,
+        levelName, levelDataPath, levelGfxPath)
     
     share.players[id] = newPlayer
 end
@@ -80,6 +82,28 @@ function server.receive(id, ...) -- Called when client with `id` does `client.se
     elseif msg == "player_dead" then
         local killedBy = arg[2]
         killPlayer(player, serverPrivate.level, share, killedBy, true)
+    
+    elseif msg == "level_select" then
+        log("server: changing level!")
+        -- player changed level
+        log("levelName = "..arg[2])
+        log("levelDataPath = "..arg[3])
+        log("levelGfxPath = "..arg[4])
+        levelName = arg[2]
+        levelDataPath = arg[3]
+        levelGfxPath = arg[4]        
+        -- temp switch level!
+        serverPrivate.level = createLevel(1, 512, true) --game size (square)
+        share.levelSize = serverPrivate.level.levelSize
+        -- reset all players
+        log("server resetting players to new level")
+        for clientId, player in pairs(share.players) do
+            resetPlayer(player, share, true)
+            server.send(clientId, "player_start", 
+            player.xDir, player.yDir, 
+            player.x, player.y, player.col,
+            levelName, levelDataPath, levelGfxPath)
+        end
     end
 end
 
@@ -149,7 +173,10 @@ function server.update(dt)
                 -- Respawn player
                 resetPlayer(player, share, true)        
                 -- tell client start pos
-                server.send(id, "player_start", player.xDir, player.yDir, player.x, player.y, player.col)
+                server.send(id, "player_start", 
+                    player.xDir, player.yDir, 
+                    player.x, player.y, player.col,
+                    levelName, levelDataPath, levelGfxPath)
 
             end
         end

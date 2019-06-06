@@ -1,4 +1,10 @@
 
+require("common")
+
+-- defaults
+levelName = LEVEL_LIST[1]
+levelDataPath = LEVEL_DATA_LIST[levelName].imgData
+levelGfxPath = LEVEL_DATA_LIST[levelName].imgGfx
 
 function createLevel(levelNum, levelSize, IS_SERVER)
     local level={
@@ -18,14 +24,15 @@ function createLevel(levelNum, levelSize, IS_SERVER)
         -- load level collision data (Client AND Server)
         -- TODO: This needs to be dynamic - based on current level
         log("loading level collision data...")
-        local levelDataPath = "assets/level-1-data.png"
+        --local levelDataPath = "assets/level-1-data.png"
         levelData = love.image.newImageData(levelDataPath)
 
         if not IS_SERVER then
             -- load drawing data
             log("loading level asset images...")
             load_png("levelgfx-bg", "assets/level-1-bg.png", nil, true)
-            load_png("levelgfx-1", "assets/level-1-gfx.png", nil, true)
+            load_png("levelgfx-1", levelGfxPath, nil, true)
+            --load_png("levelgfx-1", "assets/level-1-gfx.png", nil, true)
             log("done loading level asset images.")
         end
     end)

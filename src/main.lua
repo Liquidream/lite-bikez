@@ -8,19 +8,22 @@ if CASTLE_PREFETCH then
   CASTLE_PREFETCH({
     'moonshine/glow.lua',
     'moonshine/scanlines.lua',
-    'assets/level-1-data.png',
     'assets/level-1-bg.png',
+    'assets/level-1-data.png',
     'assets/level-1-gfx.png',
+    'assets/level-2-data.png',
+    'assets/level-2-gfx.png',
     'network/cs.lua',
     'network/state.lua',
     'network/tests.lua',
+    'sugarcoat/sugarcoat.lua',
     'common.lua',
-    --sugarcoat lib?
     'example_client.lua',
     'example_local.lua',
     'example_server.lua',
     'level.lua',
     'player.lua',
+    'ui_input.lua',
   })
  end
 
