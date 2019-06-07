@@ -255,8 +255,6 @@ function shader_switch(enable)
         Texel_color(texture, coords - tcd)
       );
       
-      
-      
       tca *= 1.3333;
       tcb *= 1.3333;
       tcc *= 1.3333;
@@ -272,8 +270,6 @@ function shader_switch(enable)
         Texel_color(texture, coords + tcd) +
         Texel_color(texture, coords - tcd)
       );
-      
-      
       
       tca *= 1.25;
       tcb *= 1.25;
@@ -291,7 +287,7 @@ function shader_switch(enable)
         Texel_color(texture, coords - tcd)
       );
       
-      return mix((col + glow_strength * glow * (1.0 + abs(distor_k))) * mask, glow, glow_strength);
+      return mix((col + glow_strength * glow * (1.0 + abs(distor_k))), glow, glow_strength) * mask;
     }
   ]])
   
