@@ -6,7 +6,7 @@
 
 if CASTLE_PREFETCH then
   CASTLE_PREFETCH({
-    'assets/Rematch.ttf',
+    'assets/MatchupPro.ttf',
     'assets/level-1-bg.png',
     'assets/level-1-data.png',
     'assets/level-1-gfx.png',
