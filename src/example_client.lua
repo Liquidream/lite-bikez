@@ -19,7 +19,7 @@ else
     client.start('127.0.0.1:22122') -- IP address ('127.0.0.1' is same computer) and port of server
 end
 
-local useShader = true
+useShader = true
 
 -- Client connects to server. It gets a unique `id` to identify it.
 --
@@ -39,10 +39,10 @@ camx,camy = 0,0       -- made it global, so "level" can access
 local zoom_scale = 2        -- 2
 
 -- shader parameters
-local shader_crt_curve      = 0.025
-local shader_glow_strength  = 0.5
-local shader_distortion_ray = 3.0
-local shader_scan_lines     = 1.0
+shader_crt_curve      = 0.025
+shader_glow_strength  = 0.5
+shader_distortion_ray = 3.0
+shader_scan_lines     = 1.0
 
 function client.connect() -- Called on connect from serverfo
     homePlayer.id = client.id
