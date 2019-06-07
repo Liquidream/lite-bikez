@@ -132,96 +132,135 @@ function client.load()
     --screen_render_integer_scale(true)
 
     if useShader then  -- Trasevol_Dog was here! B)
-  screen_shader([[
-    varying vec2 v_vTexcoord;
-    varying vec4 v_vColour;
-    
-    extern float time;
-    
-    const float PI = 3.1415926535897932384626433832795;
-    
-    float get_line_k(float y){
-      //return (abs(sin(y * SCREEN_SIZE.y * PI)) - 0.25) / 0.75;
-      return abs(sin(y * SCREEN_SIZE.y * PI));
-    }
-    
-    float sqr(float a){
-      return a*a;
-    }
-    
-    vec4 effect(vec4 color, Image texture, vec2 coords, vec2 screen_coords)
-    {
-      coords = coords * 2.0 - vec2(1.0, 1.0);
-      coords += (coords.yx * coords.yx) * coords * 0.025;
+      screen_shader([[
+        varying vec2 v_vTexcoord;
+        varying vec4 v_vColour;
+        
+        extern float time;
+        
+        const float PI = 3.1415926535897932384626433832795;
+        
+        float get_line_k(float y){
+          //return (abs(sin(y * SCREEN_SIZE.y * PI)) - 0.25) / 0.75;
+          return abs(sin(y * SCREEN_SIZE.y * PI));
+        }
+        
+        float sqr(float a){
+          return a*a;
+        }
+        
+        vec4 effect(vec4 color, Image texture, vec2 coords, vec2 screen_coords)
+        {
+          coords = coords * 2.0 - vec2(1.0, 1.0);
+          coords += (coords.yx * coords.yx) * coords * 0.025;
+          
+          float mask = min(sign(1.0 - abs(coords.x)), sign(1.0 - abs(coords.y)));
+          mask = max(mask, 0.0);
       
-      float mask = min(sign(1.0 - abs(coords.x)), sign(1.0 - abs(coords.y)));
-      mask = max(mask, 0.0);
-
-      coords = coords * 0.5 + vec2(0.5, 0.5);
-      
-      float distor_k = sqr(cos(-time*4.23 - coords.y*73.456)) * sin(0.4*cos(-time*49.23 + coords.y*12.345 + 0.6543)*cos(-time*62.0 - coords.y*45.785 + 0.127654));
-      coords.x += 0.002 * distor_k;
-    
-      vec4 col = Texel_color(texture, coords);
-      
-      float yk = get_line_k(coords.y);
-      col.rgb *= yk;
-      
-      vec4 colb = Texel_color(texture, coords + vec2(0.005*distor_k, 0.0));
-      col.rgb += (0.05 + 0.1 * distor_k) * vec3(
-        colb.r + colb.b,
-        colb.g + colb.r,
-        colb.b + colb.g
-      );
-      
-      float n = 1.15;
-      vec2 tca = vec2(0.98 * n, 0.2 * n) / SCREEN_SIZE;
-      vec2 tcb = vec2(-0.98 * n, 0.2 * n) / SCREEN_SIZE;
-      vec2 tcc = vec2(0.2 * n, 0.98 * n) / SCREEN_SIZE;
-      vec2 tcd = vec2(-0.2 * n, 0.98 * n) / SCREEN_SIZE;
-      
-      col += 0.15 * (
-        Texel_color(texture, coords + tca) +
-        Texel_color(texture, coords - tca) +
-        Texel_color(texture, coords + tcb) +
-        Texel_color(texture, coords - tcb) +
-        Texel_color(texture, coords + tcc) +
-        Texel_color(texture, coords - tcc) +
-        Texel_color(texture, coords + tcd) +
-        Texel_color(texture, coords - tcd)
-      );
-      
-      tca *= 2.0;
-      tcb *= 2.0;
-      
-      col += 0.1 * (
-        Texel_color(texture, coords + tca) +
-        Texel_color(texture, coords - tca) +
-        Texel_color(texture, coords + tcb) +
-        Texel_color(texture, coords - tcb) +
-        Texel_color(texture, coords + tcc) +
-        Texel_color(texture, coords - tcc) +
-        Texel_color(texture, coords + tcd) +
-        Texel_color(texture, coords - tcd)
-      );
-      
-      tca *= 1.5;
-      tcb *= 1.5;
-      
-      col += 0.05 * (
-        Texel_color(texture, coords + tca) +
-        Texel_color(texture, coords - tca) +
-        Texel_color(texture, coords + tcb) +
-        Texel_color(texture, coords - tcb) +
-        Texel_color(texture, coords + tcc) +
-        Texel_color(texture, coords - tcc) +
-        Texel_color(texture, coords + tcd) +
-        Texel_color(texture, coords - tcd)
-      );
-      
-      return col * mask;
-    }
-  ]])
+          coords = coords * 0.5 + vec2(0.5, 0.5);
+          
+          float distor_k = 3.0 * max(sqr(cos(-time*1.73 - coords.y*13.456)) - 0.7, 0.05) * sin(0.4*sqr(cos(-time*20.023 - coords.y*185.785 + 0.127654)));
+          coords.x += 0.002 * distor_k;
+        
+          vec4 col = Texel_color(texture, coords);
+          
+          float yk = get_line_k(coords.y);
+          col.rgb *= yk;
+          
+          col.rgb += 1.2 * abs(distor_k) * vec3(
+            col.r + col.b,
+            col.g + col.r,
+            col.b + col.g
+          );
+          
+          float n = 0.9;
+          vec2 tca = vec2(0.98 * n, 0.2 * n) / SCREEN_SIZE;
+          vec2 tcb = vec2(-0.98 * n, 0.2 * n) / SCREEN_SIZE;
+          vec2 tcc = vec2(0.2 * n, 0.98 * n) / SCREEN_SIZE;
+          vec2 tcd = vec2(-0.2 * n, 0.98 * n) / SCREEN_SIZE;
+          
+          vec4 glow = 0.15 * (
+            Texel_color(texture, coords + tca) +
+            Texel_color(texture, coords - tca) +
+            Texel_color(texture, coords + tcb) +
+            Texel_color(texture, coords - tcb) +
+            Texel_color(texture, coords + tcc) +
+            Texel_color(texture, coords - tcc) +
+            Texel_color(texture, coords + tcd) +
+            Texel_color(texture, coords - tcd)
+          );
+          
+          tca *= 2.0;
+          tcb *= 2.0;
+          tcc *= 2.0;
+          tcd *= 2.0;
+          
+          glow += 0.1 * (
+            Texel_color(texture, coords + tca) +
+            Texel_color(texture, coords - tca) +
+            Texel_color(texture, coords + tcb) +
+            Texel_color(texture, coords - tcb) +
+            Texel_color(texture, coords + tcc) +
+            Texel_color(texture, coords - tcc) +
+            Texel_color(texture, coords + tcd) +
+            Texel_color(texture, coords - tcd)
+          );
+          
+          tca *= 1.5;
+          tcb *= 1.5;
+          tcc *= 1.5;
+          tcd *= 1.5;
+          
+          glow += 0.05 * (
+            Texel_color(texture, coords + tca) +
+            Texel_color(texture, coords - tca) +
+            Texel_color(texture, coords + tcb) +
+            Texel_color(texture, coords - tcb) +
+            Texel_color(texture, coords + tcc) +
+            Texel_color(texture, coords - tcc) +
+            Texel_color(texture, coords + tcd) +
+            Texel_color(texture, coords - tcd)
+          );
+          
+          
+          
+          tca *= 1.3333;
+          tcb *= 1.3333;
+          tcc *= 1.3333;
+          tcd *= 1.3333;
+          
+          glow += 0.035 * (
+            Texel_color(texture, coords + tca) +
+            Texel_color(texture, coords - tca) +
+            Texel_color(texture, coords + tcb) +
+            Texel_color(texture, coords - tcb) +
+            Texel_color(texture, coords + tcc) +
+            Texel_color(texture, coords - tcc) +
+            Texel_color(texture, coords + tcd) +
+            Texel_color(texture, coords - tcd)
+          );
+          
+          
+          
+          tca *= 1.25;
+          tcb *= 1.25;
+          tcc *= 1.25;
+          tcd *= 1.25;
+          
+          glow += 0.02 * (
+            Texel_color(texture, coords + tca) +
+            Texel_color(texture, coords - tca) +
+            Texel_color(texture, coords + tcb) +
+            Texel_color(texture, coords - tcb) +
+            Texel_color(texture, coords + tcc) +
+            Texel_color(texture, coords - tcc) +
+            Texel_color(texture, coords + tcd) +
+            Texel_color(texture, coords - tcd)
+          );
+          
+          return mix((col + glow * (0.5 + 0.5 * abs(distor_k))) * mask, glow, 0.5);
+        }
+      ]])
     end
 
     set_frame_waiting(60)
