@@ -148,7 +148,7 @@ function client.load()
 
 
     -- new font!
-    load_font ('assets/Rematch.ttf', 16, 'rematch', true)
+    load_font ('assets/MatchupPro.ttf', 16, 'corefont', true)
 
     -- default player to dead
     homePlayer.dead = true
