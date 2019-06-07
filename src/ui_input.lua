@@ -42,6 +42,29 @@ if home and home.id == 1
     --ui.markdown('![](https://raw.githubusercontent.com/Liquidream/lite-bikez/dev/src/'..levelGfxPath..')')
     ui.markdown('![](https://api.castle.games/api/hosted/@liquidream/lite-bikez-wip/src/'..levelGfxPath..')')
 
+    ui.markdown([[
+#### Shader settings
+hello from Remy - I didn't consult Paul before doing this ui bit so this is all going to get deleted probably... :,(
+but hey the game's great! :D
+]])
+
+    ui.toggle("Shader OFF", "Shader ON", useShader,
+        { onToggle = function()
+            useShader = not useShader
+            shader_switch(useShader)
+        end }
+    )
+    
+    local refresh = false
+    shader_crt_curve      = ui.slider("CRT Curve",      shader_crt_curve,      0, 0.25, { step = 0.0025, onChange = function() refresh = true end })
+    shader_glow_strength  = ui.slider("Glow Strength",  shader_glow_strength,  0, 1,    { step = 0.01, onChange = function() refresh = true end })
+    shader_distortion_ray = ui.slider("Distortion Ray", shader_distortion_ray, 0, 10,   { step = 0.1, onChange = function() refresh = true end })
+    shader_scan_lines     = ui.slider("Scan Lines",     shader_scan_lines,     0, 1.0,  { step = 0.01, onChange = function() refresh = true end })
+    if refresh then update_shader_parameters() end
+    
+    ui.markdown([[
+#### B-)
+]])
 end
     -- -- Button for adding circles
     -- if ui.button('add circle') then
