@@ -78,7 +78,10 @@ end
 
 -- Update player pos/direction/state
 function updatePlayerPos(player, dt)
-    
+    -- remember last pos
+    player.lastGridX = player.gridX
+    player.lastGridY = player.gridY
+
     --local level = share.level
 
     -- abort if no position given yet
@@ -89,11 +92,11 @@ function updatePlayerPos(player, dt)
     -- Update player pos, based on direction
     -- player.diff_x = lerp(player.diff_x, 0, (0.01) * 10 * dt)
     -- player.diff_y = lerp(player.diff_y, 0, (0.01) * 10 * dt)
-
-    player.x = player.x + player.xDir * dt  --(Can't do until floor position on grid-check)
-    player.y = player.y + player.yDir * dt 
+    
+    player.x = player.x + player.xDir * dt * player.speed
+    player.y = player.y + player.yDir * dt * player.speed
     player.gridX = math.floor(player.x)
-    player.gridY = math.floor(player.y)
+    player.gridY = math.floor(player.y)    
 end
 
 -- Update player pos/direction/state
@@ -102,14 +105,14 @@ function checkLevelPlayer(share, player, level)
     local lastPoint_x = player.lastGridX
     local lastPoint_y = player.lastGridY 
 
-    log(">player pos = "..tostring(player.x)..","..tostring(player.y))
-    log(">player gridpos = "..tostring(player.gridX)..","..tostring(player.gridY))
-    log(">player lastpoint = "..tostring(lastPoint_x)..","..tostring(lastPoint_y))
+    -- log(">player pos = "..tostring(player.x)..","..tostring(player.y))
+    -- log(">player gridpos = "..tostring(player.gridX)..","..tostring(player.gridY))
+    -- log(">player lastpoint = "..tostring(lastPoint_x)..","..tostring(lastPoint_y))
 
     -- Abort if player is hasn't moved pos since last time
     if lastPoint_x == player.gridX 
         and lastPoint_y == player.gridY then
-        log("No change in player pos, aborting check")
+        -- log("No change in player pos, aborting check")
         return
     end
 
@@ -142,7 +145,7 @@ function checkLevelPlayer(share, player, level)
         killPlayer(player, level, share, blockOwner, false)
         return
     else
-        log("<empty grid cell>")
+        --log("<empty grid cell>")
     end
 
 end

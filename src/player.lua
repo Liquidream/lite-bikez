@@ -55,7 +55,7 @@ function resetPlayer(player, share, IS_SERVER)
     
     player.waypoints={}
     player.pointCount=0
-    player.last_xDir, player.last_yDir = -2,-2    
+    player.last_xDir, player.last_yDir = -2,-2
 
     if IS_SERVER then
         -- the server decides the random start position
@@ -67,6 +67,7 @@ function resetPlayer(player, share, IS_SERVER)
             player.gridY = player.y
             player.lastGridX = player.gridX
             player.lastGridY = player.gridY
+            player.speed = PLAYER_NORM_SPEED
             -- check we're in the "safe" zone
             local r, g, b = levelData:getPixel(player.x, player.y)
             local hitObstacle = r > 0 -- red means level obstacles/boundary

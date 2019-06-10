@@ -82,6 +82,7 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
         homePlayer.gridY = math.floor(homePlayer.y)
         homePlayer.lastGridX = homePlayer.gridX
         homePlayer.lastGridY = homePlayer.gridY
+        homePlayer.speed = PLAYER_NORM_SPEED
         
         log(">>> arg 7 = ".. arg[7])
         log(">>> arg 8 =".. arg[8])

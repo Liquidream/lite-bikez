@@ -60,6 +60,8 @@ GAME_WIDTH = 512  -- 16:9 aspect ratio that fits nicely
 GAME_HEIGHT = 288 -- within the default Castle window size
 GAME_SCALE = 3
 
+PLAYER_NORM_SPEED = 100
+
 LEVEL_LIST = {
     "Pillars of Doom",
     "Corridors of Chaos"
