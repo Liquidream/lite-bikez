@@ -89,8 +89,17 @@ function updatePlayerPos(player, dt)
         return
     end
 
+    -- check for "SPEED" boost
+    if love.keyboard.isDown("space") then
+        player.boost = true
+    else
+        player.boost = false
+    end
+
     -- Apply acceleration
-    player.speed = math.min(player.speed + PLAYER_ACC_SPEED, PLAYER_NORM_SPEED)
+    local targetSpeed = player.boost and (PLAYER_NORM_SPEED * 1.5) or PLAYER_NORM_SPEED
+    player.speed = player.speed + ((player.speed < targetSpeed) and 1 or -1)
+    --player.speed = math.min(player.speed + PLAYER_ACC_SPEED, PLAYER_NORM_SPEED)
     -- Update player pos, based on direction
     -- player.diff_x = lerp(player.diff_x, 0, (0.01) * 10 * dt)
     -- player.diff_y = lerp(player.diff_y, 0, (0.01) * 10 * dt)

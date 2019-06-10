@@ -129,6 +129,12 @@ function drawPlayer(player, draw_zoom_scale)
         return 
     end
 
+    -- Bail out if no colours
+    if lastPoint==nil then 
+        log("no lastPoint !!")
+        return 
+    end
+
     -- draw path
     for i=1,player.pointCount do
         local point = player.waypoints[i]
