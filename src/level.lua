@@ -89,6 +89,8 @@ function updatePlayerPos(player, dt)
         return
     end
 
+    -- Apply acceleration
+    player.speed = math.min(player.speed + PLAYER_ACC_SPEED, PLAYER_NORM_SPEED)
     -- Update player pos, based on direction
     -- player.diff_x = lerp(player.diff_x, 0, (0.01) * 10 * dt)
     -- player.diff_y = lerp(player.diff_y, 0, (0.01) * 10 * dt)
