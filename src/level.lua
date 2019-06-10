@@ -40,14 +40,12 @@ function createLevel(levelNum, levelSize, IS_SERVER)
 
     return level
 end
-    -- Store the new level grid
-    -- o.grid = grid
-    -- o.levelSize = levelSize
     
 -- Update grid state, based on player pos/direction/state
 -- (used for Server AND Local copies)
 function updateLevelGrid(player, level)
     if #player.waypoints == 0 then
+        log("no waypoints yet")
         return
     end
     
@@ -58,17 +56,17 @@ function updateLevelGrid(player, level)
     -- Bail out now if not enought data yet
     if (lastPoint_x==nil) then return end
     
-    while lastPoint_x ~= player.x 
-    or lastPoint_y ~= player.y do 
+    while lastPoint_x ~= player.gridX 
+    or lastPoint_y ~= player.gridY do 
         
-        if lastPoint_x ~= player.x then
-            local dx=lastPoint_x-player.x
+        if lastPoint_x ~= player.gridX then
+            local dx=lastPoint_x-player.gridX
             dx=dx/math.abs(dx)
             lastPoint_x = lastPoint_x-dx
         end
 
-        if lastPoint_y ~= player.y then
-            local dy=lastPoint_y-player.y
+        if lastPoint_y ~= player.gridY then
+            local dy=lastPoint_y-player.gridY
             dy=dy/math.abs(dy)
             lastPoint_y = lastPoint_y-dy
         end
@@ -92,16 +90,26 @@ function updatePlayerPos(player, dt)
     -- player.diff_x = lerp(player.diff_x, 0, (0.01) * 10 * dt)
     -- player.diff_y = lerp(player.diff_y, 0, (0.01) * 10 * dt)
 
-    player.x = player.x + player.xDir --* dt --(Can't do until floor position on grid-check)
-    player.y = player.y + player.yDir --* dt
+    player.x = player.x + player.xDir * dt  --(Can't do until floor position on grid-check)
+    player.y = player.y + player.yDir * dt 
+    player.gridX = math.floor(player.x)
+    player.gridY = math.floor(player.y)
 end
 
 -- Update player pos/direction/state
 function checkLevelPlayer(share, player, level)
     
-    -- Abort if player is stationary
-    if player.xDir == 0 and player.yDir == 0 then
-        --log("Player not moving")
+    local lastPoint_x = player.lastGridX
+    local lastPoint_y = player.lastGridY 
+
+    log(">player pos = "..tostring(player.x)..","..tostring(player.y))
+    log(">player gridpos = "..tostring(player.gridX)..","..tostring(player.gridY))
+    log(">player lastpoint = "..tostring(lastPoint_x)..","..tostring(lastPoint_y))
+
+    -- Abort if player is hasn't moved pos since last time
+    if lastPoint_x == player.gridX 
+        and lastPoint_y == player.gridY then
+        log("No change in player pos, aborting check")
         return
     end
 
@@ -117,7 +125,7 @@ function checkLevelPlayer(share, player, level)
     end
     
     -- Check if player has hit level object/boundary
-    local r, g, b = levelData:getPixel(player.x, player.y)
+    local r, g, b = levelData:getPixel(player.gridX, player.gridY)
     local hitObstacle = r > 0 -- red means level obstacles/boundary
     if hitObstacle then
         -- Player has hit obstacle/boundary of game
@@ -126,13 +134,15 @@ function checkLevelPlayer(share, player, level)
     end
 
     -- Check player has hit another Player's trail
-    local blockOwner = level.grid[player.x][player.y]
+    local blockOwner = level.grid[player.gridX][player.gridY]
     if blockOwner > 0 then
         -- Player hit something (someone)
         log("test > "..type(blockOwner))
         log("test > "..blockOwner)
         killPlayer(player, level, share, blockOwner, false)
         return
+    else
+        log("<empty grid cell>")
     end
 
 end

@@ -78,6 +78,10 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
         homePlayer.x = arg[4]
         homePlayer.y = arg[5]
         homePlayer.col = arg[6]
+        homePlayer.gridX = math.floor(homePlayer.x)
+        homePlayer.gridY = math.floor(homePlayer.y)
+        homePlayer.lastGridX = homePlayer.gridX
+        homePlayer.lastGridY = homePlayer.gridY
         
         log(">>> arg 7 = ".. arg[7])
         log(">>> arg 8 =".. arg[8])

@@ -63,6 +63,10 @@ function resetPlayer(player, share, IS_SERVER)
         repeat 
             player.x = math.random(share.levelSize)
             player.y = math.random(share.levelSize/2)
+            player.gridX = player.x
+            player.gridY = player.y
+            player.lastGridX = player.gridX
+            player.lastGridY = player.gridY
             -- check we're in the "safe" zone
             local r, g, b = levelData:getPixel(player.x, player.y)
             local hitObstacle = r > 0 -- red means level obstacles/boundary
@@ -93,6 +97,7 @@ function resetPlayer(player, share, IS_SERVER)
 
 
     log("player pos = "..player.x..","..player.y)
+    log("player gridpos = "..player.gridX..","..player.gridY)
 
     -- Add starting waypoint
     addWaypoint(player)
@@ -103,14 +108,14 @@ end
 
 function addWaypoint(player)
     local point={        
-        x=player.x,
-        y=player.y,
+        x=player.gridX,
+        y=player.gridY,
     }
     log("addWaypoint("..(player.id or "<nil>")..") ="..point.x..","..point.y)
     player.pointCount = player.pointCount + 1
     player.waypoints[player.pointCount] = point
-    player.smoothX = player.x
-    player.smoothY = player.y
+    player.smoothX = player.gridX
+    player.smoothY = player.gridY
 end
 
 
@@ -144,15 +149,15 @@ function drawPlayer(player, draw_zoom_scale)
     --
 
     -- apply client-side player postion "smoothing"
-    local x, y = player.x, player.y
+    local x, y = player.gridX, player.gridY
     if not player.smoothX then
-        player.smoothX = player.x
+        player.smoothX = player.gridX
     end
     if not player.smoothY then
-        player.smoothY = player.y
+        player.smoothY = player.gridY
     end
-    player.smoothX = player.smoothX + 0.4 * (player.x - player.smoothX)
-    player.smoothY = player.smoothY + 0.4 * (player.y - player.smoothY)
+    player.smoothX = player.smoothX + 0.4 * (player.gridX - player.smoothX)
+    player.smoothY = player.smoothY + 0.4 * (player.gridY - player.smoothY)
     player.smoothX = player.smoothX + 0.2 * (x - player.smoothX)
     player.smoothY = player.smoothY + 0.2 * (y - player.smoothY)
 
