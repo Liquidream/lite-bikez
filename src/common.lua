@@ -62,7 +62,9 @@ GAME_SCALE = 3
 
 PLAYER_START_SPEED = 5
 PLAYER_NORM_SPEED = 75
+PLAYER_SLOW_SPEED = 50  -- Speed player goes to AFTER boosting
 PLAYER_ACC_SPEED = 1
+PLAYER_MAX_BOOST = 1000 -- Cap the duration players can boost for
 
 LEVEL_LIST = {
     "Pillars of Doom",
