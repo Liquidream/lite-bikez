@@ -7,6 +7,7 @@ levelDataPath = LEVEL_DATA_LIST[levelName].imgData
 levelGfxPath = LEVEL_DATA_LIST[levelName].imgGfx
 
 function createLevel(levelNum, levelSize, IS_SERVER)
+    log("createLevel()... IS_SERVER="..tostring(IS_SERVER))
     local level={
         levelSize = levelSize,
         grid = {}

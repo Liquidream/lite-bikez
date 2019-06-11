@@ -61,8 +61,8 @@ function resetPlayer(player, share, IS_SERVER)
         -- the server decides the random start position
         -- (and tells the client)        
         repeat 
-            player.x = math.random(share.levelSize)
-            player.y = math.random(share.levelSize/2)
+            player.x = math.random(share.levelSize-1)
+            player.y = math.random(share.levelSize-1)
             player.gridX = player.x
             player.gridY = player.y
             player.lastGridX = player.gridX
@@ -72,7 +72,8 @@ function resetPlayer(player, share, IS_SERVER)
             local r, g, b = levelData:getPixel(player.x, player.y)
             local hitObstacle = r > 0 -- red means level obstacles/boundary
             local inSafeZone = g > 0 -- red means level obstacles/boundary
-        until (not hitObstacle) and inSafeZone
+        until (not hitObstacle) and inSafeZone --or (levelData==nil)
+
         -- now face "inward"
         if math.random(2)>1 then
             player.xDir = (player.x < share.levelSize/2) and 1 or -1
@@ -81,11 +82,6 @@ function resetPlayer(player, share, IS_SERVER)
             player.xDir = 0
             player.yDir = (player.y < share.levelSize/2) and 1 or -1
         end
-        -- local dirs={
-        --     {1,0},{0,1},{-1,0},{0,-1}
-        -- }
-        --local dir=math.random(4)
-        --player.xDir,player.yDir = dirs[dir][1],dirs[dir][2]
 
         -- col based on id
         player.col = player.id * 2

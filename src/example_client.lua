@@ -88,8 +88,9 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
         log(">>> arg 8 =".. arg[8])
         log(">>> arg 9 =".. arg[9])
 
+        log(">>> curr datapath=".. levelDataPath)
         -- new level?
-        if arg[7] ~= levelDataPath then
+        if arg[8] ~= levelDataPath then
             -- level changed!
             levelName = arg[7]
             levelDataPath = arg[8]
