@@ -313,7 +313,7 @@ function client.update(dt)
     screen_shader_input({ time = t() })
     
     -- if DEBUG_MODE then
-    --     log(love.timer.getTime().." - player.dead="..tostring(homePlayer.dead))
+    --     log("dt="..dt)
     -- end
 
     if client.connected
@@ -364,9 +364,12 @@ function client.draw()
     
     if client.connected then
         -- Update camera pos
-        local cam_edge=40
-        camx = homePlayer.x - flr(GAME_WIDTH/(2*zoom_scale))
-        camy = homePlayer.y - flr(GAME_HEIGHT/(2*zoom_scale))
+        local cam_edge=40        
+        
+        --log("p_gridPos = "..homePlayer.gridX..","..homePlayer.gridY)
+
+        camx = homePlayer.gridX - flr(GAME_WIDTH/(2*zoom_scale))
+        camy = homePlayer.gridY - flr(GAME_HEIGHT/(2*zoom_scale))
         camx = mid(-cam_edge, camx, clientPrivate.level.levelSize-(GAME_WIDTH/zoom_scale)+cam_edge)
         camy = mid(-cam_edge, camy, clientPrivate.level.levelSize-(GAME_HEIGHT/zoom_scale)+cam_edge)
         camera(camx*zoom_scale, camy*zoom_scale)

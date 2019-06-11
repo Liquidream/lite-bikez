@@ -106,8 +106,8 @@ function updatePlayerPos(player, dt)
     
     player.x = player.x + player.xDir * dt * player.speed
     player.y = player.y + player.yDir * dt * player.speed
-    player.gridX = math.floor(player.x)
-    player.gridY = math.floor(player.y)    
+    player.gridX = math.floor(player.x + 0.5)
+    player.gridY = math.floor(player.y + 0.5)    
 end
 
 -- Update player pos/direction/state
