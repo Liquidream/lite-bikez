@@ -159,11 +159,18 @@ function drawPlayer(player, draw_zoom_scale)
     if not player.smoothY then
         player.smoothY = player.gridY
     end
-    player.smoothX = player.smoothX + 0.4 * (player.gridX - player.smoothX)
-    player.smoothY = player.smoothY + 0.4 * (player.gridY - player.smoothY)
-    player.smoothX = player.smoothX + 0.2 * (x - player.smoothX)
-    player.smoothY = player.smoothY + 0.2 * (y - player.smoothY)
-
+    
+    -- only apply smoothing to OTHER players, not us
+    if player.id ~= client.id then
+        player.smoothX = player.smoothX + 0.4 * (player.gridX - player.smoothX)
+        player.smoothY = player.smoothY + 0.4 * (player.gridY - player.smoothY)
+        player.smoothX = player.smoothX + 0.2 * (x - player.smoothX)
+        player.smoothY = player.smoothY + 0.2 * (y - player.smoothY)
+    else
+        player.smoothX = player.gridX
+        player.smoothY = player.gridY
+    end
+    
     --"corner"
     rectfill(
         lastPoint.x*draw_zoom_scale, lastPoint.y*draw_zoom_scale,
