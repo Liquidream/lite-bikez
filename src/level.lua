@@ -100,7 +100,7 @@ function updatePlayerPos(player, dt)
     -- Apply acceleration
     local targetSpeed = player.boost and (PLAYER_NORM_SPEED * 1.5) or PLAYER_NORM_SPEED
     player.speed = player.speed + ((player.speed < targetSpeed) and 1 or -1)
-    
+
     -- Update player pos, based on direction
     -- player.diff_x = lerp(player.diff_x, 0, (0.01) * 10 * dt)
     -- player.diff_y = lerp(player.diff_y, 0, (0.01) * 10 * dt)
@@ -138,27 +138,51 @@ function checkLevelPlayer(share, player, level)
         killPlayer(player, level, share, -1, false)
         return
     end
-    
-    -- Check if player has hit level object/boundary
-    local r, g, b = levelData:getPixel(player.gridX, player.gridY)
-    local hitObstacle = r > 0 -- red means level obstacles/boundary
-    if hitObstacle then
-        -- Player has hit obstacle/boundary of game
-        killPlayer(player, level, share, -1, false)
-        return
-    end
 
-    -- Check player has hit another Player's trail
-    local blockOwner = level.grid[player.gridX][player.gridY]
-    if blockOwner > 0 then
-        -- Player hit something (someone)
-        log("test > "..type(blockOwner))
-        log("test > "..blockOwner)
-        killPlayer(player, level, share, blockOwner, false)
-        return
-    else
-        --log("<empty grid cell>")
+    -- now check, pixel by pixel, from player's last known pos
+    
+    -- Bail out now if not enought data yet
+    if (lastPoint_x==nil) then return end
+    while lastPoint_x ~= player.gridX 
+    or lastPoint_y ~= player.gridY do 
+        
+        if lastPoint_x ~= player.gridX then
+            local dx=lastPoint_x-player.gridX
+            dx=dx/math.abs(dx)
+            lastPoint_x = lastPoint_x-dx
+        end
+
+        if lastPoint_y ~= player.gridY then
+            local dy=lastPoint_y-player.gridY
+            dy=dy/math.abs(dy)
+            lastPoint_y = lastPoint_y-dy
+        end
+
+        -- Valid movement
+        --level.grid[lastPoint_x][lastPoint_y] = player.id
+
+        -- Check if player has hit level object/boundary
+        local r, g, b = levelData:getPixel(lastPoint_x, lastPoint_y)
+        local hitObstacle = r > 0 -- red means level obstacles/boundary
+        if hitObstacle then
+            -- Player has hit obstacle/boundary of game
+            killPlayer(player, level, share, -1, false)
+            return
+        end
+    
+        -- Check player has hit another Player's trail
+        local blockOwner = level.grid[lastPoint_x][lastPoint_y]
+        if blockOwner > 0 then
+            -- Player hit something (someone)
+            log("test > "..type(blockOwner))
+            log("test > "..blockOwner)
+            killPlayer(player, level, share, blockOwner, false)
+            return
+        else
+            --log("<empty grid cell>")
+        end
     end
+    
 
 end
 
