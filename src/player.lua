@@ -68,6 +68,7 @@ function resetPlayer(player, share, IS_SERVER)
             player.lastGridX = player.gridX
             player.lastGridY = player.gridY
             player.speed = PLAYER_START_SPEED
+            player.boostCount = 0
             -- check we're in the "safe" zone
             local r, g, b = levelData:getPixel(player.x, player.y)
             local hitObstacle = r > 0 -- red means level obstacles/boundary

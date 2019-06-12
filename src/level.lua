@@ -91,10 +91,19 @@ function updatePlayerPos(player, dt)
     end
 
     -- check for "SPEED" boost
+    player.boost = false
     if love.keyboard.isDown("space") then
-        player.boost = true
-    else
-        player.boost = false
+        -- Boost pressed
+        player.boostCount = player.boostCount+1
+        --log("boostCount="..player.boostCount)
+        if player.boostCount < PLAYER_MAX_BOOST then
+            player.boost = true            
+        end
+    end
+    
+    -- Boost comedown
+    if not player.boost then
+        player.boostCount = math.max(player.boostCount-1, 0)
     end
 
     -- Apply acceleration
