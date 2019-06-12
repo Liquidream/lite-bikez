@@ -170,7 +170,7 @@ function drawPlayer(player, draw_zoom_scale)
         player.smoothX = player.gridX
         player.smoothY = player.gridY
     end
-    
+
     --"corner"
     rectfill(
         lastPoint.x*draw_zoom_scale, lastPoint.y*draw_zoom_scale,
@@ -184,6 +184,14 @@ function drawPlayer(player, draw_zoom_scale)
     rectfill(
         player.smoothX*draw_zoom_scale, player.smoothY*draw_zoom_scale,
             (player.smoothX*draw_zoom_scale)+draw_zoom_scale, (player.smoothY*draw_zoom_scale)+draw_zoom_scale, 1)
+
+    -- Boost effect?
+    if player.boost then
+        pset(
+            (player.smoothX + rnd(6+draw_zoom_scale)-3)*draw_zoom_scale,
+            (player.smoothY + rnd(6+draw_zoom_scale)-3)*draw_zoom_scale,
+            1)
+    end
 end
 
 return Player

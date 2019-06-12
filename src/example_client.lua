@@ -533,13 +533,6 @@ function love.keypressed( key, scancode, isrepeat )
             homePlayer.yDir = 1
         end
 
-        -- DEBUG
-        if DEBUG_MODE and key == "space" then
-            homePlayer.xDir = 0
-            homePlayer.yDir = 0
-        end
-
-
         if homePlayer.xDir ~= homePlayer.last_xDir
         and homePlayer.yDir ~= homePlayer.last_yDir then
             -- Now record player pos-change
