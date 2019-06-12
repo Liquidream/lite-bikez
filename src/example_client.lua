@@ -78,13 +78,20 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
         homePlayer.x = arg[4]
         homePlayer.y = arg[5]
         homePlayer.col = arg[6]
+        homePlayer.gridX = math.floor(homePlayer.x)
+        homePlayer.gridY = math.floor(homePlayer.y)
+        homePlayer.lastGridX = homePlayer.gridX
+        homePlayer.lastGridY = homePlayer.gridY
+        homePlayer.speed = PLAYER_START_SPEED
+        homePlayer.boostCount = 0
         
         log(">>> arg 7 = ".. arg[7])
         log(">>> arg 8 =".. arg[8])
         log(">>> arg 9 =".. arg[9])
 
+        log(">>> curr datapath=".. levelDataPath)
         -- new level?
-        if arg[7] ~= levelDataPath then
+        if arg[8] ~= levelDataPath then
             -- level changed!
             levelName = arg[7]
             levelDataPath = arg[8]
@@ -308,7 +315,7 @@ function client.update(dt)
     screen_shader_input({ time = t() })
     
     -- if DEBUG_MODE then
-    --     log(love.timer.getTime().." - player.dead="..tostring(homePlayer.dead))
+    --     log("dt="..dt)
     -- end
 
     if client.connected
@@ -359,9 +366,12 @@ function client.draw()
     
     if client.connected then
         -- Update camera pos
-        local cam_edge=40
-        camx = homePlayer.x - flr(GAME_WIDTH/(2*zoom_scale))
-        camy = homePlayer.y - flr(GAME_HEIGHT/(2*zoom_scale))
+        local cam_edge=40        
+        
+        --log("p_gridPos = "..homePlayer.gridX..","..homePlayer.gridY)
+
+        camx = homePlayer.gridX - flr(GAME_WIDTH/(2*zoom_scale))
+        camy = homePlayer.gridY - flr(GAME_HEIGHT/(2*zoom_scale))
         camx = mid(-cam_edge, camx, clientPrivate.level.levelSize-(GAME_WIDTH/zoom_scale)+cam_edge)
         camy = mid(-cam_edge, camy, clientPrivate.level.levelSize-(GAME_HEIGHT/zoom_scale)+cam_edge)
         camera(camx*zoom_scale, camy*zoom_scale)
@@ -523,13 +533,6 @@ function love.keypressed( key, scancode, isrepeat )
             homePlayer.xDir = 0
             homePlayer.yDir = 1
         end
-
-        -- DEBUG
-        if DEBUG_MODE and key == "space" then
-            homePlayer.xDir = 0
-            homePlayer.yDir = 0
-        end
-
 
         if homePlayer.xDir ~= homePlayer.last_xDir
         and homePlayer.yDir ~= homePlayer.last_yDir then

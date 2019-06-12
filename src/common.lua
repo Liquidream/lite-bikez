@@ -60,6 +60,12 @@ GAME_WIDTH = 512  -- 16:9 aspect ratio that fits nicely
 GAME_HEIGHT = 288 -- within the default Castle window size
 GAME_SCALE = 3
 
+PLAYER_START_SPEED = 5
+PLAYER_NORM_SPEED = 75
+PLAYER_SLOW_SPEED = 50  -- Speed player goes to AFTER boosting
+PLAYER_ACC_SPEED = 1
+PLAYER_MAX_BOOST = 100 -- Cap the duration players can boost for
+
 LEVEL_LIST = {
     "Pillars of Doom",
     "Corridors of Chaos"

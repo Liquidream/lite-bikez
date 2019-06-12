@@ -161,7 +161,7 @@ function server.update(dt)
 
                 -- Have to do this on the server,
                 -- as it's a collation of all player trails
-                -- (but also doing it at )
+                -- (but also doing it at client too)
                 updateLevelGrid(share.players[id], share.level)
 
                 -- -- Check for deaths
