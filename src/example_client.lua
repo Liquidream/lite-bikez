@@ -543,7 +543,7 @@ function love.keypressed( key, scancode, isrepeat )
             -- (Sends the player's input DIRECTLY to server
             --  seems a *bit* faster/more responsive)
             log("send player update...")
-            client.send("player_update", homePlayer.xDir, homePlayer.yDir, homePlayer.x, homePlayer.y)
+            client.send("player_update", homePlayer.xDir, homePlayer.yDir, homePlayer.x, homePlayer.y, homePlayer.gridX, homePlayer.gridY)
         end
 
     end

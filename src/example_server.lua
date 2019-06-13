@@ -76,6 +76,8 @@ function server.receive(id, ...) -- Called when client with `id` does `client.se
         player.yDir = arg[3]
         player.x = arg[4]
         player.y = arg[5]
+        player.gridX = arg[6]
+        player.gridY = arg[7]
         -- Now record player pos-change
         addWaypoint(player)
 
@@ -158,7 +160,8 @@ function server.update(dt)
                     player.x = home.x
                     player.y = home.y
                     player.gridX = home.gridX
-                    player.gridY = home.gridY                  
+                    player.gridY = home.gridY
+                    player.boost = home.boost
                 end
 
                 -- Have to do this on the server,

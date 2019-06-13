@@ -155,21 +155,24 @@ function drawPlayer(player, draw_zoom_scale)
     -- apply client-side player postion "smoothing"
     local x, y = player.gridX, player.gridY
     if not player.smoothX then
-        player.smoothX = player.gridX
+        player.smoothX = x
     end
     if not player.smoothY then
-        player.smoothY = player.gridY
+        player.smoothY = y
     end
     
     -- only apply smoothing to OTHER players, not us
     if player.id ~= client.id then
-        player.smoothX = player.smoothX + 0.4 * (player.gridX - player.smoothX)
-        player.smoothY = player.smoothY + 0.4 * (player.gridY - player.smoothY)
+        --
+        -- TODO: Check this, coz it SEEMS wrong/bloated!
+        --
+        player.smoothX = player.smoothX + 0.4 * (x - player.smoothX)
+        player.smoothY = player.smoothY + 0.4 * (y - player.smoothY)
         player.smoothX = player.smoothX + 0.2 * (x - player.smoothX)
         player.smoothY = player.smoothY + 0.2 * (y - player.smoothY)
     else
-        player.smoothX = player.gridX
-        player.smoothY = player.gridY
+        player.smoothX = x
+        player.smoothY = y
     end
 
     --"corner"
