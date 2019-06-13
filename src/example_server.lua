@@ -157,6 +157,8 @@ function server.update(dt)
                 then
                     player.x = home.x
                     player.y = home.y
+                    player.gridX = home.gridX
+                    player.gridY = home.gridY                  
                 end
 
                 -- Have to do this on the server,

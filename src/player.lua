@@ -119,19 +119,19 @@ end
 
 function drawPlayer(player, draw_zoom_scale)
     local lastPoint = player.waypoints[1]
-
+    
     -- Bail out if no colours
     if player.col==nil then 
         log("no col !!")
         return 
     end
 
-    -- Bail out if no colours
+    -- Bail out if waypoint
     if lastPoint==nil then 
         log("no lastPoint !!")
         return 
     end
-
+    
     -- draw path
     for i=1,player.pointCount do
         local point = player.waypoints[i]
