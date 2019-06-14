@@ -19,12 +19,13 @@ The GOAL is... to survive!
 ui.section("Controls", function()
 
     ui.markdown([[
-## Player Controls
-⬆⬇⬅➡ = Turn Bike
-[SPACE] = Boost!
+### Player Controls
+**⬆⬇⬅➡** = *Turn Bike*
 
-## Advanced controls
-S = Toggle GFX Shader
+**\[SPACE\]** = *Boost!*
+
+### Advanced controls
+**S** = *Toggle GFX Shader*
 ]])
 
 end)
