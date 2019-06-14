@@ -16,6 +16,19 @@ Welcome to The Grid.
 The GOAL is... to survive!
 ]])
 
+ui.section("Controls", function()
+
+    ui.markdown([[
+## Player Controls
+⬆⬇⬅➡ = Turn Bike
+[SPACE] = Boost!
+
+## Advanced controls
+S = Toggle GFX Shader
+]])
+
+end)
+
     -- Only if "host" of session 
     -- (TODO: Allow subsequent hosts!)
 

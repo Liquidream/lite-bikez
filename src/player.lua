@@ -184,10 +184,9 @@ function drawPlayer(player, draw_zoom_scale)
 
     -- Boost effect?
     if player.boost then
-        pset(
-            (player.smoothX + rnd(6+draw_zoom_scale)-3)*draw_zoom_scale,
-            (player.smoothY + rnd(6+draw_zoom_scale)-3)*draw_zoom_scale,
-            1)
+        local px = (player.smoothX + rnd(6+draw_zoom_scale)-2-draw_zoom_scale)*draw_zoom_scale
+        local py = (player.smoothY + rnd(6+draw_zoom_scale)-2.25-draw_zoom_scale)*draw_zoom_scale
+        rectfill(px, py, px+draw_zoom_scale/2, py+draw_zoom_scale/2, player.col)
     end
 end
 
