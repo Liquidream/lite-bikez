@@ -353,6 +353,8 @@ function client.update(dt)
             if homePlayer.dead then
                 -- tell the server we died
                 client.send("player_dead", homePlayer.killedBy)
+                -- clear local player grid data
+                remove_player_from_grid(clientPrivate.level, homePlayer)
             end
         end
     end
@@ -543,7 +545,7 @@ function love.keypressed( key, scancode, isrepeat )
             -- (Sends the player's input DIRECTLY to server
             --  seems a *bit* faster/more responsive)
             log("send player update...")
-            client.send("player_update", homePlayer.xDir, homePlayer.yDir, homePlayer.x, homePlayer.y)
+            client.send("player_update", homePlayer.xDir, homePlayer.yDir, homePlayer.x, homePlayer.y, homePlayer.gridX, homePlayer.gridY)
         end
 
     end

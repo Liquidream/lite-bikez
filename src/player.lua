@@ -30,16 +30,9 @@ function killPlayer(player, level, share, killedBy, IS_SERVER)
         player.smoothX = 0
         player.smoothY = 0
     
-        log("clear the player grid data...")
+        -- clear player grid data
+        remove_player_from_grid(level, player)
 
-        -- clear player's data from grid
-        for r = 1,level.levelSize do
-            for c = 1,level.levelSize do
-                if level.grid[c][r] == player.id then
-                    level.grid[c][r] = 0
-                end
-            end
-        end
 
     end
 end
@@ -119,19 +112,19 @@ end
 
 function drawPlayer(player, draw_zoom_scale)
     local lastPoint = player.waypoints[1]
-
+    
     -- Bail out if no colours
     if player.col==nil then 
         log("no col !!")
         return 
     end
 
-    -- Bail out if no colours
+    -- Bail out if waypoint
     if lastPoint==nil then 
         log("no lastPoint !!")
         return 
     end
-
+    
     -- draw path
     for i=1,player.pointCount do
         local point = player.waypoints[i]
@@ -155,21 +148,24 @@ function drawPlayer(player, draw_zoom_scale)
     -- apply client-side player postion "smoothing"
     local x, y = player.gridX, player.gridY
     if not player.smoothX then
-        player.smoothX = player.gridX
+        player.smoothX = x
     end
     if not player.smoothY then
-        player.smoothY = player.gridY
+        player.smoothY = y
     end
     
     -- only apply smoothing to OTHER players, not us
     if player.id ~= client.id then
-        player.smoothX = player.smoothX + 0.4 * (player.gridX - player.smoothX)
-        player.smoothY = player.smoothY + 0.4 * (player.gridY - player.smoothY)
+        --
+        -- TODO: Check this, coz it SEEMS wrong/bloated!
+        --
+        player.smoothX = player.smoothX + 0.4 * (x - player.smoothX)
+        player.smoothY = player.smoothY + 0.4 * (y - player.smoothY)
         player.smoothX = player.smoothX + 0.2 * (x - player.smoothX)
         player.smoothY = player.smoothY + 0.2 * (y - player.smoothY)
     else
-        player.smoothX = player.gridX
-        player.smoothY = player.gridY
+        player.smoothX = x
+        player.smoothY = y
     end
 
     --"corner"
@@ -188,10 +184,9 @@ function drawPlayer(player, draw_zoom_scale)
 
     -- Boost effect?
     if player.boost then
-        pset(
-            (player.smoothX + rnd(6+draw_zoom_scale)-3)*draw_zoom_scale,
-            (player.smoothY + rnd(6+draw_zoom_scale)-3)*draw_zoom_scale,
-            1)
+        local px = (player.smoothX + rnd(6+draw_zoom_scale)-2-draw_zoom_scale)*draw_zoom_scale
+        local py = (player.smoothY + rnd(6+draw_zoom_scale)-2.25-draw_zoom_scale)*draw_zoom_scale
+        rectfill(px, py, px+draw_zoom_scale/2, py+draw_zoom_scale/2, player.col)
     end
 end
 

@@ -77,6 +77,19 @@ function updateLevelGrid(player, level)
     end
 end
 
+function remove_player_from_grid(level, player)
+    log("clear the player grid data...")
+
+    -- clear player's data from grid
+    for r = 1,level.levelSize do
+        for c = 1,level.levelSize do
+            if level.grid[c][r] == player.id then
+                level.grid[c][r] = 0
+            end
+        end
+    end
+end
+
 -- Update player pos/direction/state
 function updatePlayerPos(player, dt)
     -- remember last pos
