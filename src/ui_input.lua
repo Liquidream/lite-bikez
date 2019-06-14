@@ -18,29 +18,31 @@ The GOAL is... to survive!
 
     -- Only if "host" of session 
     -- (TODO: Allow subsequent hosts!)
-    if home and home.id == 1 
-      or not USE_CASTLE_CONFIGs then
 
-    ui.markdown([[
+    if (client.home and client.home.id==1)
+      or not USE_CASTLE_CONFIG 
+      then
+
+        ui.markdown([[
 #### Level Select
 ]])
+        ui.dropdown("Choose the battle arena:", levelName, LEVEL_LIST,
+            { onChange=function(value) 
+                -- Get details of selected level            
+                log("value="..value)
+                -- levelDataPath = LEVEL_DATA_LIST[value].imgData
+                -- levelGfxPath = LEVEL_DATA_LIST[value].imgGfx
 
-    ui.dropdown("Choose the battle arena:", levelName, LEVEL_LIST,
-        { onChange=function(value) 
-            -- Get details of selected level            
-            log("value="..value)
-            -- levelDataPath = LEVEL_DATA_LIST[value].imgData
-            -- levelGfxPath = LEVEL_DATA_LIST[value].imgGfx
-
-            client.send("level_select", 
-                value,
-                LEVEL_DATA_LIST[value].imgData,
-                LEVEL_DATA_LIST[value].imgGfx)
-        end}
-    )
+                client.send("level_select", 
+                    value,
+                    LEVEL_DATA_LIST[value].imgData,
+                    LEVEL_DATA_LIST[value].imgGfx)
+            end}
+        )
     
-    ui.markdown('![](https://raw.githubusercontent.com/Liquidream/lite-bikez/master/src/'..levelGfxPath..')')
-    --ui.markdown('![](https://api.castle.games/api/hosted/@liquidream/lite-bikez-wip/src/'..levelGfxPath..')')
+        ui.markdown('![]('..levelGfxPath..')')    
+    
+    end -- if "host"
 
     ui.markdown([[
 #### Other Settings
@@ -63,6 +65,7 @@ The GOAL is... to survive!
         if refresh then update_shader_parameters() end
 
     end)
-   end
+
+
 
 end
