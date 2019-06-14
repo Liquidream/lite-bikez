@@ -353,6 +353,8 @@ function client.update(dt)
             if homePlayer.dead then
                 -- tell the server we died
                 client.send("player_dead", homePlayer.killedBy)
+                -- clear local player grid data
+                remove_player_from_grid(clientPrivate.level, homePlayer)
             end
         end
     end

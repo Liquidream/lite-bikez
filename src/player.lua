@@ -30,16 +30,9 @@ function killPlayer(player, level, share, killedBy, IS_SERVER)
         player.smoothX = 0
         player.smoothY = 0
     
-        log("clear the player grid data...")
+        -- clear player grid data
+        remove_player_from_grid(level, player)
 
-        -- clear player's data from grid
-        for r = 1,level.levelSize do
-            for c = 1,level.levelSize do
-                if level.grid[c][r] == player.id then
-                    level.grid[c][r] = 0
-                end
-            end
-        end
 
     end
 end
