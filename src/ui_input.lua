@@ -54,9 +54,14 @@ end)
             end}
         )
     
-        ui.markdown('![]('..levelGfxPath..')')    
-    
+    else
+        ui.markdown([[
+#### Current Level
+    ]])
+        
     end -- if "host"
+
+    ui.markdown('![]('..levelGfxPath..')')    
 
     ui.markdown([[
 #### Other Settings
