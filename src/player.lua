@@ -189,9 +189,10 @@ function drawPlayer(player, draw_zoom_scale)
             (player.smoothX*draw_zoom_scale)+draw_zoom_scale+draw_zoom_scale, (player.smoothY*draw_zoom_scale)+draw_zoom_scale+draw_zoom_scale, 1)
         
         -- particles
-        local px = (player.smoothX + rnd(6+draw_zoom_scale)-2-draw_zoom_scale)*draw_zoom_scale
-        local py = (player.smoothY + rnd(6+draw_zoom_scale)-2.25-draw_zoom_scale)*draw_zoom_scale
-        rectfill(px, py, px+draw_zoom_scale/2, py+draw_zoom_scale/2, player.col)
+        local px = (player.smoothX + rnd(6+draw_zoom_scale)-1.5-draw_zoom_scale)*draw_zoom_scale
+        local py = (player.smoothY + rnd(6+draw_zoom_scale)-1.5-draw_zoom_scale)*draw_zoom_scale
+        local colNum=irnd(#ak54Paired)
+        rectfill(px, py, px+draw_zoom_scale/2, py+draw_zoom_scale/2, ak54Paired[colNum]) --player.col)
     end
 end
 

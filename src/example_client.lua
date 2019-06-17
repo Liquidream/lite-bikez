@@ -153,9 +153,14 @@ function client.load()
     --use_palette(palettes.pico8)
     --set_background_color(0)
 
+    network.async(function()
+        -- load drawing data
+        log("loading title asset images...")
+        load_png("titlegfx-bg", "assets/level-1-bg.png", nil, true)
+    end)
 
     -- new font!
-    load_font ('assets/MatchupPro.ttf', 16, 'corefont', true)
+    load_font('assets/MatchupPro.ttf', 16, 'corefont', true)
 
     -- default player to dead
     homePlayer.dead = true
@@ -454,18 +459,18 @@ function drawUI(players)
                 end
             end
             
-
-
             playerPos = playerPos + 1
         end
     end
 
     if client.connected then
         -- Draw our ping
-        --love.graphics.setColor(1,1,1)
-      --  print('ping: ' .. client.getPing(), 2, 2, 51)
+        print('Ping: ' .. client.getPing(), 2, 2, 24)
     else
-        print('not connected', 2, 2, 24)
+        -- draw background gfx
+        drawTitleBG(512, zoom_scale)
+
+        print('Connecting...', GAME_WIDTH/2-35, GAME_HEIGHT/2+50, 24)
     end
 
     -- did we die?
@@ -474,7 +479,11 @@ function drawUI(players)
         print('YOU DIED', GAME_WIDTH/2, GAME_HEIGHT/2, 51)
         local msg = ""
         if homePlayer.killedBy > 0 then
-            msg = share.players[homePlayer.killedBy].me.shortname.." squished you!"
+            if homePlayer.killedBy ~= homePlayer.id then
+                msg = share.players[homePlayer.killedBy].me.shortname.." squished you!"
+            else
+                msg = "You squished yourself!"
+            end
         else
             msg = "You hit a wall!"
         end
@@ -487,6 +496,13 @@ function drawUI(players)
 
     -- reset trans again
     palt(0,true)
+end
+
+function drawTitleBG(levelSize, draw_zoom_scale)    
+    -- draw background gfx
+    if surface_exists("titlegfx-bg") then
+        spr_sheet("titlegfx-bg", -16,-16, levelSize*draw_zoom_scale,levelSize*draw_zoom_scale)
+    end
 end
 
 

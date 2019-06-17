@@ -209,10 +209,16 @@ function checkLevelPlayer(share, player, level)
 end
 
 
+function drawBG(levelSize, draw_zoom_scale)    
+    -- draw background gfx
+    spr_sheet("levelgfx-bg", 0,0, levelSize*draw_zoom_scale,levelSize*draw_zoom_scale)
+end
+
 function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel, draw_zoom_scale)
     
     -- draw background gfx
-    spr_sheet("levelgfx-bg", 0,0, level.levelSize*draw_zoom_scale,level.levelSize*draw_zoom_scale)
+    drawBG(levelSize, draw_zoom_scale)
+    --spr_sheet("levelgfx-bg", 0,0, level.levelSize*draw_zoom_scale,level.levelSize*draw_zoom_scale)
        
     -- draw players
     if levelSize and otherPlayers and homePlayer then
