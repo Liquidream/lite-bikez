@@ -96,9 +96,10 @@ function createMessage(share, messageText, col, taggedIds)
     share.messageCount = share.messageCount + 1
     -- cap number of messages
     if share.messageCount > MAX_MESSAGES then
+        share.messageCount = MAX_MESSAGES
         -- move all messages up one slot
         for i=1,share.messageCount-1 do
-            share.messages[i+1] = share.messages[i]
+            share.messages[i] = share.messages[i+1]
         end
     end
     -- add latest message
