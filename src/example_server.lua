@@ -124,6 +124,9 @@ function server.load()
     share.levelSize = serverPrivate.level.levelSize
     -- create players
     share.players = {}
+    -- create message notifications/history (kills/deaths/etc.)
+    share.messages={}
+    share.messageCount=0
 end
 
 function server.update(dt)

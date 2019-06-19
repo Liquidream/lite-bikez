@@ -491,6 +491,15 @@ function drawUI(players)
 
     end
 
+    -- draw game message history
+    if share.messages then
+        for i=1,#share.messages do
+            local msg = share.messages[i]
+            local ourMsg = taggedIds[1]==homePlayer.id or taggedIds[2]==homePlayer.id
+            print(msg.text, GAME_WIDTH-100, GAME_HEIGHT-20-(i*10), ourMsg and msg.col or msg.col-1)
+        end
+    end
+
     print('FPS: ' .. love.timer.getFPS(), 10, GAME_HEIGHT-20, 51)
 
 

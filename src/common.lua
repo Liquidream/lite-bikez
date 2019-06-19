@@ -66,6 +66,8 @@ PLAYER_SLOW_SPEED = 50  -- Speed player goes to AFTER boosting
 PLAYER_ACC_SPEED = 1
 PLAYER_MAX_BOOST = 100 -- Cap the duration players can boost for
 
+MAX_MESSAGES = 8
+
 LEVEL_LIST = {
     "Pillars of Doom",
     "Corridors of Chaos"
@@ -80,6 +82,27 @@ LEVEL_DATA_LIST = {
         imgData="assets/level-2-data.png",
         imgGfx="assets/level-2-gfx.png" },    
 }
+
+--
+-- Global functions
+--
+function createMessage(share, messageText, col, taggedIds)
+    local msg = {
+        text=messageText,
+        col=col or 24,
+        taggedIds=taggedIds,
+        created=love.timer.getTime()
+    }
+    share.messageCount = share.messageCount + 1
+    -- cap number of messages
+    if share.messageCount > MAX_MESSAGES then
+        table.remove(share.messages, 1)
+    end
+    -- add latest message
+    table.insert(share.messages, msg)
+end
+
+
 --
 -- Helper Functions
 --
