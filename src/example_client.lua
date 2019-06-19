@@ -492,11 +492,12 @@ function drawUI(players)
     end
 
     -- draw game message history
-    if share.messages then
-        for i=1,#share.messages do
+    if share.messageCount and share.messageCount > 0 then
+        local yOff = share.messageCount*8
+        for i=1,share.messageCount do
             local msg = share.messages[i]
-            local ourMsg = taggedIds[1]==homePlayer.id or taggedIds[2]==homePlayer.id
-            print(msg.text, GAME_WIDTH-100, GAME_HEIGHT-20-(i*10), ourMsg and msg.col or msg.col-1)
+            local ourMsg = msg.taggedIds[1]==homePlayer.id or msg.taggedIds[2]==homePlayer.id
+            print(msg.text, GAME_WIDTH-165, GAME_HEIGHT-20-yOff+(i*9), ourMsg and msg.col or msg.col-1)
         end
     end
 
