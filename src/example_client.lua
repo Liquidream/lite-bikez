@@ -453,7 +453,7 @@ function drawUI(players)
                 pprint(string.sub(player.me.shortname,1,8),
                         x+12-((#player.me.shortname/2)*7), G+6, 51)
                 -- draw player score
-                print(player.score, x+4, G+16, 51)
+                pprint(player.score, x+4, G+16, 51)
             else
                 -- ...otherwise, draw a shape with player col
                 love.graphics.circle('fill', x + 0.5 * G, y + 0.5 * G, 0.5 * G)
