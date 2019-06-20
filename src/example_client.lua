@@ -418,6 +418,7 @@ function drawUI(players)
     palt(0,false)
 
     -- Make text more "readable"
+    --print("!!!",50,1,1)
     printp(0x0330, 0x3123, 0x0330, 0x0, 0x0)
     printp_color(5, 7, 0)
     
@@ -449,10 +450,10 @@ function drawUI(players)
                 local w,h = sugar.gfx.surface_size(playerPhotos[player.id])
                 sugar.gfx.sspr(0, 0, w, h, x, y,  G, G)
                 -- draw a shortened version of player name (if longer than 1 chars)
-                pprint(string.sub(player.me.shortname,1,8),
+                print(string.sub(player.me.shortname,1,8),
                         x+12-((#player.me.shortname/2)*7), G+6, 51)
                 -- draw player score
-                pprint(player.score, x+4, G+16, 51)
+                print(player.score, x+4, G+16, 51)
             else
                 -- ...otherwise, draw a shape with player col
                 love.graphics.circle('fill', x + 0.5 * G, y + 0.5 * G, 0.5 * G)
@@ -474,13 +475,13 @@ function drawUI(players)
         -- draw background gfx
         drawTitleBG(512, zoom_scale)
 
-        pprint('Connecting...', GAME_WIDTH/2-35, GAME_HEIGHT/2+50, 24)
+        print('Connecting...', GAME_WIDTH/2-35, GAME_HEIGHT/2+50, 24)
     end
 
     -- did we die?
     if homePlayer.dead and homePlayer.killedBy then
         -- display info about our "killer"
-        pprint('YOU DIED', GAME_WIDTH/2, GAME_HEIGHT/2, 51)
+        print('YOU DIED', GAME_WIDTH/2, GAME_HEIGHT/2, 51)
         local msg = ""
         if homePlayer.killedBy > 0 then
             if homePlayer.killedBy ~= homePlayer.id then
@@ -491,7 +492,7 @@ function drawUI(players)
         else
             msg = "You hit a wall!"
         end
-        pprint(msg, GAME_WIDTH/2-(#msg/2*4), GAME_HEIGHT/2+20, 51)
+        print(msg, GAME_WIDTH/2-(#msg/2*4), GAME_HEIGHT/2+20, 51)
 
     end
 
