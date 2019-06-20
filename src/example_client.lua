@@ -450,7 +450,7 @@ function drawUI(players)
                 local w,h = sugar.gfx.surface_size(playerPhotos[player.id])
                 sugar.gfx.sspr(0, 0, w, h, x, y,  G, G)
                 -- draw a shortened version of player name (if longer than 1 chars)
-                print(string.sub(player.me.shortname,1,8),
+                pprint(string.sub(player.me.shortname,1,8),
                         x+12-((#player.me.shortname/2)*7), G+6, 51)
                 -- draw player score
                 print(player.score, x+4, G+16, 51)
@@ -475,7 +475,7 @@ function drawUI(players)
         -- draw background gfx
         drawTitleBG(512, zoom_scale)
 
-        print('Connecting...', GAME_WIDTH/2-35, GAME_HEIGHT/2+50, 24)
+        pprint('Connecting...', GAME_WIDTH/2-35, GAME_HEIGHT/2+50, 24)
     end
 
     -- did we die?
