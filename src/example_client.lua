@@ -425,7 +425,8 @@ function drawUI(players)
     -- Players    
     if players then
         local playerPos = 1
-        local xoff=100
+        local G=25
+        local xoff=(GAME_WIDTH /2) + G - (#players * G+2)
         for clientId, player in pairs(players) do
             -- Does player have a photo?
             if player.me 
@@ -435,7 +436,6 @@ function drawUI(players)
             end
 
 
-            local G=25
             local x=xoff+(playerPos-1)*(G+10)
             local y=2
             --
@@ -453,7 +453,7 @@ function drawUI(players)
                 pprint(string.sub(player.me.shortname,1,8),
                         x+12-((#player.me.shortname/2)*7), G+6, 51)
                 -- draw player score
-                pprint(player.score, x+4, G+16, 51)
+                print(player.score, x+5, G+18, 51)
             else
                 -- ...otherwise, draw a shape with player col
                 love.graphics.circle('fill', x + 0.5 * G, y + 0.5 * G, 0.5 * G)
