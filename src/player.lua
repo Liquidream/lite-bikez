@@ -158,7 +158,9 @@ function drawPlayer(player, draw_zoom_scale)
     --
 
     -- apply client-side player postion "smoothing"
-    local x, y = player.gridX, player.gridY
+    --local x, y = player.gridX, player.gridY
+    local x = player.xDir~=0 and player.x or player.gridX
+    local y = player.yDir~=0 and player.y or player.gridY
     if not player.smoothX then
         player.smoothX = x
     end
