@@ -367,8 +367,11 @@ end
 
 function client.draw()
     -- Draw game to canvas/screen
-    cls() --53
-    --cls(1)
+    cls()
+    
+    
+    -- Rémy's fix for "black display" issue
+    color(1) color(2)
 
     
     if client.connected then
@@ -453,7 +456,7 @@ function drawUI(players)
                 pprint(string.sub(player.me.shortname,1,8),
                         x+12-((#player.me.shortname/2)*7), G+6, 51)
                 -- draw player score
-                print(player.score, x+7, G+18, 51)
+                pprint(player.score, x+7, G+18, 51)
             else
                 -- ...otherwise, draw a shape with player col
                 love.graphics.circle('fill', x + 0.5 * G, y + 0.5 * G, 0.5 * G)
