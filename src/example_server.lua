@@ -44,7 +44,8 @@ function server.connect(id) -- Called on connect from client with `id`
 
     local newPlayer = { 
         id = id,
-        score = 0 
+        score = 0,
+        announce = false
     }
     log("server reset")
     resetPlayer(newPlayer, share, true)
@@ -60,7 +61,13 @@ end
 function server.disconnect(id) -- Called on disconnect from client with `id`
     log('client ' .. id .. ' disconnected')
     
+    
     killPlayer(share.players[id], serverPrivate.level, share, id, true)
+    
+    -- announce player left
+    createMessage(share, share.players[id].me.shortname.." left the game", 
+                    37, { id, id })
+
     share.players[id]=nil
 end
 
@@ -186,6 +193,13 @@ function server.update(dt)
                     player.x, player.y, player.col,
                     levelName, levelDataPath, levelGfxPath)
 
+            end
+
+            if not player.announced and player.me then
+                -- announce new player
+                createMessage(share, player.me.shortname.." joined the game", 
+                    18, { player.id, player.id })
+                player.announced = true
             end
         end
     end

@@ -66,7 +66,8 @@ PLAYER_SLOW_SPEED = 50  -- Speed player goes to AFTER boosting
 PLAYER_ACC_SPEED = 1
 PLAYER_MAX_BOOST = 100 -- Cap the duration players can boost for
 
-MAX_MESSAGES = 8
+MAX_MESSAGES = 6
+MAX_MSG_LIFE = 10
 
 LEVEL_LIST = {
     "Pillars of Doom",
@@ -89,7 +90,7 @@ LEVEL_DATA_LIST = {
 function createMessage(share, messageText, col, taggedIds)
     local msg = {
         text=messageText,
-        col=col or 24,
+        col=col or 51,
         taggedIds=taggedIds,
         created=love.timer.getTime()
     }
@@ -105,7 +106,6 @@ function createMessage(share, messageText, col, taggedIds)
     -- add latest message
     share.messages[share.messageCount] = msg
 end
-
 
 --
 -- Helper Functions

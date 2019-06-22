@@ -50,7 +50,7 @@ function client.connect() -- Called on connect from serverfo
     -- home.col = serverPlayer.col
     --log("col type:"..type(homePlayer.col))
     
-    -- Photo
+    -- Player info
     home.me = castle.user.getMe and castle.user.getMe()
 
     -- Name
@@ -367,8 +367,11 @@ end
 
 function client.draw()
     -- Draw game to canvas/screen
-    cls() --53
-    --cls(1)
+    cls()
+    
+    
+    -- Rémy's fix for "black display" issue
+    color(1) color(2)
 
     
     if client.connected then
@@ -416,11 +419,17 @@ function drawUI(players)
     -- Draw UI (inc. Player info)
     --pal()
     palt(0,false)
+
+    -- Make text more "readable"
+    --print("!!!",50,1,1)
+    printp(0x0330, 0x3123, 0x0330, 0x0, 0x0)
+    printp_color(5, 7, 0)
     
     -- Players    
     if players then
         local playerPos = 1
-        local xoff=100
+        local G=25
+        local xoff=(GAME_WIDTH /2) + G/2 - (#players * G+2)
         for clientId, player in pairs(players) do
             -- Does player have a photo?
             if player.me 
@@ -430,7 +439,6 @@ function drawUI(players)
             end
 
 
-            local G=25
             local x=xoff+(playerPos-1)*(G+10)
             local y=2
             --
@@ -445,38 +453,35 @@ function drawUI(players)
                 local w,h = sugar.gfx.surface_size(playerPhotos[player.id])
                 sugar.gfx.sspr(0, 0, w, h, x, y,  G, G)
                 -- draw a shortened version of player name (if longer than 1 chars)
-                print(string.sub(player.me.shortname,1,8),
-                        x+12-((#player.me.shortname/2)*7), G+6, 51)
+                pprint(string.sub(player.me.shortname,1,8),
+                        x+12-((#player.me.shortname/2)*7), G+6, 28)
                 -- draw player score
-                print(player.score, x+4, G+16, 51)
+                pprint(player.score, x+7, G+18, 28)
             else
                 -- ...otherwise, draw a shape with player col
-                love.graphics.circle('fill', x + 0.5 * G, y + 0.5 * G, 0.5 * G)
-                if isOwn then
-                    love.graphics.setLineWidth(4)
-                    love.graphics.setColor(1, 1, 1)
-                    love.graphics.circle('line', x + 0.5 * G, y + 0.5 * G, 0.5 * G - 2)
-                end
+                rectfill(x, y, x+G, y+G, player.col)
             end
             
             playerPos = playerPos + 1
         end
     end
 
+    
     if client.connected then
-        -- Draw our ping
-        print('Ping: ' .. client.getPing(), 2, 2, 24)
+        -- Draw our ping        
+        pprint('Ping: ' .. client.getPing(), 2, 2, 49)--49 --51
     else
         -- draw background gfx
         drawTitleBG(512, zoom_scale)
-
-        print('Connecting...', GAME_WIDTH/2-35, GAME_HEIGHT/2+50, 24)
+        
+        pprintc('Connecting...', GAME_HEIGHT/2+50, 11) --24 
     end
+    pprint('FPS: ' .. love.timer.getFPS(), 2, 16, 49)--49 --51
 
     -- did we die?
     if homePlayer.dead and homePlayer.killedBy then
         -- display info about our "killer"
-        print('YOU DIED', GAME_WIDTH/2, GAME_HEIGHT/2, 51)
+        pprintc('YOU DIED', GAME_HEIGHT/2, 24)
         local msg = ""
         if homePlayer.killedBy > 0 then
             if homePlayer.killedBy ~= homePlayer.id then
@@ -487,7 +492,7 @@ function drawUI(players)
         else
             msg = "You hit a wall!"
         end
-        print(msg, GAME_WIDTH/2-(#msg/2*4), GAME_HEIGHT/2+20, 51)
+        pprintc(msg, GAME_HEIGHT/2+20, 28) --25
 
     end
 
@@ -496,16 +501,29 @@ function drawUI(players)
         local yOff = share.messageCount*8
         for i=1,share.messageCount do
             local msg = share.messages[i]
-            local ourMsg = msg.taggedIds[1]==homePlayer.id or msg.taggedIds[2]==homePlayer.id
-            print(msg.text, GAME_WIDTH-165, GAME_HEIGHT-20-yOff+(i*9), ourMsg and msg.col or msg.col-1)
+            if msg then
+                local ourMsg = msg.taggedIds[1]==homePlayer.id or msg.taggedIds[2]==homePlayer.id
+                pprint(msg.text, GAME_WIDTH-165, GAME_HEIGHT-22-yOff+(i*8), ourMsg and 24 or msg.col)              
+            end
         end
     end
 
-    print('FPS: ' .. love.timer.getFPS(), 10, GAME_HEIGHT-20, 51)
+    
+    
 
+
+    -- Reset pretty print 
+    -- (otherwise it affects the drawing of players)
+    printp()
+    printp_color()
 
     -- reset trans again
     palt(0,true)
+end
+
+-- print centered
+function pprintc(text, y, col)
+    pprint(text, GAME_WIDTH/2-(#text*6)/2, y, col)
 end
 
 function drawTitleBG(levelSize, draw_zoom_scale)    
