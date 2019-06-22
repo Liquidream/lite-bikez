@@ -50,7 +50,7 @@ function client.connect() -- Called on connect from serverfo
     -- home.col = serverPlayer.col
     --log("col type:"..type(homePlayer.col))
     
-    -- Photo
+    -- Player info
     home.me = castle.user.getMe and castle.user.getMe()
 
     -- Name
@@ -474,19 +474,19 @@ function drawUI(players)
     
     if client.connected then
         -- Draw our ping        
-        pprint('Ping: ' .. client.getPing(), 2, 2, 51)
+        pprint('Ping: ' .. client.getPing(), 2, 2, 49)--49 --51
     else
         -- draw background gfx
         drawTitleBG(512, zoom_scale)
         
-        pprintc('Connecting...', GAME_HEIGHT/2+50, 24)
+        pprintc('Connecting...', GAME_HEIGHT/2+50, 11) --24 
     end
-    pprint('FPS: ' .. love.timer.getFPS(), 2, 12, 51)
+    pprint('FPS: ' .. love.timer.getFPS(), 2, 12, 49)--49 --51
 
     -- did we die?
     if homePlayer.dead and homePlayer.killedBy then
         -- display info about our "killer"
-        pprintc('YOU DIED', GAME_HEIGHT/2, 51)
+        pprintc('YOU DIED', GAME_HEIGHT/2, 24)
         local msg = ""
         if homePlayer.killedBy > 0 then
             if homePlayer.killedBy ~= homePlayer.id then
@@ -497,7 +497,7 @@ function drawUI(players)
         else
             msg = "You hit a wall!"
         end
-        pprintc(msg, GAME_HEIGHT/2+20, 51)
+        pprintc(msg, GAME_HEIGHT/2+20, 28) --25
 
     end
 
@@ -508,7 +508,7 @@ function drawUI(players)
             local msg = share.messages[i]
             if msg then
                 local ourMsg = msg.taggedIds[1]==homePlayer.id or msg.taggedIds[2]==homePlayer.id
-                pprint(msg.text, GAME_WIDTH-165, GAME_HEIGHT-22-yOff+(i*8), ourMsg and msg.col or msg.col+1)              
+                pprint(msg.text, GAME_WIDTH-165, GAME_HEIGHT-22-yOff+(i*8), ourMsg and 24 or msg.col)              
             end
         end
     end
@@ -528,7 +528,7 @@ end
 
 -- print centered
 function pprintc(text, y, col)
-    print(text, GAME_WIDTH/2-(#text*6)/2, y, col)
+    pprint(text, GAME_WIDTH/2-(#text*6)/2, y, col)
 end
 
 function drawTitleBG(levelSize, draw_zoom_scale)    

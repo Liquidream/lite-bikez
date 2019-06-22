@@ -90,7 +90,7 @@ LEVEL_DATA_LIST = {
 function createMessage(share, messageText, col, taggedIds)
     local msg = {
         text=messageText,
-        col=col or 24,
+        col=col or 51,
         taggedIds=taggedIds,
         created=love.timer.getTime()
     }
