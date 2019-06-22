@@ -67,6 +67,7 @@ PLAYER_ACC_SPEED = 1
 PLAYER_MAX_BOOST = 100 -- Cap the duration players can boost for
 
 MAX_MESSAGES = 8
+MAX_MSG_LIFE = 10
 
 LEVEL_LIST = {
     "Pillars of Doom",
@@ -97,15 +98,18 @@ function createMessage(share, messageText, col, taggedIds)
     -- cap number of messages
     if share.messageCount > MAX_MESSAGES then
         share.messageCount = MAX_MESSAGES
-        -- move all messages up one slot
-        for i=1,share.messageCount-1 do
-            share.messages[i] = share.messages[i+1]
-        end
+        scrollMessages(1)
     end
     -- add latest message
     share.messages[share.messageCount] = msg
 end
 
+function scrollMessages(dir)
+    -- move all messages up one slot
+    for i=1,share.messageCount-1 do
+        share.messages[i] = share.messages[i+dir]
+    end
+end
 
 --
 -- Helper Functions

@@ -426,7 +426,7 @@ function drawUI(players)
     if players then
         local playerPos = 1
         local G=25
-        local xoff=(GAME_WIDTH /2) + G - (#players * G+2)
+        local xoff=(GAME_WIDTH /2) + G/2 - (#players * G+2)
         for clientId, player in pairs(players) do
             -- Does player have a photo?
             if player.me 
@@ -453,7 +453,7 @@ function drawUI(players)
                 pprint(string.sub(player.me.shortname,1,8),
                         x+12-((#player.me.shortname/2)*7), G+6, 51)
                 -- draw player score
-                print(player.score, x+5, G+18, 51)
+                print(player.score, x+7, G+18, 51)
             else
                 -- ...otherwise, draw a shape with player col
                 love.graphics.circle('fill', x + 0.5 * G, y + 0.5 * G, 0.5 * G)
@@ -475,13 +475,13 @@ function drawUI(players)
         -- draw background gfx
         drawTitleBG(512, zoom_scale)
 
-        pprint('Connecting...', GAME_WIDTH/2-35, GAME_HEIGHT/2+50, 24)
+        pprintc('Connecting...', GAME_HEIGHT/2+50, 24)
     end
 
     -- did we die?
     if homePlayer.dead and homePlayer.killedBy then
         -- display info about our "killer"
-        print('YOU DIED', GAME_WIDTH/2, GAME_HEIGHT/2, 51)
+        pprintc('YOU DIED', GAME_HEIGHT/2, 51)
         local msg = ""
         if homePlayer.killedBy > 0 then
             if homePlayer.killedBy ~= homePlayer.id then
@@ -492,7 +492,7 @@ function drawUI(players)
         else
             msg = "You hit a wall!"
         end
-        print(msg, GAME_WIDTH/2-(#msg/2*4), GAME_HEIGHT/2+20, 51)
+        pprintc(msg, GAME_HEIGHT/2+20, 51)
 
     end
 
@@ -502,7 +502,13 @@ function drawUI(players)
         for i=1,share.messageCount do
             local msg = share.messages[i]
             local ourMsg = msg.taggedIds[1]==homePlayer.id or msg.taggedIds[2]==homePlayer.id
-            pprint(msg.text, GAME_WIDTH-165, GAME_HEIGHT-20-yOff+(i*9), ourMsg and msg.col or msg.col-1)
+            pprint(msg.text, GAME_WIDTH-165, GAME_HEIGHT-22-yOff+(i*8), ourMsg and msg.col or msg.col-1)
+            -- kill msg?
+            if love.timer.getTime()-msg.created >= MAX_MSG_LIFE then
+                -- "delete" msg
+                scrollMessages(-1)
+                share.messageCount = max(share.messageCount - 1, 0)
+            end
         end
     end
 
@@ -517,6 +523,11 @@ function drawUI(players)
 
     -- reset trans again
     palt(0,true)
+end
+
+-- print centered
+function pprintc(text, y, col)
+    print(text, GAME_WIDTH/2-(#text*6)/2, y, col)
 end
 
 function drawTitleBG(levelSize, draw_zoom_scale)    
