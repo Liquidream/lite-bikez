@@ -127,8 +127,8 @@ function server.load()
     -- create message notifications/history (kills/deaths/etc.)
     share.messages={}
     share.messageCount=0
-    for i=0,share.messageCount do
-        share.messages[i]=""
+    for i=0,MAX_MESSAGES+1 do
+        share.messages[i]=nil
     end
 end
 
@@ -192,5 +192,8 @@ function server.update(dt)
             end
         end
     end
+
+    -- update lessage log
+    --updateMessages(share)
 
 end

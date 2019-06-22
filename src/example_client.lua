@@ -471,15 +471,17 @@ function drawUI(players)
         end
     end
 
+    
     if client.connected then
         -- Draw our ping        
-        pprint('Ping: ' .. client.getPing(), 2, 2, 24)
+        pprint('Ping: ' .. client.getPing(), 2, 2, 51)
     else
         -- draw background gfx
         drawTitleBG(512, zoom_scale)
-
+        
         pprintc('Connecting...', GAME_HEIGHT/2+50, 24)
     end
+    pprint('FPS: ' .. love.timer.getFPS(), 2, 12, 51)
 
     -- did we die?
     if homePlayer.dead and homePlayer.killedBy then
@@ -502,21 +504,29 @@ function drawUI(players)
     -- draw game message history
     if share.messageCount and share.messageCount > 0 then
         local yOff = share.messageCount*8
-        for i=1,share.messageCount do
+        for i=1,MAX_MESSAGES do
             local msg = share.messages[i]
-            local ourMsg = msg.taggedIds[1]==homePlayer.id or msg.taggedIds[2]==homePlayer.id
-            pprint(msg.text, GAME_WIDTH-165, GAME_HEIGHT-22-yOff+(i*8), ourMsg and msg.col or msg.col-1)
-            -- kill msg?
-            if love.timer.getTime()-msg.created >= MAX_MSG_LIFE then
-                -- "delete" msg
-                scrollMessages(-1)
-                share.messageCount = max(share.messageCount - 1, 0)
+            if msg then
+                local ourMsg = msg.taggedIds[1]==homePlayer.id or msg.taggedIds[2]==homePlayer.id
+                pprint(msg.text, GAME_WIDTH-165, GAME_HEIGHT-22-yOff+(i*8), ourMsg and msg.col or msg.col+1)
+                -- kill msg?
+                -- log("love.timer.getTime()="..love.timer.getTime())
+                -- log("msg.created="..tostring(msg.created))
+                --local ddt=love.timer.getTime()-msg.created
+                --log("ddt = "..ddt.." | MAX_MSG_LIFE="..MAX_MSG_LIFE)
+                --if ddt >= MAX_MSG_LIFE then
+                -- msg.life=msg.life+0.1
+                -- if msg.life >= MAX_MSG_LIFE then
+                --     -- "delete" msg
+                --     scrollMessages(share, -1)
+                --     share.messageCount = max(share.messageCount - 1, 0)
+                -- end
             end
         end
     end
 
     
-    pprint('FPS: ' .. love.timer.getFPS(), 10, GAME_HEIGHT-20, 51)
+    
 
 
     -- Reset pretty print 

@@ -92,21 +92,40 @@ function createMessage(share, messageText, col, taggedIds)
         text=messageText,
         col=col or 24,
         taggedIds=taggedIds,
-        created=love.timer.getTime()
+        life=0
+        --created=love.timer.getTime()
     }
     share.messageCount = share.messageCount + 1
     -- cap number of messages
-    if share.messageCount > MAX_MESSAGES then
-        share.messageCount = MAX_MESSAGES
-        scrollMessages(1)
+     if share.messageCount > MAX_MESSAGES then
+    --     share.messageCount = MAX_MESSAGES
+        scrollMessages(share, 1)
     end
+
     -- add latest message
+    --share.messages[1] = msg
+    log("setting msg# "..share.messageCount.."="..messageText)
     share.messages[share.messageCount] = msg
 end
 
-function scrollMessages(dir)
+function updateMessages(share)
+    
+    --for i=1,MAX_MESSAGES do
+        local msg=share.messages[1]
+        msg.life=msg.life+0.01
+        if msg.life >= MAX_MSG_LIFE then
+            -- "delete" msg
+            log("delete message #")
+            msg.text = "--deleted--"
+            scrollMessages(share, -1)
+            share.messageCount = max(share.messageCount - 1, 0)
+        end
+    --end
+end
+
+function scrollMessages(share, dir)
     -- move all messages up one slot
-    for i=1,share.messageCount-1 do
+    for i=1,MAX_MESSAGES do
         share.messages[i] = share.messages[i+dir]
     end
 end
