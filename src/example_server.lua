@@ -127,9 +127,6 @@ function server.load()
     -- create message notifications/history (kills/deaths/etc.)
     share.messages={}
     share.messageCount=0
-    for i=0,MAX_MESSAGES+1 do
-        share.messages[i]=nil
-    end
 end
 
 function server.update(dt)

@@ -66,7 +66,7 @@ PLAYER_SLOW_SPEED = 50  -- Speed player goes to AFTER boosting
 PLAYER_ACC_SPEED = 1
 PLAYER_MAX_BOOST = 100 -- Cap the duration players can boost for
 
-MAX_MESSAGES = 8
+MAX_MESSAGES = 6
 MAX_MSG_LIFE = 10
 
 LEVEL_LIST = {
@@ -92,52 +92,19 @@ function createMessage(share, messageText, col, taggedIds)
         text=messageText,
         col=col or 24,
         taggedIds=taggedIds,
-        life=0
-        --created=love.timer.getTime()
+        created=love.timer.getTime()
     }
     share.messageCount = share.messageCount + 1
     -- cap number of messages
-     if share.messageCount > MAX_MESSAGES then
-    --     share.messageCount = MAX_MESSAGES
-        scrollMessages(share, 1)
-    end
-
-    -- add latest message
-    --share.messages[1] = msg
-    log("setting msg# "..share.messageCount.."="..messageText)
-    share.messages[share.messageCount] = msg
-end
-
-function updateMessages(share)
-    
-    --for i=1,MAX_MESSAGES do
-        local msg=share.messages[1]
-        if msg then 
-            msg.life=msg.life+0.1
-            if msg.life >= MAX_MSG_LIFE then
-                -- "delete" msg
-                log("delete message!")
-                msg.text = "--deleted--"
-                --msg=nil
-                scrollMessages(share, 1)
-                share.messageCount = max(share.messageCount - 1, 1)
-            end
+    if share.messageCount > MAX_MESSAGES then
+        share.messageCount = MAX_MESSAGES
+        -- move all messages up one slot
+        for i=1,share.messageCount-1 do
+            share.messages[i] = share.messages[i+1]
         end
-    --end
-end
-
-function scrollMessages(share, dir)
-    -- move all messages up one slot
-    for i=1,share.messageCount do
-        -- note: can't just set ref to diff index due to clever "share.lua" sync stuffs
-        share.messages[i] = {
-            text = share.messages[i+dir].text,
-            col = share.messages[i+dir].col,            
-            life = share.messages[i+dir].life
-        }
-        share.messages[i].taggedIds[1] = share.messages[i+dir].taggedIds[1]
-        share.messages[i].taggedIds[2] = share.messages[i+dir].taggedIds[2]
     end
+    -- add latest message
+    share.messages[share.messageCount] = msg
 end
 
 --

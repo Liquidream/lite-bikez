@@ -504,7 +504,7 @@ function drawUI(players)
     -- draw game message history
     if share.messageCount and share.messageCount > 0 then
         local yOff = share.messageCount*8
-        for i=1,MAX_MESSAGES do
+        for i=1,share.messageCount do
             local msg = share.messages[i]
             if msg then
                 local ourMsg = msg.taggedIds[1]==homePlayer.id or msg.taggedIds[2]==homePlayer.id
