@@ -508,19 +508,7 @@ function drawUI(players)
             local msg = share.messages[i]
             if msg then
                 local ourMsg = msg.taggedIds[1]==homePlayer.id or msg.taggedIds[2]==homePlayer.id
-                pprint(msg.text, GAME_WIDTH-165, GAME_HEIGHT-22-yOff+(i*8), ourMsg and msg.col or msg.col+1)
-                -- kill msg?
-                -- log("love.timer.getTime()="..love.timer.getTime())
-                -- log("msg.created="..tostring(msg.created))
-                --local ddt=love.timer.getTime()-msg.created
-                --log("ddt = "..ddt.." | MAX_MSG_LIFE="..MAX_MSG_LIFE)
-                --if ddt >= MAX_MSG_LIFE then
-                -- msg.life=msg.life+0.1
-                -- if msg.life >= MAX_MSG_LIFE then
-                --     -- "delete" msg
-                --     scrollMessages(share, -1)
-                --     share.messageCount = max(share.messageCount - 1, 0)
-                -- end
+                pprint(msg.text, GAME_WIDTH-165, GAME_HEIGHT-22-yOff+(i*8), ourMsg and msg.col or msg.col+1)              
             end
         end
     end

@@ -194,6 +194,6 @@ function server.update(dt)
     end
 
     -- update lessage log
-    --updateMessages(share)
+    updateMessages(share)
 
 end

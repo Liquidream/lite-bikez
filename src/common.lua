@@ -112,21 +112,31 @@ function updateMessages(share)
     
     --for i=1,MAX_MESSAGES do
         local msg=share.messages[1]
-        msg.life=msg.life+0.01
-        if msg.life >= MAX_MSG_LIFE then
-            -- "delete" msg
-            log("delete message #")
-            msg.text = "--deleted--"
-            scrollMessages(share, -1)
-            share.messageCount = max(share.messageCount - 1, 0)
+        if msg then 
+            msg.life=msg.life+0.1
+            if msg.life >= MAX_MSG_LIFE then
+                -- "delete" msg
+                log("delete message!")
+                msg.text = "--deleted--"
+                --msg=nil
+                scrollMessages(share, 1)
+                share.messageCount = max(share.messageCount - 1, 1)
+            end
         end
     --end
 end
 
 function scrollMessages(share, dir)
     -- move all messages up one slot
-    for i=1,MAX_MESSAGES do
-        share.messages[i] = share.messages[i+dir]
+    for i=1,share.messageCount do
+        -- note: can't just set ref to diff index due to clever "share.lua" sync stuffs
+        share.messages[i] = {
+            text = share.messages[i+dir].text,
+            col = share.messages[i+dir].col,            
+            life = share.messages[i+dir].life
+        }
+        share.messages[i].taggedIds[1] = share.messages[i+dir].taggedIds[1]
+        share.messages[i].taggedIds[2] = share.messages[i+dir].taggedIds[2]
     end
 end
 
