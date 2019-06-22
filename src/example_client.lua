@@ -454,17 +454,12 @@ function drawUI(players)
                 sugar.gfx.sspr(0, 0, w, h, x, y,  G, G)
                 -- draw a shortened version of player name (if longer than 1 chars)
                 pprint(string.sub(player.me.shortname,1,8),
-                        x+12-((#player.me.shortname/2)*7), G+6, 51)
+                        x+12-((#player.me.shortname/2)*7), G+6, 28)
                 -- draw player score
-                pprint(player.score, x+7, G+18, 51)
+                pprint(player.score, x+7, G+18, 28)
             else
                 -- ...otherwise, draw a shape with player col
-                love.graphics.circle('fill', x + 0.5 * G, y + 0.5 * G, 0.5 * G)
-                if isOwn then
-                    love.graphics.setLineWidth(4)
-                    love.graphics.setColor(1, 1, 1)
-                    love.graphics.circle('line', x + 0.5 * G, y + 0.5 * G, 0.5 * G - 2)
-                end
+                rectfill(x, y, x+G, y+G, player.col)
             end
             
             playerPos = playerPos + 1
@@ -481,7 +476,7 @@ function drawUI(players)
         
         pprintc('Connecting...', GAME_HEIGHT/2+50, 11) --24 
     end
-    pprint('FPS: ' .. love.timer.getFPS(), 2, 12, 49)--49 --51
+    pprint('FPS: ' .. love.timer.getFPS(), 2, 16, 49)--49 --51
 
     -- did we die?
     if homePlayer.dead and homePlayer.killedBy then
