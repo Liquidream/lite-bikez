@@ -10,7 +10,7 @@ local circles = {}
 function castle.uiupdate()
 
     ui.markdown([[
-## Lite Bikez
+## LIGHT RYDERS
 Welcome to The Grid.
 
 The GOAL is... to survive!
@@ -20,7 +20,7 @@ ui.section("Controls", function()
 
     ui.markdown([[
 ### Player Controls
-**⬆⬇⬅➡** = *Turn Bike*
+**⬆⬇⬅➡** = *Turn*
 
 **\[SPACE\]** = *Boost!*
 

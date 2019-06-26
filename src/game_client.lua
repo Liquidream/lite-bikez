@@ -473,14 +473,9 @@ function drawUI(players)
         pprint('Ping: ' .. client.getPing(), 2, 2, 49)--49 --51
     else
         -- draw background gfx
-        drawTitleBG(512, zoom_scale)
+        drawTitle(512, zoom_scale)
         
-        -- title logo
-        if surface_exists("titlegfx-text") then
-            spr_sheet("titlegfx-text", GAME_WIDTH/2-384/2, GAME_HEIGHT/2-50)
-        end
-
-        pprintc('Connecting...', GAME_HEIGHT/2+50, 11) --24 
+        pprintc('Connecting to the grid...', GAME_HEIGHT/2+50, 11) --24 
     end
     pprint('FPS: ' .. love.timer.getFPS(), 2, 16, 49)--49 --51
 
@@ -535,11 +530,39 @@ function pprintc(text, y, col)
     pprint(text, GAME_WIDTH/2-(#text*6)/2, y, col)
 end
 
-function drawTitleBG(levelSize, draw_zoom_scale)    
+local pgrid=0
+function drawTitle(levelSize, draw_zoom_scale)    
     -- draw background gfx
-    if surface_exists("titlegfx-bg") then
-        spr_sheet("titlegfx-bg", -16,-16, levelSize*draw_zoom_scale,levelSize*draw_zoom_scale)
+    -- if surface_exists("titlegfx-bg") then
+    --     spr_sheet("titlegfx-bg", -16,-16, levelSize*draw_zoom_scale,levelSize*draw_zoom_scale)
+    -- end    
+    palt(0,true)
+
+    
+    local pcols = {13, 7,  33, 55}
+    local pdist = {288,174,154,134}
+    local vpoint_y=120
+
+    -- grid perspective
+    for i=1,#pcols do
+        clip(0, 0, GAME_WIDTH, pdist[i])
+        for n=-130,130 do
+            w=63+(n-pgrid)*70
+            line(GAME_WIDTH/2,vpoint_y,w,GAME_HEIGHT,pcols[i])
+            y=vpoint_y+n*n*0.4
+            line(0,y,GAME_WIDTH,y,pcols[i])
+        end
     end
+    pgrid=0.1+pgrid%1
+    clip()
+
+    -- title logo
+    if surface_exists("titlegfx-text") then
+        spr_sheet("titlegfx-text", GAME_WIDTH/2-384/2, GAME_HEIGHT/2-50)
+    end
+
+
+
 end
 
 
