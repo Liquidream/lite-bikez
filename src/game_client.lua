@@ -156,6 +156,7 @@ function client.load()
     network.async(function()
         -- load drawing data
         log("loading title asset images...")
+        load_png("titlegfx-text", "assets/title-text.png", nil, true)
         load_png("titlegfx-bg", "assets/level-1-bg.png", nil, true)
     end)
 
@@ -474,6 +475,11 @@ function drawUI(players)
         -- draw background gfx
         drawTitleBG(512, zoom_scale)
         
+        -- title logo
+        if surface_exists("titlegfx-text") then
+            spr_sheet("titlegfx-text", GAME_WIDTH/2-384/2, GAME_HEIGHT/2-50)
+        end
+
         pprintc('Connecting...', GAME_HEIGHT/2+50, 11) --24 
     end
     pprint('FPS: ' .. love.timer.getFPS(), 2, 16, 49)--49 --51
