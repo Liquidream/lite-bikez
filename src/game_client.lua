@@ -475,7 +475,7 @@ function drawUI(players)
         -- draw background gfx
         drawTitle(512, zoom_scale)
         
-        pprintc('Connecting to the grid...', GAME_HEIGHT/2+50, 11) --24 
+        pprintc('Connecting to the grid...', GAME_HEIGHT/2+48, 11) --24 
     end
     pprint('FPS: ' .. love.timer.getFPS(), 2, 16, 49)--49 --51
 
@@ -540,20 +540,20 @@ function drawTitle(levelSize, draw_zoom_scale)
 
     
     local pcols = {13, 7,  33, 55}
-    local pdist = {288,174,154,134}
+    local pdist = {288,180,134,127}
     local vpoint_y=120
 
     -- grid perspective
     for i=1,#pcols do
         clip(0, 0, GAME_WIDTH, pdist[i])
         for n=-130,130 do
-            w=63+(n-pgrid)*70
+            w=63+(n-pgrid)*140
             line(GAME_WIDTH/2,vpoint_y,w,GAME_HEIGHT,pcols[i])
-            y=vpoint_y+n*n*0.4
+            y=vpoint_y+n*n*0.75
             line(0,y,GAME_WIDTH,y,pcols[i])
         end
     end
-    pgrid=0.1+pgrid%1
+    pgrid=0.05+pgrid%1
     clip()
 
     -- title logo
