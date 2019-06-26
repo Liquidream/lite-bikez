@@ -1,7 +1,7 @@
 main: src/main.lua
-title: Lite Bikez (WIP)
+title: Light Ryders (WIP)
 owner: liquidream
-description: Not much to see here... yet!
+description: Welcome to The Grid. The GOAL is... to survive!
 coverImage: cover-image.png
 multiplayer:
     enabled: true
