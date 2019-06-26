@@ -12,14 +12,16 @@ if CASTLE_PREFETCH then
     'assets/level-1-gfx.png',
     'assets/level-2-data.png',
     'assets/level-2-gfx.png',
+    'assets/bounce.mp3',    
+    'assets/bounce_2.mp3',    
     'network/cs.lua',
     'network/state.lua',
     'network/tests.lua',
     'sugarcoat/sugarcoat.lua',
     'common.lua',
-    'example_client.lua',
-    'example_local.lua',
-    'example_server.lua',
+    'game_client.lua',
+    'game_server.lua',
+    --'example_local.lua',
     'level.lua',
     'player.lua',
     'ui_input.lua',
@@ -32,6 +34,6 @@ USE_CASTLE_CONFIG = true
 
 --## DON'T LOAD THE SERVER HERE
 --## .CASTLE FILE WILL HANDLE IT
---require 'example_server'
+--require 'game_server'
 
-require 'example_client'
+require 'game_client'

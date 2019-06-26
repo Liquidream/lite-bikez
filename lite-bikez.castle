@@ -5,5 +5,5 @@ description: Not much to see here... yet!
 coverImage: cover-image.png
 multiplayer:
     enabled: true
-    serverMain: src/example_server.lua
+    serverMain: src/game_server.lua
 dimensions: full

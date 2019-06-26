@@ -423,7 +423,7 @@ function drawUI(players)
     -- Make text more "readable"
     --print("!!!",50,1,1)
     printp(0x0330, 0x3123, 0x0330, 0x0, 0x0)
-    printp_color(5, 7, 0)
+    printp_color(0, 0, 0)
     
     -- Players    
     if players then
@@ -502,8 +502,11 @@ function drawUI(players)
         for i=1,share.messageCount do
             local msg = share.messages[i]
             if msg then
-                local ourMsg = msg.taggedIds[1]==homePlayer.id or msg.taggedIds[2]==homePlayer.id
-                pprint(msg.text, GAME_WIDTH-165, GAME_HEIGHT-22-yOff+(i*8), ourMsg and 24 or msg.col)              
+                --local ourMsg = msg.taggedIds[1]==homePlayer.id or msg.taggedIds[2]==homePlayer.id
+                pprint(msg.text, GAME_WIDTH-165, GAME_HEIGHT-22-yOff+(i*8), 
+                 msg.taggedIds[2]==homePlayer.id and 24 
+                 or msg.taggedIds[1]==homePlayer.id and 11 
+                 or msg.col)
             end
         end
     end
