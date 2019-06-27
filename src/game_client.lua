@@ -525,6 +525,7 @@ function drawUI(players)
     palt(0,true)
 end
 
+
 -- print centered
 function pprintc(text, y, col)
     pprint(text, GAME_WIDTH/2-(#text*6)/2, y, col)
@@ -536,14 +537,23 @@ function drawTitle(levelSize, draw_zoom_scale)
     -- if surface_exists("titlegfx-bg") then
     --     spr_sheet("titlegfx-bg", -16,-16, levelSize*draw_zoom_scale,levelSize*draw_zoom_scale)
     -- end    
-    palt(0,true)
 
-    
     local pcols = {13, 7,  33, 55}
     local pdist = {288,180,134,127}
     local vpoint_y=120
+    palt(0,true)
 
-    -- grid perspective
+    -- stars
+    srand(197)  --197 --194 --56 --131  --139 --220 --236
+    for i=1,100 do
+        local x=rnd(GAME_WIDTH)
+        local y=rnd(vpoint_y)
+        local s=(irnd(20)==0) and rnd(3) or 0
+        rectfill(x,y,x+s,y+s,1)
+    end
+
+
+    -- draw grid
     for i=1,#pcols do
         clip(0, 0, GAME_WIDTH, pdist[i])
         for n=-130,130 do

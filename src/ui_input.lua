@@ -16,6 +16,8 @@ Welcome to The Grid.
 The GOAL is... to survive!
 ]])
 
+--seed_num = ui.numberInput("Test", seed_num or 0)
+
 ui.section("Controls", function()
 
     ui.markdown([[
