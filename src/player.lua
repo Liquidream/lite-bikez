@@ -37,6 +37,9 @@ function killPlayer(player, level, share, killedBy, IS_SERVER)
                 createMessage(share, player.me.shortname.." hit a wall", 
                     37, { player.killedBy, player.id })
             end
+        else
+            --CLIENT only            
+            explodePlayer(player)
         end
 
         player.smoothX = 0
@@ -44,7 +47,6 @@ function killPlayer(player, level, share, killedBy, IS_SERVER)
     
         -- clear player grid data
         remove_player_from_grid(level, player)
-
 
     end
 end
@@ -92,6 +94,11 @@ function resetPlayer(player, share, IS_SERVER)
         -- col based on id
         player.col = player.id * 2
         player.col2 = player.id * 2 + 1
+    else
+        -- CLIENT only 
+        if player.expEmitterIdx and player.expEmitterIdx > 0 then
+            table.remove(pSystems, player.expEmitterIdx)
+        end
     end
 
     -- smoothing out network lag
@@ -121,6 +128,51 @@ function addWaypoint(player)
     player.smoothY = player.gridY
 end
 
+function explodePlayer(player)
+    -- create a new particle system
+    local pEmitter = Particool:createSystem(
+        player.x * zoom_scale, 
+        player.y * zoom_scale)
+    
+    -- set clip bounds
+    pEmitter.game_width = 512 * zoom_scale  
+    pEmitter.game_height = 512 * zoom_scale
+    
+    -- tweak effect for impact explosion
+    pEmitter.fake_bounce = true
+    pEmitter.spread = math.pi    --180
+    pEmitter.lifetime = 1            -- Only want 1 burst
+    pEmitter.rate = 20
+    pEmitter.acc_min = 10
+    pEmitter.acc_max = 200
+    pEmitter.max_rnd_start = 30
+    pEmitter.cols = {2,3,28,29}
+
+    -- Set angle, based on direction
+    if (player.xDir < 0) then
+        -- left
+        pEmitter.angle = 0
+    elseif (player.yDir < 0) then
+        -- up
+        pEmitter.angle = 3*math.pi
+    elseif (player.xDir > 0) then
+        -- right
+        pEmitter.angle = math.pi
+    elseif (player.yDir > 0) then
+        -- down
+        pEmitter.angle = 2*math.pi
+    end
+
+    -- Add to global list of systems    
+    local idx = #pSystems + 1
+    --https://stackoverflow.com/questions/25762102/table-insert-remember-key-of-inserted-value
+    pSystems[idx] = pEmitter
+    
+    -- Remember pSystem index
+    player.expEmitterIdx = idx
+
+    -- TODO: Delete "dead" systems!!
+end
 
 function drawPlayer(player, draw_zoom_scale)
     local lastPoint = player.waypoints[1]

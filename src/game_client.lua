@@ -8,6 +8,7 @@ require("common")
 require("player")
 require("level")
 require("ui_input")
+require("sprinklez")
 
 local Sounds = require 'sounds'
 
@@ -38,7 +39,9 @@ local homePlayer = home
 local clientPrivate = {}    -- data private to the client (not synced)
 local playerPhotos = {}
 camx,camy = 0,0       -- made it global, so "level" can access
-local zoom_scale = 2        -- 2
+zoom_scale = 2        -- 2
+-- all particle systems
+pSystems = {}
 
 -- shader parameters
 shader_crt_curve      = 0.025
@@ -48,6 +51,9 @@ shader_scan_lines     = 1.0
 
 function client.connect() -- Called on connect from serverfo
     homePlayer.id = client.id
+
+    -- other player inits
+    homePlayer.expEmitterIdx = 0
 
     -- home.col = serverPlayer.col
     --log("col type:"..type(homePlayer.col))
@@ -339,14 +345,13 @@ function client.update(dt)
     if client.connected
      and not homePlayer.dead  then
 
-        -- update player (controls)
-        
-
         -- Check for deaths
         if not homePlayer.dead then
             home.x = homePlayer.x
             home.y = homePlayer.y
-                 
+            
+            -- update player (controls)
+
             -- move player
             updatePlayerPos(homePlayer, dt)
 
@@ -375,6 +380,11 @@ function client.update(dt)
                 remove_player_from_grid(clientPrivate.level, homePlayer)
             end
         end
+    end
+
+    -- Update all particle systems
+    for index, psys in ipairs(pSystems) do
+        psys:update(dt)
     end
 end
 

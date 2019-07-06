@@ -269,6 +269,12 @@ function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel, draw_z
         end
     end
 
+    -- Draw all particle systems
+    for index, psys in ipairs(pSystems) do
+        psys:draw()
+    end
+
+
      -- draw entire level
      if levelData then 
         -- draw fake-3d level

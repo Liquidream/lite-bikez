@@ -35,6 +35,7 @@ if CASTLE_PREFETCH then
     'assets/snd/music_skyking.mp3',
     'assets/snd/music_zima_hangover.mp3',
     'assets/snd/title_loop.mp3',
+    'sprinklez.lua',
   })
  end
 
