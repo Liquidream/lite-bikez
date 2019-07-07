@@ -141,12 +141,12 @@ function explodePlayer(player)
     -- tweak effect for impact explosion
     pEmitter.fake_bounce = true
     pEmitter.spread = math.pi    --180
-    pEmitter.lifetime = 1            -- Only want 1 burst
+    pEmitter.lifetime = 5            -- Only want 1 burst
     pEmitter.rate = 20
     pEmitter.acc_min = 10
     pEmitter.acc_max = 200
-    pEmitter.max_rnd_start = 30
-    pEmitter.cols = {2,3,28,29}
+    pEmitter.max_rnd_start = 5--30
+    pEmitter.cols = {1, player.col, player.col+1, 29}   --{2,3,28,29}
 
     -- Set angle, based on direction
     if (player.xDir < 0) then
@@ -154,13 +154,13 @@ function explodePlayer(player)
         pEmitter.angle = 0
     elseif (player.yDir < 0) then
         -- up
-        pEmitter.angle = 3*math.pi
+        pEmitter.angle = (math.pi/2)*3
     elseif (player.xDir > 0) then
         -- right
         pEmitter.angle = math.pi
     elseif (player.yDir > 0) then
         -- down
-        pEmitter.angle = 2*math.pi
+        pEmitter.angle = (math.pi/2)
     end
 
     -- Add to global list of systems    
