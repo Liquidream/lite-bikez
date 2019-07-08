@@ -144,9 +144,11 @@ function explodePlayer(player)
     pEmitter.lifetime = 5            -- Only want 1 burst
     pEmitter.rate = 20
     pEmitter.acc_min = 10
-    pEmitter.acc_max = 200
+    pEmitter.acc_max = 100
     pEmitter.max_rnd_start = 5--30
     pEmitter.cols = {1, player.col, player.col+1, 29}   --{2,3,28,29}
+    pEmitter.size_min = 1
+    pEmitter.size_max = 2
 
     -- Set angle, based on direction
     if (player.xDir < 0) then
@@ -170,6 +172,51 @@ function explodePlayer(player)
     
     -- Remember pSystem index
     player.expEmitterIdx = idx
+
+    -- Stop "boost" emitter (if present)
+    if player.boostEmitterIdx > 0 then
+        table.remove(pSystems, player.boostEmitterIdx)
+        player.boostEmitterIdx = 0
+    end
+end
+
+function boostPlayer(player)
+
+    if player.boostEmitterIdx == 0 then 
+        -- create a new particle system
+        local pEmitter = Particool:createSystem(
+            player.x * zoom_scale, 
+            player.y * zoom_scale)
+        
+        -- set clip bounds
+        pEmitter.game_width = 512 * zoom_scale  
+        pEmitter.game_height = 512 * zoom_scale
+        
+        -- tweak effect for trail
+        pEmitter.rate = 5
+        pEmitter.acc_min = 10
+        pEmitter.acc_max = 10
+        pEmitter.max_rnd_start = 5--30
+        pEmitter.cols = {1, player.col, player.col+1, 29}   --{2,3,28,29}
+        pEmitter.gravity = 0
+        pEmitter.max_rnd_start = 10
+        pEmitter.size_min = 0
+        pEmitter.size_max = 2
+
+        -- Add to global list of systems    
+        local idx = #pSystems + 1
+        --https://stackoverflow.com/questions/25762102/table-insert-remember-key-of-inserted-value
+        pSystems[idx] = pEmitter
+        
+        -- Remember pSystem index
+        player.boostEmitterIdx = idx
+    else
+        -- update existing emitter
+        local pEmitter = pSystems[player.boostEmitterIdx]
+        pEmitter.lifetime = -1
+        pEmitter.xpos = player.smoothX * zoom_scale - zoom_scale
+        pEmitter.ypos = player.smoothY * zoom_scale - zoom_scale
+    end
 
     -- TODO: Delete "dead" systems!!
 end
@@ -249,17 +296,17 @@ function drawPlayer(player, draw_zoom_scale)
             (player.smoothX*draw_zoom_scale)+draw_zoom_scale, (player.smoothY*draw_zoom_scale)+draw_zoom_scale, 1)
 
     -- Boost effect?
-    if player.boost then
-        rectfill(
-            player.smoothX*draw_zoom_scale-draw_zoom_scale, player.smoothY*draw_zoom_scale-draw_zoom_scale,
-            (player.smoothX*draw_zoom_scale)+draw_zoom_scale+draw_zoom_scale, (player.smoothY*draw_zoom_scale)+draw_zoom_scale+draw_zoom_scale, 1)
+    -- if player.boost then
+    --     rectfill(
+    --         player.smoothX*draw_zoom_scale-draw_zoom_scale, player.smoothY*draw_zoom_scale-draw_zoom_scale,
+    --         (player.smoothX*draw_zoom_scale)+draw_zoom_scale+draw_zoom_scale, (player.smoothY*draw_zoom_scale)+draw_zoom_scale+draw_zoom_scale, 1)
         
-        -- particles
-        local px = (player.smoothX + rnd(6+draw_zoom_scale)-1.5-draw_zoom_scale)*draw_zoom_scale
-        local py = (player.smoothY + rnd(6+draw_zoom_scale)-1.5-draw_zoom_scale)*draw_zoom_scale
-        local colNum=irnd(#ak54Paired)
-        rectfill(px, py, px+draw_zoom_scale/2, py+draw_zoom_scale/2, ak54Paired[colNum]) --player.col)
-    end
+    --     -- particles
+    --     local px = (player.smoothX + rnd(6+draw_zoom_scale)-1.5-draw_zoom_scale)*draw_zoom_scale
+    --     local py = (player.smoothY + rnd(6+draw_zoom_scale)-1.5-draw_zoom_scale)*draw_zoom_scale
+    --     local colNum=irnd(#ak54Paired)
+    --     rectfill(px, py, px+draw_zoom_scale/2, py+draw_zoom_scale/2, ak54Paired[colNum]) 
+    -- end
 end
 
 return Player

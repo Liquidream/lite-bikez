@@ -54,6 +54,7 @@ function client.connect() -- Called on connect from serverfo
 
     -- other player inits
     homePlayer.expEmitterIdx = 0
+    homePlayer.boostEmitterIdx = 0
 
     -- home.col = serverPlayer.col
     --log("col type:"..type(homePlayer.col))
@@ -498,6 +499,12 @@ function drawUI(players)
         drawTitle(512, zoom_scale)
         
         pprintc('Connecting to the grid...', GAME_HEIGHT/2+48, 11) --24 
+
+        pprintc('Code + Art                                                       Music', 
+            GAME_HEIGHT/2+75, 51) --24 
+        
+        pprintc('Paul Nicholas                                                  Ken Wheeler', 
+            GAME_HEIGHT/2+88, 45) --24 
     end
     pprint('FPS: ' .. love.timer.getFPS(), 2, 16, 49)--49 --51
 
