@@ -83,7 +83,7 @@ function resetPlayer(player, share, IS_SERVER)
             -- in case player connects before server ready...
             local r, g, b = 0,5,5
             if levelData then 
-                levelData:getPixel(player.x, player.y)
+                local r, g, b = levelData:getPixel(player.x, player.y)
             end
             local hitObstacle = r > 0 -- red means level obstacles/boundary
             local inSafeZone = g > 0 -- red means level obstacles/boundary
