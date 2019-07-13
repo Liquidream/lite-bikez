@@ -1,20 +1,22 @@
 
 -- Sprinklez Particle Library, for Sugarcoat
 
--- (based on Krystman's Fireworks Tutorial:
+-- (loosly based on
+--  Krystman's Fireworks Tutorial:
 --  https://www.lexaloffle.com/bbs/?tid=28260
 --  and also
 --  Morgan McGuire's p8particle library:
 --  https://github.com/morgan3d/misc/tree/master/p8particle)
 
 
-Particool = {}
-Particool.__index = Particool
+Sprinklez = {}
+Sprinklez.__index = Sprinklez
 
 
-function Particool:createSystem(_x, _y) -- _cols, _count)
+function Sprinklez:createSystem(_x, _y, options) -- _cols, _count)
     local emitter = {}               -- our new object
-    setmetatable(emitter,Particool)  -- make Particool handle lookup
+    options = options or {}          -- possible overloads
+    setmetatable(emitter,Sprinklez)  -- make Sprinklez handle lookup
 
     emitter.particles = {}
 
@@ -23,45 +25,46 @@ function Particool:createSystem(_x, _y) -- _cols, _count)
 
     emitter.xpos = _x or emitter.game_width/2
     emitter.ypos = _y or emitter.game_height/2
-    emitter.cols = _cols or {1,2,3,4}
-    emitter.rate = _count or 10   -- emission rate (# spawn per frame)
+    emitter.cols = options.cols or {1,2,3,4}
+    emitter.rate = options.rate or 10   -- emission rate (# spawn per frame)
 
-    emitter.angle = 0
-    emitter.spread = 2*math.pi     -- how wide the angle can be
+    emitter.angle = options.angle or 0
+    emitter.spread = options.spread or 2*math.pi     -- how wide the angle can be
 
     -- linear acceleration
     -- https://love2d.org/wiki/ParticleSystem:setLinearAcceleration
-    emitter.acc_min = 50
-    emitter.acc_max = 150
+    emitter.acc_min = options.acc_min or 50
+    emitter.acc_max = options.acc_max or 150
 
     -- randomness 
     -- (start pos)
-    emitter.max_rnd_start = 10
+    emitter.max_rnd_start = options.max_rnd_start or 10
 
     -- gravity
-    emitter.gravity = 9.8
+    emitter.gravity = options.gravity or 9.8
     
     -- fake 2D "bounce"? (overrides normal gravity behaviour)
-    emitter.fake_bounce = false
+    emitter.fake_bounce = options.fake_bounce or false
 
     -- How long to emit for (-1 forever)
-    emitter.lifetime = -1
+    emitter.lifetime = options.lifetime or -1
     emitter._lifecount = 0
 
     -- Size variance
-    emitter.size_min = 1
-    emitter.size_max = 3
+    emitter.size_min = options.size_min or 1
+    emitter.size_max = options.size_max or 3
 
     -- debug mode
-    emitter.debug = false
+    emitter.debug = options.debug or false
 
     -- TODO: setSizeVariation?
-
 
     return emitter
 end
 
-function Particool:spawn(_x, _y)
+
+
+function Sprinklez:spawn(_x, _y)
     -- create a new particle
     local new={}
     
@@ -98,7 +101,7 @@ function Particool:spawn(_x, _y)
    end
    
    
-function Particool:update(dt)
+function Sprinklez:update(dt)
     
     -- debug slow-mo
     --dt=dt/5
@@ -153,7 +156,7 @@ function Particool:update(dt)
     self._lifecount = self._lifecount + 1
 end
    
-function Particool:draw()
+function Sprinklez:draw()
     --iterate trough all particles
     local col
     for index, p in ipairs(self.particles) do

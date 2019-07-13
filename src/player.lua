@@ -138,7 +138,7 @@ end
 
 function explodePlayer(player)
     -- create a new particle system
-    local pEmitter = Particool:createSystem(
+    local pEmitter = Sprinklez:createSystem(
         player.x * zoom_scale, 
         player.y * zoom_scale)
     
@@ -192,7 +192,7 @@ function boostPlayer(player)
 
     if player.boostEmitterIdx == 0 then 
         -- create a new particle system
-        local pEmitter = Particool:createSystem(
+        local pEmitter = Sprinklez:createSystem(
             player.x * zoom_scale, 
             player.y * zoom_scale)
         
