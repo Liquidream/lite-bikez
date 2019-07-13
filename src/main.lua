@@ -19,10 +19,10 @@ if CASTLE_PREFETCH then
     'network/state.lua',
     'network/tests.lua',
     'sugarcoat/sugarcoat.lua',
+    'sprinklez.lua',
     'common.lua',
     'game_client.lua',
     'game_server.lua',
-    --'example_local.lua',
     'level.lua',
     'player.lua',
     'ui_input.lua',
@@ -35,7 +35,6 @@ if CASTLE_PREFETCH then
     'assets/snd/music_skyking.mp3',
     'assets/snd/music_zima_hangover.mp3',
     'assets/snd/title_loop.mp3',
-    'sprinklez.lua',
   })
  end
 

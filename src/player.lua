@@ -143,8 +143,8 @@ function explodePlayer(player)
         player.y * zoom_scale)
     
     -- set clip bounds
-    pEmitter.game_width = 512 * zoom_scale  
-    pEmitter.game_height = 512 * zoom_scale
+    pEmitter.game_width = 512 * zoom_scale + 20 -- add some leway for particles to spawn at edges
+    pEmitter.game_height = 512 * zoom_scale + 20
     
     -- tweak effect for impact explosion
     pEmitter.fake_bounce = true
@@ -197,8 +197,8 @@ function boostPlayer(player)
             player.y * zoom_scale)
         
         -- set clip bounds
-        pEmitter.game_width = 512 * zoom_scale  
-        pEmitter.game_height = 512 * zoom_scale
+        pEmitter.game_width = 512 * zoom_scale + 20 -- add some leway for particles to spawn at edges
+        pEmitter.game_height = 512 * zoom_scale + 20
         
         -- tweak effect for trail
         pEmitter.rate = 5
