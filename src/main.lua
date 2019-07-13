@@ -26,6 +26,15 @@ if CASTLE_PREFETCH then
     'level.lua',
     'player.lua',
     'ui_input.lua',
+    'assets/snd/bike_start.mp3',
+    'assets/snd/casette_intro.mp3',
+    'assets/snd/music_cocaine_lambo.mp3',
+    'assets/snd/music_microwave_robocop.mp3',
+    'assets/snd/music_payphone_cybersex.mp3',
+    'assets/snd/music_profunctor_optics.mp3',
+    'assets/snd/music_skyking.mp3',
+    'assets/snd/music_zima_hangover.mp3',
+    'assets/snd/title_loop.mp3',
   })
  end
 
