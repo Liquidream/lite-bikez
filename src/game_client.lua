@@ -15,7 +15,7 @@ local Sounds = require 'sounds'
 -- made client global so UI and others can use
 client = cs.client
 
-if USE_CASTLE_CONFIG then
+if castle then
     client.useCastleConfig()
 else
     client.enabled = true

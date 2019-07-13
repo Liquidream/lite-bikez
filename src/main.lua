@@ -41,7 +41,8 @@ if CASTLE_PREFETCH then
 
 -- This requests a cloud server from Castle
 
-USE_CASTLE_CONFIG = true
+--### REPLACED with just "castle"
+--USE_CASTLE_CONFIG = true
 
 --## DON'T LOAD THE SERVER HERE
 --## .CASTLE FILE WILL HANDLE IT
