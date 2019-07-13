@@ -11,12 +11,11 @@ local server = cs.server
 local frameTime = 0
 local FPS = 60
 
---local IS_SERVER = true
-SUGAR_SERVER_MODE = USE_CASTLE_CONFIG --true
+SUGAR_SERVER_MODE = true
 -- Sugarcoat alias
 log = print
 
-if USE_CASTLE_CONFIG then
+if castle then
     server.useCastleConfig()
 else
     server.enabled = true

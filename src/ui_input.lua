@@ -36,7 +36,7 @@ end)
     -- (TODO: Allow subsequent hosts!)
 
     if (client.home and client.home.id==1)
-      or not USE_CASTLE_CONFIG 
+      or not castle-- USE_CASTLE_CONFIG 
       then
 
         ui.markdown([[

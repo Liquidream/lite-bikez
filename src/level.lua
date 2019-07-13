@@ -110,13 +110,19 @@ function updatePlayerPos(player, dt)
         player.boostCount = player.boostCount+1
         --log("boostCount="..player.boostCount)
         if player.boostCount < PLAYER_MAX_BOOST then
-            player.boost = true            
+            player.boost = true
+            -- upate boost visual effect
+            boostPlayer(player)
         end
     end
     
     -- Boost comedown
     if not player.boost then
         player.boostCount = math.max(player.boostCount-1, 0)
+        -- kill particle system        
+        if  player.boostEmitterIdx and player.boostEmitterIdx > 0 then
+            pSystems[player.boostEmitterIdx].lifetime = 0
+        end
     end
 
     -- Apply acceleration
@@ -268,6 +274,12 @@ function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel, draw_z
             end
         end
     end
+
+    -- Draw all particle systems
+    for index, psys in ipairs(pSystems) do
+        psys:draw()
+    end
+
 
      -- draw entire level
      if levelData then 

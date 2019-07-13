@@ -19,10 +19,10 @@ if CASTLE_PREFETCH then
     'network/state.lua',
     'network/tests.lua',
     'sugarcoat/sugarcoat.lua',
+    'sprinklez.lua',
     'common.lua',
     'game_client.lua',
     'game_server.lua',
-    --'example_local.lua',
     'level.lua',
     'player.lua',
     'ui_input.lua',
@@ -40,7 +40,8 @@ if CASTLE_PREFETCH then
 
 -- This requests a cloud server from Castle
 
-USE_CASTLE_CONFIG = true
+--### REPLACED with just "castle"
+--USE_CASTLE_CONFIG = true
 
 --## DON'T LOAD THE SERVER HERE
 --## .CASTLE FILE WILL HANDLE IT

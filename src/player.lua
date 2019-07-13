@@ -37,6 +37,9 @@ function killPlayer(player, level, share, killedBy, IS_SERVER)
                 createMessage(share, player.me.shortname.." hit a wall", 
                     37, { player.killedBy, player.id })
             end
+        else
+            --CLIENT only            
+            explodePlayer(player)
         end
 
         player.smoothX = 0
@@ -44,7 +47,6 @@ function killPlayer(player, level, share, killedBy, IS_SERVER)
     
         -- clear player grid data
         remove_player_from_grid(level, player)
-
 
     end
 end
@@ -64,8 +66,10 @@ function resetPlayer(player, share, IS_SERVER)
 
     if IS_SERVER then
         -- the server decides the random start position
-        -- (and tells the client)        
+        -- (and tells the client)
+        local attemptCount=0
         repeat 
+            log("allocating player start position")
             player.x = math.random(share.levelSize-1)
             player.y = math.random(share.levelSize-1)
             player.gridX = player.x
@@ -75,10 +79,16 @@ function resetPlayer(player, share, IS_SERVER)
             player.speed = PLAYER_START_SPEED
             player.boostCount = 0
             -- check we're in the "safe" zone
-            local r, g, b = levelData:getPixel(player.x, player.y)
+            --local r, g, b = levelData:getPixel(player.x, player.y)            
+            -- in case player connects before server ready...
+            local r, g, b = 0,5,5
+            if levelData then 
+                local r, g, b = levelData:getPixel(player.x, player.y)
+            end
             local hitObstacle = r > 0 -- red means level obstacles/boundary
             local inSafeZone = g > 0 -- red means level obstacles/boundary
-        until (not hitObstacle) and inSafeZone --or (levelData==nil)
+            attemptCount = attemptCount + 1
+        until (not hitObstacle) and inSafeZone or attemptCount > 20 --or (levelData==nil)
 
         -- now face "inward"
         if math.random(2)>1 then
@@ -92,6 +102,11 @@ function resetPlayer(player, share, IS_SERVER)
         -- col based on id
         player.col = player.id * 2
         player.col2 = player.id * 2 + 1
+    else
+        -- CLIENT only 
+        if player.expEmitterIdx and player.expEmitterIdx > 0 then
+            table.remove(pSystems, player.expEmitterIdx)
+        end
     end
 
     -- smoothing out network lag
@@ -121,6 +136,98 @@ function addWaypoint(player)
     player.smoothY = player.gridY
 end
 
+function explodePlayer(player)
+    -- create a new particle system
+    local pEmitter = Sprinklez:createSystem(
+        player.x * zoom_scale, 
+        player.y * zoom_scale)
+    
+    -- set clip bounds
+    pEmitter.game_width = 512 * zoom_scale + 20 -- add some leway for particles to spawn at edges
+    pEmitter.game_height = 512 * zoom_scale + 20
+    
+    -- tweak effect for impact explosion
+    pEmitter.fake_bounce = true
+    pEmitter.spread = math.pi    --180
+    pEmitter.lifetime = 5            -- Only want 1 burst
+    pEmitter.rate = 20
+    pEmitter.acc_min = 10
+    pEmitter.acc_max = 100
+    pEmitter.max_rnd_start = 7-- 5
+    pEmitter.cols = {1, player.col, player.col+1, 29}   --{2,3,28,29}
+    pEmitter.size_min = 1
+    pEmitter.size_max = 3 --2
+
+    -- Set angle, based on direction
+    if (player.xDir < 0) then
+        -- left
+        pEmitter.angle = 0
+    elseif (player.yDir < 0) then
+        -- up
+        pEmitter.angle = (math.pi/2)*3
+    elseif (player.xDir > 0) then
+        -- right
+        pEmitter.angle = math.pi
+    elseif (player.yDir > 0) then
+        -- down
+        pEmitter.angle = (math.pi/2)
+    end
+
+    -- Add to global list of systems    
+    local idx = #pSystems + 1
+    --https://stackoverflow.com/questions/25762102/table-insert-remember-key-of-inserted-value
+    pSystems[idx] = pEmitter
+    
+    -- Remember pSystem index
+    player.expEmitterIdx = idx
+
+    -- Stop "boost" emitter (if present)
+    if player.boostEmitterIdx > 0 then
+        table.remove(pSystems, player.boostEmitterIdx)
+        player.boostEmitterIdx = 0
+    end
+end
+
+function boostPlayer(player)
+
+    if player.boostEmitterIdx == 0 then 
+        -- create a new particle system
+        local pEmitter = Sprinklez:createSystem(
+            player.x * zoom_scale, 
+            player.y * zoom_scale)
+        
+        -- set clip bounds
+        pEmitter.game_width = 512 * zoom_scale + 20 -- add some leway for particles to spawn at edges
+        pEmitter.game_height = 512 * zoom_scale + 20
+        
+        -- tweak effect for trail
+        pEmitter.rate = 5
+        pEmitter.acc_min = 10
+        pEmitter.acc_max = 10
+        pEmitter.max_rnd_start = 5--30
+        pEmitter.cols = {1, player.col, player.col+1, 29}   --{2,3,28,29}
+        pEmitter.gravity = 0
+        pEmitter.max_rnd_start = 10
+        pEmitter.size_min = 0
+        pEmitter.size_max = 2
+
+        -- Add to global list of systems    
+        local idx = #pSystems + 1
+        --https://stackoverflow.com/questions/25762102/table-insert-remember-key-of-inserted-value
+        pSystems[idx] = pEmitter
+        
+        -- Remember pSystem index
+        player.boostEmitterIdx = idx
+    else
+        -- update existing emitter
+        local pEmitter = pSystems[player.boostEmitterIdx]
+        pEmitter.lifetime = -1
+        pEmitter.xpos = player.smoothX * zoom_scale - zoom_scale
+        pEmitter.ypos = player.smoothY * zoom_scale - zoom_scale
+    end
+
+    -- TODO: Delete "dead" systems!!
+end
 
 function drawPlayer(player, draw_zoom_scale)
     local lastPoint = player.waypoints[1]
@@ -197,17 +304,17 @@ function drawPlayer(player, draw_zoom_scale)
             (player.smoothX*draw_zoom_scale)+draw_zoom_scale, (player.smoothY*draw_zoom_scale)+draw_zoom_scale, 1)
 
     -- Boost effect?
-    if player.boost then
-        rectfill(
-            player.smoothX*draw_zoom_scale-draw_zoom_scale, player.smoothY*draw_zoom_scale-draw_zoom_scale,
-            (player.smoothX*draw_zoom_scale)+draw_zoom_scale+draw_zoom_scale, (player.smoothY*draw_zoom_scale)+draw_zoom_scale+draw_zoom_scale, 1)
+    -- if player.boost then
+    --     rectfill(
+    --         player.smoothX*draw_zoom_scale-draw_zoom_scale, player.smoothY*draw_zoom_scale-draw_zoom_scale,
+    --         (player.smoothX*draw_zoom_scale)+draw_zoom_scale+draw_zoom_scale, (player.smoothY*draw_zoom_scale)+draw_zoom_scale+draw_zoom_scale, 1)
         
-        -- particles
-        local px = (player.smoothX + rnd(6+draw_zoom_scale)-1.5-draw_zoom_scale)*draw_zoom_scale
-        local py = (player.smoothY + rnd(6+draw_zoom_scale)-1.5-draw_zoom_scale)*draw_zoom_scale
-        local colNum=irnd(#ak54Paired)
-        rectfill(px, py, px+draw_zoom_scale/2, py+draw_zoom_scale/2, ak54Paired[colNum]) --player.col)
-    end
+    --     -- particles
+    --     local px = (player.smoothX + rnd(6+draw_zoom_scale)-1.5-draw_zoom_scale)*draw_zoom_scale
+    --     local py = (player.smoothY + rnd(6+draw_zoom_scale)-1.5-draw_zoom_scale)*draw_zoom_scale
+    --     local colNum=irnd(#ak54Paired)
+    --     rectfill(px, py, px+draw_zoom_scale/2, py+draw_zoom_scale/2, ak54Paired[colNum]) 
+    -- end
 end
 
 return Player
