@@ -78,13 +78,15 @@ function resetPlayer(player, share, IS_SERVER)
             player.lastGridY = player.gridY
             player.speed = PLAYER_START_SPEED
             player.boostCount = 0
-            -- check we're in the "safe" zone
-            --local r, g, b = levelData:getPixel(player.x, player.y)            
+            
+            -- check we're in the "safe" zone            
+            local r, g, b = levelData:getPixel(player.x, player.y)                        
             -- in case player connects before server ready...
-            local r, g, b = 0,5,5
-            if levelData then 
-                local r, g, b = levelData:getPixel(player.x, player.y)
-            end
+            -- local r, g, b = 0,5,5
+            -- if levelData then 
+            --     local r, g, b = levelData:getPixel(player.x, player.y)
+            -- end
+
             local hitObstacle = r > 0 -- red means level obstacles/boundary
             local inSafeZone = g > 0 -- red means level obstacles/boundary
             attemptCount = attemptCount + 1
