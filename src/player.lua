@@ -153,10 +153,10 @@ function explodePlayer(player)
     pEmitter.rate = 20
     pEmitter.acc_min = 10
     pEmitter.acc_max = 100
-    pEmitter.max_rnd_start = 5--30
+    pEmitter.max_rnd_start = 7-- 5
     pEmitter.cols = {1, player.col, player.col+1, 29}   --{2,3,28,29}
     pEmitter.size_min = 1
-    pEmitter.size_max = 2
+    pEmitter.size_max = 3 --2
 
     -- Set angle, based on direction
     if (player.xDir < 0) then
