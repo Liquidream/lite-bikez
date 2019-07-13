@@ -9,6 +9,8 @@ require("player")
 require("level")
 require("ui_input")
 
+local Sounds = require 'sounds'
+
 -- made client global so UI and others can use
 client = cs.client
 
@@ -60,9 +62,12 @@ function client.connect() -- Called on connect from serverfo
     else
         home.me.shortname = home.me.name
     end
+
+    Sounds.playingLoop:play()
 end
 
 function client.disconnect() -- Called on disconnect from server
+  Sounds.playingLoop:stop()
 end
 
 function client.receive(...) -- Called when server does `server.send(id, ...)` with our `id`
@@ -127,6 +132,11 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
 
 end
 
+function initSounds()
+  Sounds.playingLoop = Sound:new('music_cocaine_lambo.mp3', 1)
+  Sounds.playingLoop:setVolume(0.7)
+  Sounds.playingLoop:setLooping(true)
+end
 
 -- Client gets all Love events
 
@@ -162,6 +172,8 @@ function client.load()
 
     -- new font!
     load_font('assets/MatchupPro.ttf', 16, 'corefont', true)
+
+    initSounds()
 
     -- default player to dead
     homePlayer.dead = true
