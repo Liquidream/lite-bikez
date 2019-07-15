@@ -149,6 +149,7 @@ function addWaypoint(player)
 end
 
 function explodePlayer(player)
+    log("in explodePlayer("..player.id..")...")
     -- create a new particle system
     local pEmitter = Sprinklez:createSystem(
         player.x * zoom_scale, 
@@ -206,7 +207,7 @@ function explodePlayer(player)
 end
 
 function boostPlayer(player)
-
+    log("in boostPlayer("..player.id..")...")
     if boostParticles[player.id] == nil then 
         -- create a new particle system
         local pEmitter = Sprinklez:createSystem(
