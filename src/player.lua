@@ -79,8 +79,12 @@ function resetPlayer(player, share, IS_SERVER)
             player.speed = PLAYER_START_SPEED
             player.boostCount = 0
             
+            local r, g, b = 0,0,0
             -- check we're in the "safe" zone            
-            local r, g, b = levelData:getPixel(player.x, player.y)                        
+            if levelData then 
+                levelData:getPixel(player.x, player.y) 
+            end
+
             -- in case player connects before server ready...
             -- local r, g, b = 0,5,5
             -- if levelData then 
@@ -90,7 +94,9 @@ function resetPlayer(player, share, IS_SERVER)
             local hitObstacle = r > 0 -- red means level obstacles/boundary
             local inSafeZone = g > 0 -- red means level obstacles/boundary
             attemptCount = attemptCount + 1
-        until (not hitObstacle) and inSafeZone or attemptCount > 20 --or (levelData==nil)
+        until (not hitObstacle) and (levelData) and inSafeZone or attemptCount > 20
+
+        --until (not hitObstacle) and inSafeZone or attemptCount > 20
 
         -- now face "inward"
         if math.random(2)>1 then

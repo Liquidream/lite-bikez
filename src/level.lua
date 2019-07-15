@@ -279,6 +279,7 @@ function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel, draw_z
     end
 
     -- Draw all particle systems
+    log("count of boost pSystems = "..#boostParticles)
     for index, psys in ipairs(boostParticles) do
         psys:draw()
     end
