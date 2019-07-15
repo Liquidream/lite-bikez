@@ -40,8 +40,10 @@ local clientPrivate = {}    -- data private to the client (not synced)
 local playerPhotos = {}
 camx,camy = 0,0       -- made it global, so "level" can access
 zoom_scale = 2        -- 2
--- all particle systems
-pSystems = {}
+-- particle systems
+boostParticles = {}
+deathParticles = {}
+--pSystems = {}
 
 -- shader parameters
 shader_crt_curve      = 0.025
@@ -53,8 +55,8 @@ function client.connect() -- Called on connect from serverfo
     homePlayer.id = client.id
 
     -- other player inits
-    homePlayer.expEmitterIdx = 0
-    homePlayer.boostEmitterIdx = 0
+    -- homePlayer.expEmitterIdx = 0
+    -- homePlayer.boostEmitterIdx = 0
 
     -- home.col = serverPlayer.col
     --log("col type:"..type(homePlayer.col))
@@ -384,7 +386,10 @@ function client.update(dt)
     end
 
     -- Update all particle systems
-    for index, psys in ipairs(pSystems) do
+    for index, psys in ipairs(boostParticles) do
+        psys:update(dt)
+    end
+    for index, psys in ipairs(deathParticles) do
         psys:update(dt)
     end
 end

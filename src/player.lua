@@ -106,9 +106,13 @@ function resetPlayer(player, share, IS_SERVER)
         player.col2 = player.id * 2 + 1
     else
         -- CLIENT only 
-        if player.expEmitterIdx and player.expEmitterIdx > 0 then
-            table.remove(pSystems, player.expEmitterIdx)
+        if deathParticles[player.id] then 
+            table.remove(deathParticles, player.id)
+            --deathParticles[player.id].lifetime = 0
         end
+        -- if player.expEmitterIdx and player.expEmitterIdx > 0 then
+        --     table.remove(pSystems, player.expEmitterIdx)
+        -- end
     end
 
     -- smoothing out network lag
@@ -176,23 +180,28 @@ function explodePlayer(player)
     end
 
     -- Add to global list of systems    
-    local idx = #pSystems + 1
+    --local idx = #pSystems + 1
     --https://stackoverflow.com/questions/25762102/table-insert-remember-key-of-inserted-value
-    pSystems[idx] = pEmitter
+    --pSystems[idx] = pEmitter
+    deathParticles[player.id] = pEmitter
     
     -- Remember pSystem index
-    player.expEmitterIdx = idx
+    --player.expEmitterIdx = idx
 
     -- Stop "boost" emitter (if present)
-    if player.boostEmitterIdx > 0 then
-        table.remove(pSystems, player.boostEmitterIdx)
-        player.boostEmitterIdx = 0
+    if boostParticles[player.id] then 
+        table.remove(boostParticles, player.id)
+        --deathParticles[player.id].lifetime = 0
     end
+    -- if player.boostEmitterIdx > 0 then
+    --     table.remove(pSystems, player.boostEmitterIdx)
+    --     player.boostEmitterIdx = 0
+    -- end
 end
 
 function boostPlayer(player)
 
-    if player.boostEmitterIdx == 0 then 
+    if boostParticles[player.id] == nil then 
         -- create a new particle system
         local pEmitter = Sprinklez:createSystem(
             player.x * zoom_scale, 
@@ -214,15 +223,15 @@ function boostPlayer(player)
         pEmitter.size_max = 2
 
         -- Add to global list of systems    
-        local idx = #pSystems + 1
+        boostParticles[player.id]=pEmitter
+        --local idx = #pSystems + 1
         --https://stackoverflow.com/questions/25762102/table-insert-remember-key-of-inserted-value
-        pSystems[idx] = pEmitter
-        
+        --pSystems[idx] = pEmitter        
         -- Remember pSystem index
-        player.boostEmitterIdx = idx
+        --player.boostEmitterIdx = idx        
     else
         -- update existing emitter
-        local pEmitter = pSystems[player.boostEmitterIdx]
+        local pEmitter = boostParticles[player.id]
         pEmitter.lifetime = -1
         pEmitter.xpos = player.smoothX * zoom_scale - zoom_scale
         pEmitter.ypos = player.smoothY * zoom_scale - zoom_scale
