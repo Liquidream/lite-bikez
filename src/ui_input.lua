@@ -9,8 +9,9 @@ local circles = {}
 
 function castle.uiupdate()
 
+    ui.markdown('![](assets/title-text.png)')   
+
     ui.markdown([[
-## LIGHT RYDERS
 Welcome to The Grid.
 
 The GOAL is... to survive!
