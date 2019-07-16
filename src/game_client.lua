@@ -387,16 +387,32 @@ function client.update(dt)
     end
 
     -- Look for player updates for particle effects
-    for id, player in pairs(share.players) do    
+    -- other players...
+    if share.players then        
+        for id, player in pairs(share.players) do    
+            if player.id ~= homePlayer.id then
+                -- Boost particles?
+                if player.boost then
+                    -- update boost visual effect
+                    boostPlayer(player)
+                end
+                -- death?
+                if player.dead 
+                and (deathParticles[player.id]==nil 
+                or deathParticles[player.id].lifetime == 0) then
+                    explodePlayer(player)
+                end
+            end
+        end
+    end
+    -- local player
+    if not homePlayer.dead then
         -- Boost particles?
-        if player.boost then
+        if homePlayer.boost then
             -- update boost visual effect
-            boostPlayer(player)
+            boostPlayer(homePlayer)
         end
-        -- death?
-        if player.dead and deathParticles[player.id]==nil then
-            explodePlayer(player)
-        end
+        -- explode already taken care of
     end
     
     -- Update all particle systems

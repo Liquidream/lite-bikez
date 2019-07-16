@@ -208,11 +208,13 @@ end
 
 function boostPlayer(player)
     --log("in boostPlayer("..player.id..")...")
-    if boostParticles[player.id] == nil then 
+    if boostParticles[player.id] == nil 
+     or boostParticles[player.id].lifetime == 0 then 
+        --log("create: "..player.smoothX)
         -- create a new particle system
         local pEmitter = Sprinklez:createSystem(
-            player.x * zoom_scale, 
-            player.y * zoom_scale)
+            player.smoothX * zoom_scale, 
+            player.smoothY * zoom_scale)
         
         -- set clip bounds
         pEmitter.game_width = 512 * zoom_scale + 20 -- add some leway for particles to spawn at edges
@@ -238,9 +240,11 @@ function boostPlayer(player)
         --player.boostEmitterIdx = idx        
     else
         -- update existing emitter
+        --log("update: "..player.smoothX)
         local pEmitter = boostParticles[player.id]
         pEmitter.lifetime = -1
         pEmitter.xpos = player.smoothX * zoom_scale - zoom_scale
+        --log("pEmitter.xpos = "..pEmitter.xpos)
         pEmitter.ypos = player.smoothY * zoom_scale - zoom_scale
     end
 
