@@ -415,6 +415,10 @@ function client.update(dt)
         if homePlayer.boost then
             -- update boost visual effect
             boostPlayer(homePlayer)
+            
+        elseif boostParticles[homePlayer.id] then 
+            -- kill particle system        
+            boostParticles[homePlayer.id].lifetime = 0
         end
         -- explode already taken care of
     end
