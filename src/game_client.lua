@@ -386,6 +386,19 @@ function client.update(dt)
         end
     end
 
+    -- Look for player updates for particle effects
+    for id, player in pairs(share.players) do    
+        -- Boost particles?
+        if player.boost then
+            -- update boost visual effect
+            boostPlayer(player)
+        end
+        -- death?
+        if player.dead and deathParticles[player.id]==nil then
+            explodePlayer(player)
+        end
+    end
+    
     -- Update all particle systems
     for index, psys in pairs(boostParticles) do
         psys:update(dt)

@@ -112,12 +112,6 @@ function updatePlayerPos(player, dt)
             player.boost = true
         end
     end
-    
-    -- Boost particles?
-    if player.boost then
-        -- update boost visual effect
-        boostPlayer(player)
-    end
 
     -- Boost comedown
     if not player.boost then
