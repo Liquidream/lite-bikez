@@ -395,6 +395,11 @@ function client.update(dt)
                 if player.boost then
                     -- update boost visual effect
                     boostPlayer(player)
+                    
+                elseif boostParticles[player.id] then 
+                    -- kill particle system        
+                        boostParticles[player.id].lifetime = 0
+                    end
                 end
                 -- death?
                 if player.dead 

@@ -116,10 +116,6 @@ function updatePlayerPos(player, dt)
     -- Boost comedown
     if not player.boost then
         player.boostCount = math.max(player.boostCount-1, 0)
-        -- kill particle system        
-        if boostParticles[player.id] then 
-            boostParticles[player.id].lifetime = 0
-        end
     end
 
     -- Apply acceleration
