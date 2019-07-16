@@ -108,7 +108,6 @@ function updatePlayerPos(player, dt)
     if love.keyboard.isDown("space") then
         -- Boost pressed
         player.boostCount = player.boostCount+1
-        --log("boostCount="..player.boostCount)
         if player.boostCount < PLAYER_MAX_BOOST then
             player.boost = true
             -- update boost visual effect
@@ -123,9 +122,6 @@ function updatePlayerPos(player, dt)
         if boostParticles[player.id] then 
             boostParticles[player.id].lifetime = 0
         end
-        -- if  player.boostEmitterIdx and player.boostEmitterIdx > 0 then
-        --     pSystems[player.boostEmitterIdx].lifetime = 0
-        -- end
     end
 
     -- Apply acceleration
@@ -280,10 +276,10 @@ function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel, draw_z
 
 
     -- Draw all particle systems    
-    for index, psys in ipairs(boostParticles) do
+    for index, psys in pairs(boostParticles) do
         psys:draw()
     end
-    for index, psys in ipairs(deathParticles) do
+    for index, psys in pairs(deathParticles) do
         psys:draw()
     end
 

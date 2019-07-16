@@ -52,6 +52,7 @@ shader_distortion_ray = 3.0
 shader_scan_lines     = 1.0
 
 function client.connect() -- Called on connect from serverfo
+    
     homePlayer.id = client.id
 
     -- other player inits
@@ -386,10 +387,10 @@ function client.update(dt)
     end
 
     -- Update all particle systems
-    for index, psys in ipairs(boostParticles) do
+    for index, psys in pairs(boostParticles) do
         psys:update(dt)
     end
-    for index, psys in ipairs(deathParticles) do
+    for index, psys in pairs(deathParticles) do
         psys:update(dt)
     end
 end

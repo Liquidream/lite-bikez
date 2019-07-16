@@ -209,7 +209,6 @@ end
 function boostPlayer(player)
     log("in boostPlayer("..player.id..")...")
     if boostParticles[player.id] == nil then 
-        log("create boostPSystem for ("..player.id..")...")
         -- create a new particle system
         local pEmitter = Sprinklez:createSystem(
             player.x * zoom_scale, 
@@ -238,7 +237,6 @@ function boostPlayer(player)
         -- Remember pSystem index
         --player.boostEmitterIdx = idx        
     else
-        log("update boostPSystem for ("..player.id..")...")
         -- update existing emitter
         local pEmitter = boostParticles[player.id]
         pEmitter.lifetime = -1
