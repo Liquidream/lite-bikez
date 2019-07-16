@@ -110,11 +110,15 @@ function updatePlayerPos(player, dt)
         player.boostCount = player.boostCount+1
         if player.boostCount < PLAYER_MAX_BOOST then
             player.boost = true
-            -- update boost visual effect
-            boostPlayer(player)
         end
     end
     
+    -- Boost particles?
+    if player.boost then
+        -- update boost visual effect
+        boostPlayer(player)
+    end
+
     -- Boost comedown
     if not player.boost then
         player.boostCount = math.max(player.boostCount-1, 0)

@@ -207,7 +207,7 @@ function explodePlayer(player)
 end
 
 function boostPlayer(player)
-    log("in boostPlayer("..player.id..")...")
+    --log("in boostPlayer("..player.id..")...")
     if boostParticles[player.id] == nil then 
         -- create a new particle system
         local pEmitter = Sprinklez:createSystem(
