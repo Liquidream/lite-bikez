@@ -164,7 +164,7 @@ function explodePlayer(player)
     pEmitter.acc_min = 10
     pEmitter.acc_max = 100
     pEmitter.max_rnd_start = 7-- 5
-    pEmitter.cols = {1, player.col, player.col+1, 29}   --{2,3,28,29}
+    pEmitter.cols = {1, player.col, player.col+1, 56}   --{2,3,28,29}
     pEmitter.size_min = 1
     pEmitter.size_max = 3 --2
 
