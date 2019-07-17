@@ -470,7 +470,9 @@ function checkAndGetPlayerPhoto(playerId, photoUrl)
             
             local key = "photo_"..playerId
             -- create a spritesheet/surface for player photo
-            load_png(key, photoUrl)
+            -- (Process with LIGHTER palette, so it'll draw darker)
+            load_png(key, photoUrl, ak54PairedLight) 
+            --load_png(key, photoUrl)
                         
             -- ...and store reference to it
             playerPhotos[playerId] = key
