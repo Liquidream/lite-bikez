@@ -68,6 +68,7 @@ function resetPlayer(player, share, IS_SERVER)
         -- the server decides the random start position
         -- (and tells the client)
         local attemptCount=0
+        local r, g, b = 0,0,0
         repeat 
             log("allocating player start position")
             player.x = math.random(share.levelSize-1)
@@ -79,24 +80,23 @@ function resetPlayer(player, share, IS_SERVER)
             player.speed = PLAYER_START_SPEED
             player.boostCount = 0
             
-            local r, g, b = 0,0,0
-            -- check we're in the "safe" zone            
-            if levelData then 
-                levelData:getPixel(player.x, player.y) 
-            end
-
+            r, g, b = 0,0,0
             -- in case player connects before server ready...
-            -- local r, g, b = 0,5,5
-            -- if levelData then 
-            --     local r, g, b = levelData:getPixel(player.x, player.y)
-            -- end
-
+            if levelData then 
+                r, g, b = levelData:getPixel(player.x, player.y) 
+            end
+            
+            -- check we're in the "safe" zone                        
             local hitObstacle = r > 0 -- red means level obstacles/boundary
             local inSafeZone = g > 0 -- red means level obstacles/boundary
-            attemptCount = attemptCount + 1
+
+            attemptCount = attemptCount + 1 -- (don't let this loop infinitely!)
+
         until (not hitObstacle) and (levelData) and inSafeZone or attemptCount > 20
 
-        --until (not hitObstacle) and inSafeZone or attemptCount > 20
+        -- log("attemptCount="..attemptCount)
+        -- log("r, g, b="..r..","..g..","..b)
+        -- log("levelData="..tostring(levelData))
 
         -- now face "inward"
         if math.random(2)>1 then
@@ -116,9 +116,6 @@ function resetPlayer(player, share, IS_SERVER)
             table.remove(deathParticles, player.id)
             --deathParticles[player.id].lifetime = 0
         end
-        -- if player.expEmitterIdx and player.expEmitterIdx > 0 then
-        --     table.remove(pSystems, player.expEmitterIdx)
-        -- end
     end
 
     -- smoothing out network lag
@@ -186,31 +183,19 @@ function explodePlayer(player)
         pEmitter.angle = (math.pi/2)
     end
 
-    -- Add to global list of systems    
-    --local idx = #pSystems + 1
-    --https://stackoverflow.com/questions/25762102/table-insert-remember-key-of-inserted-value
-    --pSystems[idx] = pEmitter
-    deathParticles[player.id] = pEmitter
-    
-    -- Remember pSystem index
-    --player.expEmitterIdx = idx
+    -- Add to particle system
+    deathParticles[player.id] = pEmitter    
 
     -- Stop "boost" emitter (if present)
     if boostParticles[player.id] then 
         table.remove(boostParticles, player.id)
-        --deathParticles[player.id].lifetime = 0
     end
-    -- if player.boostEmitterIdx > 0 then
-    --     table.remove(pSystems, player.boostEmitterIdx)
-    --     player.boostEmitterIdx = 0
-    -- end
 end
 
 function boostPlayer(player)
     --log("in boostPlayer("..player.id..")...")
     if boostParticles[player.id] == nil 
-     or boostParticles[player.id].lifetime == 0 then 
-        --log("create: "..player.smoothX)
+     or boostParticles[player.id].lifetime == 0 then
         -- create a new particle system
         local pEmitter = Sprinklez:createSystem(
             player.smoothX * zoom_scale, 
@@ -231,20 +216,13 @@ function boostPlayer(player)
         pEmitter.size_min = 0
         pEmitter.size_max = 2
 
-        -- Add to global list of systems    
+        -- Add to particle system
         boostParticles[player.id]=pEmitter
-        --local idx = #pSystems + 1
-        --https://stackoverflow.com/questions/25762102/table-insert-remember-key-of-inserted-value
-        --pSystems[idx] = pEmitter        
-        -- Remember pSystem index
-        --player.boostEmitterIdx = idx        
     else
         -- update existing emitter
-        --log("update: "..player.smoothX)
         local pEmitter = boostParticles[player.id]
         pEmitter.lifetime = -1
         pEmitter.xpos = player.smoothX * zoom_scale - zoom_scale
-        --log("pEmitter.xpos = "..pEmitter.xpos)
         pEmitter.ypos = player.smoothY * zoom_scale - zoom_scale
     end
 
@@ -300,7 +278,7 @@ function drawPlayer(player, draw_zoom_scale)
     -- only apply smoothing to OTHER players, not us
     if player.id ~= client.id then
         --
-        -- TODO: Check this, coz it SEEMS wrong/bloated!
+        -- TODO: Check/improve this, coz it SEEMS a bitbloated!
         --
         player.smoothX = player.smoothX + 0.4 * (x - player.smoothX)
         player.smoothY = player.smoothY + 0.4 * (y - player.smoothY)
@@ -325,18 +303,6 @@ function drawPlayer(player, draw_zoom_scale)
         player.smoothX*draw_zoom_scale, player.smoothY*draw_zoom_scale,
             (player.smoothX*draw_zoom_scale)+draw_zoom_scale, (player.smoothY*draw_zoom_scale)+draw_zoom_scale, 1)
 
-    -- Boost effect?
-    -- if player.boost then
-    --     rectfill(
-    --         player.smoothX*draw_zoom_scale-draw_zoom_scale, player.smoothY*draw_zoom_scale-draw_zoom_scale,
-    --         (player.smoothX*draw_zoom_scale)+draw_zoom_scale+draw_zoom_scale, (player.smoothY*draw_zoom_scale)+draw_zoom_scale+draw_zoom_scale, 1)
-        
-    --     -- particles
-    --     local px = (player.smoothX + rnd(6+draw_zoom_scale)-1.5-draw_zoom_scale)*draw_zoom_scale
-    --     local py = (player.smoothY + rnd(6+draw_zoom_scale)-1.5-draw_zoom_scale)*draw_zoom_scale
-    --     local colNum=irnd(#ak54Paired)
-    --     rectfill(px, py, px+draw_zoom_scale/2, py+draw_zoom_scale/2, ak54Paired[colNum]) 
-    -- end
 end
 
 return Player
