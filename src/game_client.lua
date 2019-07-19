@@ -402,9 +402,14 @@ function client.update(dt)
                 end
                 -- death?
                 if player.dead 
-                and (deathParticles[player.id]==nil 
-                or deathParticles[player.id].lifetime == 0) then
+                 and (deathParticles[player.id]==nil 
+                 or deathParticles[player.id].lifetime == 0) then
                     explodePlayer(player)
+                elseif not player.dead 
+                 and deathParticles[player.id] then
+                    -- remove death particles for other players after respawn
+                    -- (coz we don't get that explicit event)
+                    table.remove(deathParticles, player.id)
                 end
             end
         end
