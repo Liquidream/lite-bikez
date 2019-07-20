@@ -52,7 +52,7 @@ function server.connect(id) -- Called on connect from client with `id`
     server.send(id, "player_start", 
         newPlayer.xDir, newPlayer.yDir, 
         newPlayer.x, newPlayer.y, newPlayer.col,
-        levelName, levelDataPath, levelGfxPath)
+        levelName, levelDataPath, levelGfxPaths)
     
     share.players[id] = newPlayer
 end
@@ -96,10 +96,10 @@ function server.receive(id, ...) -- Called when client with `id` does `client.se
         -- player changed level
         log("levelName = "..arg[2])
         log("levelDataPath = "..arg[3])
-        log("levelGfxPath = "..arg[4])
+        log("#levelGfxPaths = "..#arg[4])
         levelName = arg[2]
         levelDataPath = arg[3]
-        levelGfxPath = arg[4]        
+        levelGfxPaths = arg[4]        
         -- temp switch level!
         serverPrivate.level = createLevel(1, 512, true) --game size (square)
         share.levelSize = serverPrivate.level.levelSize
@@ -110,7 +110,7 @@ function server.receive(id, ...) -- Called when client with `id` does `client.se
             server.send(clientId, "player_start", 
             player.xDir, player.yDir, 
             player.x, player.y, player.col,
-            levelName, levelDataPath, levelGfxPath)
+            levelName, levelDataPath, levelGfxPaths)
         end
     end
 end
@@ -190,7 +190,7 @@ function server.update(dt)
                 server.send(id, "player_start", 
                     player.xDir, player.yDir, 
                     player.x, player.y, player.col,
-                    levelName, levelDataPath, levelGfxPath)
+                    levelName, levelDataPath, levelGfxPaths)
 
             end
 

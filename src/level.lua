@@ -4,7 +4,7 @@ require("common")
 -- defaults
 levelName = LEVEL_LIST[1]
 levelDataPath = LEVEL_DATA_LIST[levelName].imgData
-levelGfxPath = LEVEL_DATA_LIST[levelName].imgGfx
+levelGfxPaths = LEVEL_DATA_LIST[levelName].imgGfxList
 
 function createLevel(levelNum, levelSize, IS_SERVER)
     log("createLevel()... IS_SERVER="..tostring(IS_SERVER))
@@ -32,8 +32,9 @@ function createLevel(levelNum, levelSize, IS_SERVER)
             -- load drawing data
             log("loading level asset images...")
             load_png("levelgfx-bg", "assets/level-1-bg.png", nil, true)
-            load_png("levelgfx-1", levelGfxPath, nil, true)
-            --load_png("levelgfx-1", "assets/level-1-gfx.png", nil, true)
+            for i=1,#levelGfxPaths do
+                load_png("levelgfx-"..i, levelGfxPaths[i], nil, true)
+            end
             log("done loading level asset images.")
         end
     end)

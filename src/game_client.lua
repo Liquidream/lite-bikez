@@ -102,7 +102,7 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
         
         log(">>> arg 7 = ".. arg[7])
         log(">>> arg 8 =".. arg[8])
-        log(">>> arg 9 =".. arg[9])
+        log(">>> arg #9 =".. #arg[9])
 
         log(">>> curr datapath=".. levelDataPath)
         -- new level?
@@ -110,10 +110,10 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
             -- level changed!
             levelName = arg[7]
             levelDataPath = arg[8]
-            levelGfxPath = arg[9]
+            levelGfxPaths = arg[9]
 
             log(">>> ".. levelDataPath)
-            log(">>> ".. levelGfxPath)
+            log(">>> #levelGfxPaths=".. #levelGfxPaths)
 
             clientPrivate.level=createLevel(1, 512, false) --game size (square)
         end

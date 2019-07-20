@@ -47,13 +47,11 @@ end)
             { onChange=function(value) 
                 -- Get details of selected level            
                 log("value="..value)
-                -- levelDataPath = LEVEL_DATA_LIST[value].imgData
-                -- levelGfxPath = LEVEL_DATA_LIST[value].imgGfx
 
                 client.send("level_select", 
                     value,
                     LEVEL_DATA_LIST[value].imgData,
-                    LEVEL_DATA_LIST[value].imgGfx)
+                    LEVEL_DATA_LIST[value].imgGfxList)
             end}
         )
     
@@ -64,7 +62,7 @@ end)
         
     end -- if "host"
 
-    ui.markdown('![]('..levelGfxPath..')')    
+    ui.markdown('![]('..levelGfxPaths[1]..')')    
 
     ui.markdown([[
 #### Other Settings
