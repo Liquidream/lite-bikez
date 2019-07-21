@@ -104,8 +104,8 @@ LEVEL_DATA_LIST = {
     ["Corridors of Chaos"] = {
         imgData="assets/level-2-data.png",
         imgGfxList={
-            "assets/level-1-gfx.png",
-            "assets/level-2-gfx.png"} 
+            "assets/level-2-gfx-a.png",
+            "assets/level-2-gfx-b.png"} 
     },    
 }
 

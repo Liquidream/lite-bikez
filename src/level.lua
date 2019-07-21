@@ -279,16 +279,16 @@ function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel, draw_z
     end
 
 
-     -- draw entire level
-     if levelData then 
-        -- draw fake-3d level
-        sugar.gfx.spritesheet("levelgfx-1")
-        
+     -- draw entire level in fake-3d
+     local layerNum = 1
+     if levelData then
         -- calc fake 3d
         local xpos = camx*draw_zoom_scale + (GAME_WIDTH /2) 
         local ypos = camy*draw_zoom_scale + (GAME_HEIGHT /2)
         local csx,csy = xpos, ypos
         local sf=1
+
+        --log("draw 3d level ----------------------------")
 
         for i=1,10 do  
             local wx = level.levelSize * sf
@@ -299,11 +299,19 @@ function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel, draw_z
             local d3x = (csx-cmx) - ((xpos - (level.levelSize/2)) * sf)
             local d3y = (csy-cmy) - ((ypos - (level.levelSize/2)) * sf)
 
+            --log("i="..i)
+
+            -- switch sprite (if necessary)
+            if (i-1>0 and (i-1)%3==0 and #levelGfxPaths > layerNum) then 
+                layerNum=layerNum + 1 
+                --log("layer increase to:"..layerNum)
+            end
+            if (get_spritesheet() ~= "levelgfx-"..layerNum) then
+                sugar.gfx.spritesheet("levelgfx-"..layerNum)
+            end
             sspr(0, 0, level.levelSize, level.levelSize, d3x,d3y, wx*draw_zoom_scale, wy*draw_zoom_scale)
 
-            --sf = sf * 1.03
             sf = sf + .06
-            --sf = sf * 1.03
         end
     end
     
