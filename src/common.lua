@@ -100,7 +100,12 @@ LEVEL_LIST = {
 LEVEL_DATA_LIST = {
     ["Pillars of Doom"] = {
         imgData="assets/level-1-data.png",
-        imgGfxList={"assets/level-1-gfx.png"} },
+        imgGfxList={
+            "assets/level-1-gfx-ab.png",
+            "assets/level-1-gfx-ab.png",
+            "assets/level-1-gfx-ab.png",
+            "assets/level-1-gfx-c.png"} 
+    },
     ["Corridors of Chaos"] = {
         imgData="assets/level-2-data.png",
         imgGfxList={

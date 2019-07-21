@@ -290,7 +290,7 @@ function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel, draw_z
 
         --log("draw 3d level ----------------------------")
 
-        for i=1,10 do  
+        for i=1,12 do  
             local wx = level.levelSize * sf
             local wy = level.levelSize * sf
 
