@@ -93,7 +93,7 @@ MAX_MSG_LIFE = 10
 
 LEVEL_LIST = {
     "Pillars of Doom",
-    "Corridors of Chaos"
+    "Castle of Chaos"
 }
 
 
@@ -106,12 +106,19 @@ LEVEL_DATA_LIST = {
             "assets/level-1-gfx-ab.png",
             "assets/level-1-gfx-c.png"} 
     },
-    ["Corridors of Chaos"] = {
-        imgData="assets/level-2-data.png",
+    ["Castle of Chaos"] = {
+        imgData="assets/level-3-data.png",
         imgGfxList={
-            "assets/level-2-gfx-a.png",
-            "assets/level-2-gfx-b.png"} 
-    },    
+            "assets/level-3-gfx-a.png",
+            "assets/level-3-gfx-b.png",
+            "assets/level-3-gfx-c.png"} 
+    }, 
+    -- ["Corridors of Chaos"] = {
+    --     imgData="assets/level-2-data.png",
+    --     imgGfxList={
+    --         "assets/level-2-gfx-a.png",
+    --         "assets/level-2-gfx-b.png"} 
+    -- },    
 }
 
 --
