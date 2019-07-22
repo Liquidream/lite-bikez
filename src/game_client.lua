@@ -99,7 +99,6 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
         homePlayer.lastGridY = homePlayer.gridY
         homePlayer.speed = PLAYER_START_SPEED
         homePlayer.boostCount = 0
-        homePlayer.vote = nil
         
         log(">>> arg 7 = ".. arg[7])
         log(">>> arg 8 =".. arg[8])
@@ -112,6 +111,8 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
             levelName = arg[7]
             levelDataPath = arg[8]
             levelGfxPaths = arg[9]
+            
+            homePlayer.vote = nil
 
             log(">>> ".. levelDataPath)
             log(">>> #levelGfxPaths=".. #levelGfxPaths)
