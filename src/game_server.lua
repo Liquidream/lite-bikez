@@ -228,7 +228,7 @@ function server.update(dt)
     for key, level in pairs(LEVEL_DATA_LIST) do
         -- do we have a majority?
         --log("  > "..key.." = "..tostring(level.votes))
-        if level.votes > math.floor(#share.players/2)+1 then
+        if level.votes >= math.floor(#share.players/2)+1 then
             -- switch level
             levelName = key
             levelDataPath = LEVEL_DATA_LIST[levelName].imgData
