@@ -104,7 +104,8 @@ LEVEL_DATA_LIST = {
             "assets/level-1-gfx-ab.png",
             "assets/level-1-gfx-ab.png",
             "assets/level-1-gfx-ab.png",
-            "assets/level-1-gfx-c.png"}
+            "assets/level-1-gfx-c.png"},
+        votes=0
     },
     ["Castle of Chaos"] = {
         imgData="assets/level-3-data.png",
@@ -112,7 +113,8 @@ LEVEL_DATA_LIST = {
             "assets/level-3-gfx-a.png",
             "assets/level-3-gfx-b.png",
             "assets/level-3-gfx-c.png",
-            "assets/level-3-gfx-d.png"} 
+            "assets/level-3-gfx-d.png"} ,
+            votes=0
     }, 
     -- ["Corridors of Chaos"] = {
     --     imgData="assets/level-2-data.png",

@@ -36,31 +36,42 @@ end)
     -- Only if "host" of session 
     -- (TODO: Allow subsequent hosts!)
 
-    if (client.home and client.home.id==1)
-      or not castle-- USE_CASTLE_CONFIG 
-      then
+    -- if (client.home and client.home.id==1)
+    --   or not castle-- USE_CASTLE_CONFIG 
+    --   then
 
         ui.markdown([[
 #### Level Select
 ]])
-        ui.dropdown("Choose the battle arena:", levelName, LEVEL_LIST,
+        ui.dropdown("Vote to change battle arena:", levelName, LEVEL_LIST,
             { onChange=function(value) 
                 -- Get details of selected level            
                 log("value="..value)
+                client.home.vote = value
 
-                client.send("level_select", 
+                client.send("level_vote", 
                     value,
                     LEVEL_DATA_LIST[value].imgData,
                     LEVEL_DATA_LIST[value].imgGfxList)
+
+                -- client.send("level_select", 
+                --     value,
+                --     LEVEL_DATA_LIST[value].imgData,
+                --     LEVEL_DATA_LIST[value].imgGfxList)
             end}
         )
+        if client.home.vote then
+            ui.markdown([[
+*(Voted)*
+]])
+        end
     
-    else
-        ui.markdown([[
-#### Current Level
-    ]])
+--     else
+--         ui.markdown([[
+-- #### Current Level
+--     ]])
         
-    end -- if "host"
+--     end -- if "host"
 
     ui.markdown('![]('..levelGfxPaths[1]..')')    
 

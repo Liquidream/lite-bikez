@@ -110,6 +110,9 @@ function resetPlayer(player, share, IS_SERVER)
         -- col based on id
         player.col = player.id * 2
         player.col2 = player.id * 2 + 1
+
+        -- reset player vote
+        player.vote = nil
     else
         -- CLIENT only 
         if deathParticles[player.id] then 

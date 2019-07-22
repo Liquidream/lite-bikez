@@ -91,27 +91,41 @@ function server.receive(id, ...) -- Called when client with `id` does `client.se
         local killedBy = arg[2]
         killPlayer(player, serverPrivate.level, share, killedBy, true)
     
-    elseif msg == "level_select" then
-        log("server: changing level!")
-        -- player changed level
+    elseif msg == "level_vote" then
+        log("server: vote received")
+        -- player voted to change level
         log("levelName = "..arg[2])
         log("levelDataPath = "..arg[3])
         log("#levelGfxPaths = "..#arg[4])
-        levelName = arg[2]
-        levelDataPath = arg[3]
-        levelGfxPaths = arg[4]        
-        -- temp switch level!
-        serverPrivate.level = createLevel(1, 512, true) --game size (square)
-        share.levelSize = serverPrivate.level.levelSize
-        -- reset all players
-        log("server resetting players to new level")
-        for clientId, player in pairs(share.players) do
-            resetPlayer(player, share, true)
-            server.send(clientId, "player_start", 
-            player.xDir, player.yDir, 
-            player.x, player.y, player.col,
-            levelName, levelDataPath, levelGfxPaths)
-        end
+
+        local levelName = arg[2]
+        local levelDataPath = arg[3]
+        local levelGfxPaths = arg[4]
+        -- cast vote
+        player.vote = levelName
+
+
+    -- elseif msg == "level_select" then
+    --     log("server: changing level!")
+    --     -- player changed level
+    --     log("levelName = "..arg[2])
+    --     log("levelDataPath = "..arg[3])
+    --     log("#levelGfxPaths = "..#arg[4])
+    --     levelName = arg[2]
+    --     levelDataPath = arg[3]
+    --     levelGfxPaths = arg[4]        
+    --     -- temp switch level!
+    --     serverPrivate.level = createLevel(1, 512, true) --game size (square)
+    --     share.levelSize = serverPrivate.level.levelSize
+    --     -- reset all players
+    --     log("server resetting players to new level")
+    --     for clientId, player in pairs(share.players) do
+    --         resetPlayer(player, share, true)
+    --         server.send(clientId, "player_start", 
+    --         player.xDir, player.yDir, 
+    --         player.x, player.y, player.col,
+    --         levelName, levelDataPath, levelGfxPaths)
+    --     end
     end
 end
 
@@ -200,7 +214,38 @@ function server.update(dt)
                     18, { player.id, player.id })
                 player.announced = true
             end
-        end
-    end
 
+            -- check for vote
+            if player.vote then
+                LEVEL_DATA_LIST[player.vote].votes = LEVEL_DATA_LIST[player.vote].votes + 1
+            end
+        end
+    end -- all players
+
+
+    -- check (& reset) vote counts
+    for key, level in pairs(LEVEL_DATA_LIST) do
+        -- do we have a majority?
+        if level.votes > math.floor(#share.players/2)+1 then
+            -- switch level
+            levelName = key
+            levelDataPath = LEVEL_DATA_LIST[levelName].imgData
+            levelGfxPaths = LEVEL_DATA_LIST[levelName].imgGfxList
+            -- 
+            serverPrivate.level = createLevel(1, 512, true) --game size (square)
+            share.levelSize = serverPrivate.level.levelSize
+            -- reset all players
+            log("server resetting players to new level")
+            for clientId, player in pairs(share.players) do                
+                -- reset player client
+                resetPlayer(player, share, true)
+                server.send(clientId, "player_start", 
+                player.xDir, player.yDir, 
+                player.x, player.y, player.col,
+                levelName, levelDataPath, levelGfxPaths)
+            end
+        end
+        -- reset count either way (for this frame)
+        level.votes = 0
+    end
 end
