@@ -550,13 +550,16 @@ function drawUI(players)
         
         pprintc('Connecting to the grid...', GAME_HEIGHT/2+48, 11) --24 
 
-        pprintc('Code + Art                                                       Music', 
+        pprintc('         Code + Art                                                       Music', 
             GAME_HEIGHT/2+75, 51) --24 
         
-        pprintc('Paul Nicholas                                                  Ken Wheeler', 
+        pprintc('         Paul Nicholas                                                  Ken Wheeler', 
             GAME_HEIGHT/2+88, 45) --24 
     end
-    pprint('FPS: ' .. love.timer.getFPS(), 2, 16, 49)--49 --51
+
+    if DEBUG_MODE then
+        pprint('FPS: ' .. love.timer.getFPS(), 2, 16, 49)--49 --51
+    end
 
     -- did we die?
     if homePlayer.dead and homePlayer.killedBy then
