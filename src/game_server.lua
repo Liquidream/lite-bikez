@@ -223,9 +223,11 @@ function server.update(dt)
     end -- all players
 
 
+    print("--- check votes -----------------")
     -- check (& reset) vote counts
     for key, level in pairs(LEVEL_DATA_LIST) do
         -- do we have a majority?
+        printh("  > "..key.." = "..tostring(level.votes))
         if level.votes > math.floor(#share.players/2)+1 then
             -- switch level
             levelName = key
