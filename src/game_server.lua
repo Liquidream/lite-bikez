@@ -223,11 +223,11 @@ function server.update(dt)
     end -- all players
 
 
-    log("--- check votes -----------------")
+    --log("--- check votes -----------------")
     -- check (& reset) vote counts
     for key, level in pairs(LEVEL_DATA_LIST) do
         -- do we have a majority?
-        log("  > "..key.." = "..tostring(level.votes))
+        --log("  > "..key.." = "..tostring(level.votes))
         if level.votes > math.floor(#share.players/2)+1 then
             -- switch level
             levelName = key
@@ -240,11 +240,13 @@ function server.update(dt)
             log("server resetting players to new level")
             for clientId, player in pairs(share.players) do                
                 -- reset player client
-                resetPlayer(player, share, true)
+                resetPlayer(player, share, true)                
+                -- reset player vote
+                player.vote = nil
                 server.send(clientId, "player_start", 
-                player.xDir, player.yDir, 
-                player.x, player.y, player.col,
-                levelName, levelDataPath, levelGfxPaths)
+                    player.xDir, player.yDir, 
+                    player.x, player.y, player.col,
+                    levelName, levelDataPath, levelGfxPaths)
             end
         end
         -- reset count either way (for this frame)
