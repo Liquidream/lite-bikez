@@ -236,9 +236,6 @@ function client.connect() -- Called on connect from serverfo
         home.me.shortname = home.me.name
     end
     
-    -- Make sure we're using the right palette
-    use_palette(ak54Paired)
-
     Sounds.playingLoop:play()
 
 end
@@ -587,7 +584,12 @@ function client.draw()
         
         -- Rémy's fix for "black display" issue
         -- (shouldn't need now - fixed in Sugarcoat)
-        --color(1) color(2)
+        color(1) color(2)
+
+        
+        -- Make sure we're using the right palette
+        use_palette(ak54Paired)
+
 
         
         if client.connected then
