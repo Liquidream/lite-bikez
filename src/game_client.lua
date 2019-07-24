@@ -96,19 +96,14 @@ function initSugarcoat()
     --set_background_color(0)
 
     network.async(function()
-        -- load drawing data
-        log("loading title asset images...")
-        
-        use_palette(palettes.pico8)
-        
-        load_png("splash", "assets/splash.png", nil, true)
-        
-        use_palette(ak54Paired)
-
-        load_png("titlegfx-text", "assets/title-text.png", nil, true)
-        load_png("titlegfx-bg", "assets/level-1-bg.png", nil, true)
-
-        use_palette(palettes.pico8)
+        -- load splash img first (to show while others dnload)
+        log("loading splash images...")        
+        load_png("splash", "assets/splash.png", palettes.pico8, true)
+    end)
+    network.async(function()
+        -- load other graphics
+        load_png("titlegfx-text", "assets/title-text.png", ak54Paired, true)
+        load_png("titlegfx-bg", "assets/level-1-bg.png", ak54Paired, true)
     end)
 
     -- new font!
@@ -240,8 +235,12 @@ function client.connect() -- Called on connect from serverfo
     else
         home.me.shortname = home.me.name
     end
+    
+    -- Make sure we're using the right palette
+    use_palette(ak54Paired)
 
     Sounds.playingLoop:play()
+
 end
 
 function client.disconnect() -- Called on disconnect from server
@@ -587,7 +586,8 @@ function client.draw()
         cls()
         
         -- Rémy's fix for "black display" issue
-        color(1) color(2)
+        -- (shouldn't need now - fixed in Sugarcoat)
+        --color(1) color(2)
 
         
         if client.connected then
