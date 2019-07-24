@@ -235,7 +235,10 @@ function client.connect() -- Called on connect from serverfo
     else
         home.me.shortname = home.me.name
     end
-    
+
+    -- Make sure we're using the right palette
+    use_palette(ak54Paired)
+
     Sounds.playingLoop:play()
 
 end
@@ -587,13 +590,6 @@ function client.draw()
         color(1) color(2)
 
         
-        -- Make sure we're using the right palette
-        if get_palette() ~= ak54Paired then
-            use_palette(ak54Paired)
-        end
-
-
-        
         if client.connected then
             -- Update camera pos
             local cam_edge=40        
@@ -630,6 +626,9 @@ function checkAndGetPlayerPhoto(playerId, photoUrl)
                         
             -- ...and store reference to it
             playerPhotos[playerId] = key
+
+            -- Make sure we're using the right palette
+            use_palette(ak54Paired)
 
         end)
     end
