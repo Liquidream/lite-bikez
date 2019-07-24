@@ -588,7 +588,9 @@ function client.draw()
 
         
         -- Make sure we're using the right palette
-        use_palette(ak54Paired)
+        if get_palette() ~= ak54Paired then
+            use_palette(ak54Paired)
+        end
 
 
         
