@@ -257,7 +257,8 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
 
         log("client reset")        
 
-        --Make sure we're using the right palette
+        -- Make sure we're using the right palette
+        -- (Added here as, with async, was finding palette was still shifting from Plr photo)
         use_palette(ak54Paired)
 
         homePlayer.xDir = arg[2]
@@ -627,14 +628,14 @@ function checkAndGetPlayerPhoto(playerId, photoUrl)
             local key = "photo_"..playerId
             -- create a spritesheet/surface for player photo
             -- (Process with LIGHTER palette, so it'll draw darker)
-            load_png(key, photoUrl)--, ak54PairedLight) 
+            load_png(key, photoUrl, ak54PairedLight) 
             --load_png(key, photoUrl)
                         
             -- ...and store reference to it
             playerPhotos[playerId] = key
 
             -- Make sure we're using the right palette
-            --use_palette(ak54Paired)
+            use_palette(ak54Paired)
 
         end)
     end
