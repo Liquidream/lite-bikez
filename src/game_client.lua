@@ -122,7 +122,7 @@ function initSplash()
 
 function updateSplash(dt)
     duration = love.timer.getTime()-startTime 
-    if duration > 2.53 then
+    if duration > 3.53 then
       -- load the title screen      
       --Sounds.titleLoop:play()
       initTitle()
@@ -612,7 +612,10 @@ function client.draw()
     end    
 end
 
-function checkAndGetPlayerPhoto(playerId, photoUrl)
+function checkAndGetPlayerPhoto(playerId, photoUrl)    
+    -- Make sure we're using the right palette
+    use_palette(ak54Paired)
+
     if playerPhotos[playerId] == nil then
         -- go and download the player photo
         playerPhotos[playerId]="pending..."
