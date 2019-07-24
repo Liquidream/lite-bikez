@@ -254,7 +254,12 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
      log("client receive msg = "..msg)
 
      if msg == "player_start" then
+
         log("client reset")        
+
+        --Make sure we're using the right palette
+        use_palette(ak54Paired)
+
         homePlayer.xDir = arg[2]
         homePlayer.yDir = arg[3]
         homePlayer.x = arg[4]
