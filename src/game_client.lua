@@ -127,7 +127,7 @@ function initSplash()
 
 function updateSplash(dt)
     duration = love.timer.getTime()-startTime 
-    if duration > 3.53 then
+    if duration > 2.53 then
       -- load the title screen      
       --Sounds.titleLoop:play()
       initTitle()
