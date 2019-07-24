@@ -9,7 +9,6 @@ require("player")
 require("level")
 require("ui_input")
 require("sprinklez")
-local SpriteSheet = require 'SpriteSheet'
 
 local Sounds = require 'sounds'
 
@@ -53,9 +52,6 @@ shader_distortion_ray = 3.0
 shader_scan_lines     = 1.0
 gameState = GAME_STATE.SPLASH
 
-local SPRITESHEET_SPLASH = SpriteSheet.new('assets/splash.png', {
-    LOGO = { 0, 0, 51, 18},
-})
 
 
 -- Client gets all Love events
@@ -63,6 +59,9 @@ local SPRITESHEET_SPLASH = SpriteSheet.new('assets/splash.png', {
 function client.load()
     local width, height = love.graphics.getDimensions()
     log(">>>> client getDimensions: "..width..","..height)
+
+     -- enable/initialise Sugarcoat engine for rendering
+    initSugarcoat()
 
     -- init splash screen   
     initSplash()
@@ -77,51 +76,6 @@ function client.load()
 end
 
 
---
--- Intro/Splash screen
---
-function initSplash()
-    -- 
-    startTime = love.timer.getTime()
-  end
-
-function updateSplash(dt)
-    duration = love.timer.getTime()-startTime 
-    if duration > 3.53 then
-      -- load the title screen      
-      --Sounds.titleLoop:play()
-      initTitle()
-    end
-  end
-
-function drawSplash()
-    --love.timer.getTime()
-    love.graphics.clear({0,0,0})
-  local offset = math.sin(duration)*2
-  love.graphics.setColor(1,1,1, offset)
-  SPRITESHEET_SPLASH:drawCentered(
-      "LOGO", 
-      math.floor(GAME_WIDTH/2), 
-      math.floor(GAME_HEIGHT/2), 
-      nil, nil, nil, 2, 2)
-end
-
---
--- Title screen
---
-
-function initTitle()
-    gameState = GAME_STATE.TITLE
-    
-    -- enable/initialise Sugarcoat engine for rendering
-    -- NOTE: Got an error here where it tried to load the teapot.ttf
-    --       and seemed that it's not doing async - so tried this.
-    --       Got past that error, but seems gfx not init correctly?
-    network.async(function()
-        initSugarcoat()
-    end)
-end
-
 function initSugarcoat()
     -- initialise and update the gfx display
     init_sugar("Light Ryders", GAME_WIDTH, GAME_HEIGHT, GAME_SCALE)
@@ -134,7 +88,8 @@ function initSugarcoat()
 
     set_frame_waiting(60)
 
-    use_palette(ak54Paired)
+    use_palette(palettes.pico8)
+    --use_palette(ak54Paired)
     --use_palette(ak54)
     --use_palette(amstradCPC)
     --use_palette(palettes.pico8)
@@ -143,13 +98,81 @@ function initSugarcoat()
     network.async(function()
         -- load drawing data
         log("loading title asset images...")
+        
+        use_palette(palettes.pico8)
+        
+        load_png("splash", "assets/splash.png", nil, true)
+        
+        use_palette(ak54Paired)
+
         load_png("titlegfx-text", "assets/title-text.png", nil, true)
         load_png("titlegfx-bg", "assets/level-1-bg.png", nil, true)
+
+        use_palette(palettes.pico8)
     end)
 
     -- new font!
     load_font('assets/MatchupPro.ttf', 16, 'corefont', true)
 end
+
+
+--
+-- Intro/Splash screen
+--
+function initSplash()
+    use_palette(palettes.pico8)
+    startTime = love.timer.getTime()
+    shader_switch(false)
+  end
+
+function updateSplash(dt)
+    duration = love.timer.getTime()-startTime 
+    if duration > 3.53 then
+      -- load the title screen      
+      --Sounds.titleLoop:play()
+      initTitle()
+    end
+  end
+
+function drawSplash()
+    cls()
+    local offset = math.sin(duration)*2
+    fade(offset*16)
+    log("offset="..offset)
+
+    -- title logo
+    if surface_exists("splash") then
+        local w,h = surface_size("splash")
+        local scale = 3
+        w=w*scale
+        h=h*scale
+        spr_sheet("splash", GAME_WIDTH/2-w/2, GAME_HEIGHT/2-h/2, w,h)
+    end
+    
+end
+
+
+   
+function fade(i)
+    for c=0,15 do
+        if flr(i+1)>=16 or flr(i+1)<=0 then
+            pal(c,0)
+        else
+            pal(c,fadeBlackTable[c+1][flr(i+1)])
+        end
+    end
+end
+
+--
+-- Title screen
+--
+
+function initTitle()
+    gameState = GAME_STATE.TITLE
+    use_palette(ak54Paired)
+    shader_switch(true)
+end
+
 
 local pgrid=0
 function drawTitle(levelSize, draw_zoom_scale)    
