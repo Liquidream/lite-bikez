@@ -137,18 +137,17 @@ function updateSplash(dt)
 function drawSplash()
     cls()
     local offset = math.sin(duration)*2
-    fade(offset*16)
-    log("offset="..offset)
-
+    fade(max(14-(offset-1.1)*25,0))
     -- title logo
     if surface_exists("splash") then
+        --log("splash exists!")
         local w,h = surface_size("splash")
-        local scale = 3
+        local scale = 2
         w=w*scale
         h=h*scale
         spr_sheet("splash", GAME_WIDTH/2-w/2, GAME_HEIGHT/2-h/2, w,h)
     end
-    
+
 end
 
 
