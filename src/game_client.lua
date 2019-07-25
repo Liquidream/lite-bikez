@@ -602,7 +602,7 @@ function client.draw()
         
         -- Rémy's fix for "black display" issue
         -- (shouldn't need now - fixed in Sugarcoat)
-        --color(1) color(2)
+        color(1) color(2)
 
         
         if client.connected then
