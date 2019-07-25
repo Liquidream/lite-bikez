@@ -221,7 +221,8 @@ end
 
 
 function client.connect() -- Called on connect from serverfo
-    
+    log(" client.connect()... ")
+
     homePlayer.id = client.id
 
     -- other player inits
@@ -250,6 +251,8 @@ function client.connect() -- Called on connect from serverfo
 end
 
 function client.disconnect() -- Called on disconnect from server
+  log("client.disconnect()...")
+  
   Sounds.playingLoop:stop()
 end
 
