@@ -50,7 +50,7 @@ shader_crt_curve      = 0.025
 shader_glow_strength  = 0.5
 shader_distortion_ray = 3.0
 shader_scan_lines     = 1.0
-gameState = GAME_STATE.SPLASH
+gameState = -1 --GAME_STATE.SPLASH
 
 
 
@@ -117,6 +117,7 @@ end
 --
 function initSplash()
     log("initSplash()...")
+    gameState = GAME_STATE.SPLASH
     use_palette(palettes.pico8)
     startTime = love.timer.getTime()
     shader_switch(false)
