@@ -50,7 +50,7 @@ shader_crt_curve      = 0.025
 shader_glow_strength  = 0.5
 shader_distortion_ray = 3.0
 shader_scan_lines     = 1.0
-gameState = -1 --GAME_STATE.SPLASH
+gameState = -1 -- nothing by default
 
 
 
@@ -216,6 +216,10 @@ function drawTitle(levelSize, draw_zoom_scale)
     if surface_exists("titlegfx-text") then
         spr_sheet("titlegfx-text", GAME_WIDTH/2-384/2, GAME_HEIGHT/2-50)
     end
+
+    
+    -- Reset camera for UI
+    camera(0,0)
     
         
     pprintc('Connecting to the grid...', GAME_HEIGHT/2+48, 11) --24 
@@ -232,6 +236,8 @@ end
 
 function client.connect() -- Called on connect from serverfo
     log(" client.connect()... ")
+
+    gameState = GAME_STATE.LVL_PLAY
 
     homePlayer.id = client.id
 
@@ -262,6 +268,8 @@ end
 
 function client.disconnect() -- Called on disconnect from server
   log("client.disconnect()...")
+
+  gameState = GAME_STATE.TITLE
 
   Sounds.playingLoop:stop()
 end
