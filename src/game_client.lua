@@ -99,6 +99,7 @@ function initSugarcoat()
         -- load splash img first (to show while others dnload)
         log("loading splash images...")        
         load_png("splash", "assets/splash.png", palettes.pico8, true)
+        startTime = love.timer.getTime()
     end)
     network.async(function()
         -- load other graphics
@@ -116,16 +117,18 @@ end
 --
 function initSplash()
     use_palette(palettes.pico8)
-    startTime = love.timer.getTime()
+    --startTime = love.timer.getTime()
     shader_switch(false)
   end
 
 function updateSplash(dt)
-    duration = love.timer.getTime()-startTime 
-    if duration > 3.53 then
-      -- load the title screen      
-      --Sounds.titleLoop:play()
-      initTitle()
+    if startTime then
+        duration = love.timer.getTime()-startTime 
+        if duration > 3.53 then
+        -- load the title screen      
+        --Sounds.titleLoop:play()
+        initTitle()
+        end
     end
   end
 
@@ -162,6 +165,8 @@ end
 --
 
 function initTitle()
+    log("initTitle()...")
+    
     gameState = GAME_STATE.TITLE
     use_palette(ak54Paired)
     shader_switch(true)
