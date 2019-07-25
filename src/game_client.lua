@@ -181,6 +181,8 @@ function drawTitle(levelSize, draw_zoom_scale)
     -- if surface_exists("titlegfx-bg") then
     --     spr_sheet("titlegfx-bg", -16,-16, levelSize*draw_zoom_scale,levelSize*draw_zoom_scale)
     -- end    
+    -- Reset camera for UI
+    camera(0,0)
 
     local pcols = {13, 7,  33, 55}
     local pdist = {288,180,134,127}
@@ -214,8 +216,15 @@ function drawTitle(levelSize, draw_zoom_scale)
     if surface_exists("titlegfx-text") then
         spr_sheet("titlegfx-text", GAME_WIDTH/2-384/2, GAME_HEIGHT/2-50)
     end
+    
+        
+    pprintc('Connecting to the grid...', GAME_HEIGHT/2+48, 11) --24 
 
-
+    pprintc('         Code + Art                                                       Music', 
+        GAME_HEIGHT/2+75, 51) --24 
+    
+    pprintc('         Paul Nicholas                                                  Ken Wheeler', 
+        GAME_HEIGHT/2+88, 45) --24 
 
 end
 
@@ -591,41 +600,41 @@ function  client.update(dt) ---(but now delaying client init!)
 end
 
 function  client.draw() --(but now delaying client init!)
+    -- Draw game to canvas/screen
+    cls()
+        
+    -- Rémy's fix for "black display" issue
+    -- (shouldn't need now - fixed in Sugarcoat)
+    color(1) color(2)
+
     -- start with the splash screen...
     if gameState == GAME_STATE.SPLASH then
         drawSplash()
-    else 
-        -- --------------------------
-        -- Sugarcoat mode
-        -- --------------------------
-        -- Draw game to canvas/screen
-        cls()
-        
-        -- Rémy's fix for "black display" issue
-        -- (shouldn't need now - fixed in Sugarcoat)
-        color(1) color(2)
+    
+    elseif gameState == GAME_STATE.TITLE 
+     or not client.connected then
+        -- draw title/connecting screen
+        drawTitle(512, zoom_scale)
 
+    elseif client.connected then
+        -- Update camera pos
+        local cam_edge=40        
         
-        if client.connected then
-            -- Update camera pos
-            local cam_edge=40        
-            
-            --log("p_gridPos = "..homePlayer.gridX..","..homePlayer.gridY)
+        --log("p_gridPos = "..homePlayer.gridX..","..homePlayer.gridY)
 
-            camx = homePlayer.x - flr(GAME_WIDTH/(2*zoom_scale))
-            camy = homePlayer.y - flr(GAME_HEIGHT/(2*zoom_scale))
-            camx = mid(-cam_edge, camx, clientPrivate.level.levelSize-(GAME_WIDTH/zoom_scale)+cam_edge)
-            camy = mid(-cam_edge, camy, clientPrivate.level.levelSize-(GAME_HEIGHT/zoom_scale)+cam_edge)
-            camera(camx*zoom_scale, camy*zoom_scale)
-            
-            -- Draw whole level
-            drawLevel(share.levelSize, share.players, homePlayer, share.level, clientPrivate.level, zoom_scale)
-        end
+        camx = homePlayer.x - flr(GAME_WIDTH/(2*zoom_scale))
+        camy = homePlayer.y - flr(GAME_HEIGHT/(2*zoom_scale))
+        camx = mid(-cam_edge, camx, clientPrivate.level.levelSize-(GAME_WIDTH/zoom_scale)+cam_edge)
+        camy = mid(-cam_edge, camy, clientPrivate.level.levelSize-(GAME_HEIGHT/zoom_scale)+cam_edge)
+        camera(camx*zoom_scale, camy*zoom_scale)
+        
+        -- Draw whole level
+        drawLevel(share.levelSize, share.players, homePlayer, share.level, clientPrivate.level, zoom_scale)
         
         -- Reset camera for UI
         camera(0,0)
         drawUI(share.players)
-    end    
+    end
 end
 
 function checkAndGetPlayerPhoto(playerId, photoUrl)
@@ -709,17 +718,6 @@ function drawUI(players)
     if client.connected then
         -- Draw our ping        
         pprint('Ping: ' .. client.getPing(), 2, 2, 49)--49 --51
-    else
-        -- draw background gfx
-        drawTitle(512, zoom_scale)
-        
-        pprintc('Connecting to the grid...', GAME_HEIGHT/2+48, 11) --24 
-
-        pprintc('         Code + Art                                                       Music', 
-            GAME_HEIGHT/2+75, 51) --24 
-        
-        pprintc('         Paul Nicholas                                                  Ken Wheeler', 
-            GAME_HEIGHT/2+88, 45) --24 
     end
 
     if DEBUG_MODE then
