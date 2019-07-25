@@ -56,7 +56,7 @@ gameState = GAME_STATE.SPLASH
 
 -- Client gets all Love events
 
-function love.load()  -- was client.load()
+function  client.load()
     local width, height = love.graphics.getDimensions()
     log(">>>> client getDimensions: "..width..","..height)
 
@@ -252,7 +252,7 @@ end
 
 function client.disconnect() -- Called on disconnect from server
   log("client.disconnect()...")
-  
+
   Sounds.playingLoop:stop()
 end
 
@@ -481,7 +481,7 @@ function update_shader_parameters()
 end
 
 
-function love.update(dt)  -- was client.update(dt) (but now delaying client init!)
+function  client.update(dt) ---(but now delaying client init!)
     -- start with the splash screen...
     if gameState == GAME_STATE.SPLASH then
         updateSplash(dt)
@@ -589,7 +589,7 @@ function love.update(dt)  -- was client.update(dt) (but now delaying client init
     end
 end
 
-function love.draw() ---- was client.draw() (but now delaying client init!)
+function  client.draw() --(but now delaying client init!)
     -- start with the splash screen...
     if gameState == GAME_STATE.SPLASH then
         drawSplash()
