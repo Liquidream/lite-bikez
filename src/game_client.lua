@@ -15,12 +15,12 @@ local Sounds = require 'sounds'
 -- made client global so UI and others can use
 client = cs.client
 
--- if castle then
---     client.useCastleConfig()
--- else
---     client.enabled = true
---     client.start('127.0.0.1:22122') -- IP address ('127.0.0.1' is same computer) and port of server
--- end
+if castle then
+    client.useCastleConfig()
+else
+    client.enabled = true
+    client.start('127.0.0.1:22122') -- IP address ('127.0.0.1' is same computer) and port of server
+end
 
 useShader = true
 
@@ -116,12 +116,13 @@ end
 -- Intro/Splash screen
 --
 function initSplash()
+    log("initSplash()...")
     use_palette(palettes.pico8)
     --startTime = love.timer.getTime()
     shader_switch(false)
   end
 
-function updateSplash(dt)
+function updateSplash(dt)    
     if startTime then
         duration = love.timer.getTime()-startTime 
         if duration > 3.53 then
@@ -173,12 +174,12 @@ function initTitle()
 
     -- now start Connecting...
     -- (not while splash screen is showing - too unpredictable - may not see title)
-    if castle then
-        client.useCastleConfig()
-    else
-        client.enabled = true
-        client.start('127.0.0.1:22122') -- IP address ('127.0.0.1' is same computer) and port of server
-    end
+    -- if castle then
+    --     client.useCastleConfig()
+    -- else
+    --     client.enabled = true
+    --     client.start('127.0.0.1:22122') -- IP address ('127.0.0.1' is same computer) and port of server
+    -- end
 end
 
 
