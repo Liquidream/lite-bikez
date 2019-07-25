@@ -99,12 +99,12 @@ function initSugarcoat()
         -- load splash img first (to show while others dnload)
         log("loading splash images...")        
         load_png("splash", "assets/splash.png", palettes.pico8, true)
-        initSplash()
-    end)
-    network.async(function()
+        
         -- load other graphics
         load_png("titlegfx-text", "assets/title-text.png", ak54Paired, true)
         load_png("titlegfx-bg", "assets/level-1-bg.png", ak54Paired, true)
+
+        initSplash()
     end)
 
     -- new font!
@@ -123,7 +123,9 @@ function initSplash()
   end
 
 function updateSplash(dt)    
+    log("...>>> 1")
     if startTime then
+        log("...>>>  2")
         duration = love.timer.getTime()-startTime 
         if duration > 3.53 then
         -- load the title screen      
