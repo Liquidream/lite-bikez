@@ -15,12 +15,12 @@ local Sounds = require 'sounds'
 -- made client global so UI and others can use
 client = cs.client
 
-if castle then
-    client.useCastleConfig()
-else
-    client.enabled = true
-    client.start('127.0.0.1:22122') -- IP address ('127.0.0.1' is same computer) and port of server
-end
+-- if castle then
+--     client.useCastleConfig()
+-- else
+--     client.enabled = true
+--     client.start('127.0.0.1:22122') -- IP address ('127.0.0.1' is same computer) and port of server
+-- end
 
 useShader = true
 
@@ -165,6 +165,15 @@ function initTitle()
     gameState = GAME_STATE.TITLE
     use_palette(ak54Paired)
     shader_switch(true)
+
+    -- now start Connecting...
+    -- (not while splash screen is showing - too unpredictable - may not see title)
+    if castle then
+        client.useCastleConfig()
+    else
+        client.enabled = true
+        client.start('127.0.0.1:22122') -- IP address ('127.0.0.1' is same computer) and port of server
+    end
 end
 
 
@@ -593,7 +602,7 @@ function client.draw()
         
         -- Rémy's fix for "black display" issue
         -- (shouldn't need now - fixed in Sugarcoat)
-        color(1) color(2)
+        --color(1) color(2)
 
         
         if client.connected then
