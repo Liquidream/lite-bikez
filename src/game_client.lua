@@ -489,7 +489,7 @@ function update_shader_parameters()
 end
 
 
-function client.update(dt)
+function love.update(dt)  -- was client.update(dt) (but now delaying client init!)
     -- start with the splash screen...
     if gameState == GAME_STATE.SPLASH then
         updateSplash(dt)
