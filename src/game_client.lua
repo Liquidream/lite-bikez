@@ -122,10 +122,8 @@ function initSplash()
     shader_switch(false)
   end
 
-function updateSplash(dt)    
-    log("...>>> 1")
+function updateSplash(dt)
     if startTime then
-        log("...>>>  2")
         duration = love.timer.getTime()-startTime 
         if duration > 3.53 then
         -- load the title screen      
@@ -176,7 +174,9 @@ function initTitle()
 
     -- now start Connecting...
     -- (not while splash screen is showing - too unpredictable - may not see title)
+    log(">> creating client..")
     if castle then
+        log(">>> client.useCastleConfig()")
         client.useCastleConfig()
     else
         client.enabled = true
