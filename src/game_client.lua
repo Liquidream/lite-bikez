@@ -597,7 +597,7 @@ function love.update(dt)  -- was client.update(dt) (but now delaying client init
     end
 end
 
-function client.draw()
+function love.draw() ---- was client.draw() (but now delaying client init!)
     -- start with the splash screen...
     if gameState == GAME_STATE.SPLASH then
         drawSplash()
