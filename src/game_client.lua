@@ -15,12 +15,12 @@ local Sounds = require 'sounds'
 -- made client global so UI and others can use
 client = cs.client
 
-if castle then
-    client.useCastleConfig()
-else
-    client.enabled = true
-    client.start('127.0.0.1:22122') -- IP address ('127.0.0.1' is same computer) and port of server
-end
+-- if castle then
+--     client.useCastleConfig()
+-- else
+--     client.enabled = true
+--     client.start('127.0.0.1:22122') -- IP address ('127.0.0.1' is same computer) and port of server
+-- end
 
 useShader = true
 
@@ -71,6 +71,15 @@ function client.load()
 
     -- default player to dead
     homePlayer.dead = true
+
+    -- now start Connecting...
+    -- (not while splash screen is showing - too unpredictable - may not see title)
+    if castle then
+        client.useCastleConfig()
+    else
+        client.enabled = true
+        client.start('127.0.0.1:22122') -- IP address ('127.0.0.1' is same computer) and port of server
+    end
 
     log("Game initialized.")
 end
