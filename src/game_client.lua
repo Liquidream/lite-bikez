@@ -64,7 +64,7 @@ function  client.load()
     initSugarcoat()
 
     -- init splash screen   
-    initSplash()
+    --initSplash()
     --initSugarcoat()
 
     initSounds()
