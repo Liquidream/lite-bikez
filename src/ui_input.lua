@@ -38,7 +38,7 @@ end)
     if gameState == GAME_STATE.LVL_PLAY then
 
         ui.markdown([[
-#### Level Select
+#### Next Level Vote
 ]])
         ui.dropdown("Vote to change battle arena:", levelName, LEVEL_LIST,
             { onChange=function(value) 
@@ -62,15 +62,11 @@ end)
 *(Voted)*
 ]])
         end
-    
---     else
---         ui.markdown([[
--- #### Current Level
---     ]])
-        
---     end -- if "host"
 
-    ui.markdown('![]('..levelGfxPaths[1]..')')    
+        ui.markdown('![]('..levelGfxPaths[1]..')')    
+    
+    end -- if vote allowed
+
 
     ui.markdown([[
 #### Other Settings
