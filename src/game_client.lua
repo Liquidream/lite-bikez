@@ -60,14 +60,9 @@ function  client.load()
     local width, height = love.graphics.getDimensions()
     log(">>>> client getDimensions: "..width..","..height)
 
+    initSounds()
      -- enable/initialise Sugarcoat engine for rendering
     initSugarcoat()
-
-    -- init splash screen   
-    --initSplash()
-    --initSugarcoat()
-
-    initSounds()
 
     -- default player to dead
     homePlayer.dead = true
