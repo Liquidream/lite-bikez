@@ -60,7 +60,10 @@ function  client.load()
     local width, height = love.graphics.getDimensions()
     log(">>>> client getDimensions: "..width..","..height)
 
+    -- (init sound first - as seems to do a pause, 
+    --  which don't want to interfere with splash duration)
     initSounds()
+    
      -- enable/initialise Sugarcoat engine for rendering
     initSugarcoat()
 
@@ -115,7 +118,6 @@ function initSplash()
     gameState = GAME_STATE.SPLASH
     use_palette(palettes.pico8)
     startTime = love.timer.getTime()
-    log("startTime = "..tostring(startTime))
     shader_switch(false)
   end
 
@@ -134,10 +136,8 @@ function drawSplash()
     cls()
     local offset = math.sin(duration)*2
     fade(max(14-(offset-1.1)*25,0))
-    log("drawSplash - duration="..tostring(duration))
     -- title logo
     if surface_exists("splash") then
-        log("splash exists!")
         local w,h = surface_size("splash")
         local scale = 2
         w=w*scale
