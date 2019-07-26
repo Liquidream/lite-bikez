@@ -116,7 +116,7 @@ end
 -- Intro/Splash screen
 --
 function initSplash()
-    log("initSplash()...")
+    log("initSplash()...,.")
     gameState = GAME_STATE.SPLASH
     use_palette(palettes.pico8)
     startTime = love.timer.getTime()
