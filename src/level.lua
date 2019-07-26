@@ -211,7 +211,9 @@ end
 
 function drawBG(levelSize, draw_zoom_scale)    
     -- draw background gfx
-    spr_sheet("levelgfx-bg", 0,0, levelSize*draw_zoom_scale,levelSize*draw_zoom_scale)
+    if surface_exists("levelgfx-bg") then
+        spr_sheet("levelgfx-bg", 0,0, levelSize*draw_zoom_scale,levelSize*draw_zoom_scale)
+    end
 end
 
 function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel, draw_zoom_scale)

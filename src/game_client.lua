@@ -132,7 +132,7 @@ function updateSplash(dt)
         initTitle()
         end
     end
-  end
+end
 
 function drawSplash()
     cls()
@@ -174,13 +174,23 @@ function initTitle()
     shader_switch(true)
 end
 
+function updateTitle(dt)
+    -- TODO: wait until connected (and for user to press space) to start
+    if client.connected and love.keyboard.isDown("space") then
+        -- tell the server we're ready to start
+        client.send("player_ready")
+    end
+end
+
 
 local pgrid=0
 function drawTitle(levelSize, draw_zoom_scale)    
-    -- draw background gfx
-    -- if surface_exists("titlegfx-bg") then
-    --     spr_sheet("titlegfx-bg", -16,-16, levelSize*draw_zoom_scale,levelSize*draw_zoom_scale)
-    -- end    
+    
+    -- Make text more "readable"
+    --print("!!!",50,1,1)
+    printp(0x0330, 0x3123, 0x0330, 0x0, 0x0)
+    printp_color(0, 0, 0)
+
     -- Reset camera for UI
     camera(0,0)
 
@@ -197,7 +207,6 @@ function drawTitle(levelSize, draw_zoom_scale)
         local s=(irnd(20)==0) and rnd(3) or 0
         rectfill(x,y,x+s,y+s,1)
     end
-
 
     -- draw grid
     for i=1,#pcols do
@@ -221,8 +230,11 @@ function drawTitle(levelSize, draw_zoom_scale)
     -- Reset camera for UI
     camera(0,0)
     
-        
-    pprintc('Connecting to the grid...', GAME_HEIGHT/2+48, 11) --24 
+    if client.connected then          
+        pprintc('Press <SPACE> to start', GAME_HEIGHT/2+48, 11)
+    else
+        pprintc('Connecting to the grid...', GAME_HEIGHT/2+48, 19)
+    end
 
     pprintc('         Code + Art                                                       Music', 
         GAME_HEIGHT/2+75, 51) --24 
@@ -237,7 +249,7 @@ end
 function client.connect() -- Called on connect from serverfo
     log(" client.connect()... ")
 
-    gameState = GAME_STATE.LVL_PLAY
+    --gameState = GAME_STATE.LVL_PLAY
 
     homePlayer.id = client.id
 
@@ -262,7 +274,7 @@ function client.connect() -- Called on connect from serverfo
     -- Make sure we're using the right palette
     use_palette(ak54Paired)
 
-    Sounds.playingLoop:play()
+    --Sounds.playingLoop:play()
 
 end
 
@@ -282,7 +294,13 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
 
      if msg == "player_start" then
 
-        log("client reset")        
+        log("client reset")
+               
+        -- first start?
+        if gameState ~= GAME_STATE.LVL_PLAY then
+            -- start game        
+            initGameplay()
+        end
 
         -- Make sure we're using the right palette
         -- (Added here as, with async, was finding palette was still shifting from Plr photo)
@@ -348,6 +366,12 @@ function initSounds()
   Sounds.playingLoop = Sound:new('music_cocaine_lambo.mp3', 1)
   Sounds.playingLoop:setVolume(0.7)
   Sounds.playingLoop:setLooping(true)
+end
+
+function initGameplay()
+    gameState = GAME_STATE.LVL_PLAY
+
+    Sounds.playingLoop:play()
 end
 
 
@@ -500,19 +524,23 @@ end
 
 
 function  client.update(dt) ---(but now delaying client init!)
+    -- update shader (even if disabled)
+    screen_shader_input({ time = t() })
+    
     -- start with the splash screen...
     if gameState == GAME_STATE.SPLASH then
         updateSplash(dt)
+    
+    
+    elseif gameState == GAME_STATE.TITLE then
+        updateTitle(dt)
 
-    else
+    elseif gameState == GAME_STATE.LVL_PLAY then
         -- --------------------------
-        -- Sugarcoat mode
+        -- Gameplay
         -- --------------------------
-        screen_shader_input({ time = t() })
-        
-        -- if DEBUG_MODE then
-        --     log("dt="..dt)
-        -- end
+
+        -- TODO: put player back to title
 
         if client.connected
         and not homePlayer.dead  then
@@ -619,12 +647,17 @@ function  client.draw() --(but now delaying client init!)
     if gameState == GAME_STATE.SPLASH then
         drawSplash()
     
-    elseif gameState == GAME_STATE.TITLE 
-     or not client.connected then
+    elseif gameState == GAME_STATE.TITLE then
+     --or not client.connected then
+
         -- draw title/connecting screen
         drawTitle(512, zoom_scale)
 
-    elseif client.connected then
+    elseif gameState == GAME_STATE.LVL_PLAY then
+        -- --------------------------
+        -- Gameplay
+        -- --------------------------
+    --elseif client.connected then
         -- Update camera pos
         local cam_edge=40        
         

@@ -41,20 +41,20 @@ local serverPrivate = share --{}   -- Data private to the server
 function server.connect(id) -- Called on connect from client with `id`
     log('client ' .. id .. ' connected')
 
-    local newPlayer = { 
-        id = id,
-        score = 0,
-        announce = false
-    }
-    log("server reset")
-    resetPlayer(newPlayer, share, true)
-    -- tell client start pos
-    server.send(id, "player_start", 
-        newPlayer.xDir, newPlayer.yDir, 
-        newPlayer.x, newPlayer.y, newPlayer.col,
-        levelName, levelDataPath, levelGfxPaths)
+    -- local newPlayer = { 
+    --     id = id,
+    --     score = 0,
+    --     announce = false
+    -- }
+    -- log("server player reset")
+    -- resetPlayer(newPlayer, share, true)
+    -- -- tell client start pos
+    -- server.send(id, "player_start", 
+    --     newPlayer.xDir, newPlayer.yDir, 
+    --     newPlayer.x, newPlayer.y, newPlayer.col,
+    --     levelName, levelDataPath, levelGfxPaths)
     
-    share.players[id] = newPlayer
+    -- share.players[id] = newPlayer
 end
 
 function server.disconnect(id) -- Called on disconnect from client with `id`
@@ -77,7 +77,22 @@ function server.receive(id, ...) -- Called when client with `id` does `client.se
     local msg = arg[1]
     log("server msg = "..msg.."(id="..id..")")
 
-    if msg == "player_update" then
+    if msg == "player_ready" then        
+        local newPlayer = { 
+            id = id,
+            score = 0,
+            announce = false
+        }
+        log("server player reset")
+        resetPlayer(newPlayer, share, true)
+        -- tell client start pos
+        server.send(id, "player_start", 
+            newPlayer.xDir, newPlayer.yDir, 
+            newPlayer.x, newPlayer.y, newPlayer.col,
+            levelName, levelDataPath, levelGfxPaths)        
+        share.players[id] = newPlayer
+
+    elseif msg == "player_update" then
         player.xDir = arg[2]
         player.yDir = arg[3]
         player.x = arg[4]
