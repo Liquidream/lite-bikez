@@ -63,7 +63,7 @@ function  client.load()
     -- (init sound first - as seems to do a pause, 
     --  which don't want to interfere with splash duration)
     initSounds()
-    
+
      -- enable/initialise Sugarcoat engine for rendering
     initSugarcoat()
 
@@ -172,7 +172,7 @@ function initTitle()
 end
 
 function updateTitle(dt)
-    -- TODO: wait until connected (and for user to press space) to start
+    -- wait until connected (and for user to press space) to start
     if client.connected and love.keyboard.isDown("space") then
         -- tell the server we're ready to start
         client.send("player_ready")
@@ -343,7 +343,7 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
 
         resetPlayer(homePlayer, share, false)
 
-        -- TODO: Review this, as only needs to be created once (on connection)
+        -- Only create level once (on connection)
         if clientPrivate.level == nil then
             clientPrivate.level=createLevel(1, 512, false) --game size (square)
         end
