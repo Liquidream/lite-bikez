@@ -119,28 +119,6 @@ function server.receive(id, ...) -- Called when client with `id` does `client.se
         -- cast vote
         player.vote = levelName
 
-
-    -- elseif msg == "level_select" then
-    --     log("server: changing level!")
-    --     -- player changed level
-    --     log("levelName = "..arg[2])
-    --     log("levelDataPath = "..arg[3])
-    --     log("#levelGfxPaths = "..#arg[4])
-    --     levelName = arg[2]
-    --     levelDataPath = arg[3]
-    --     levelGfxPaths = arg[4]        
-    --     -- temp switch level!
-    --     serverPrivate.level = createLevel(1, 512, true) --game size (square)
-    --     share.levelSize = serverPrivate.level.levelSize
-    --     -- reset all players
-    --     log("server resetting players to new level")
-    --     for clientId, player in pairs(share.players) do
-    --         resetPlayer(player, share, true)
-    --         server.send(clientId, "player_start", 
-    --         player.xDir, player.yDir, 
-    --         player.x, player.y, player.col,
-    --         levelName, levelDataPath, levelGfxPaths)
-    --     end
     end
 end
 
@@ -239,6 +217,7 @@ function server.update(dt)
 
 
     --log("--- check votes -----------------")
+    
     -- check (& reset) vote counts
     for key, level in pairs(LEVEL_DATA_LIST) do
         -- do we have a majority?

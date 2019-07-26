@@ -38,7 +38,7 @@ end)
     if gameState == GAME_STATE.LVL_PLAY then
 
         ui.markdown([[
-#### Next Level Vote
+#### Level Select
 ]])
         ui.dropdown("Vote to change battle arena:", levelName, LEVEL_LIST,
             { onChange=function(value) 

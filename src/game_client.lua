@@ -86,7 +86,10 @@ function initSugarcoat()
 
     set_frame_waiting(60)
 
-    use_palette(palettes.pico8)
+    
+    -- start with splash screen palette 
+    use_palette(palettes.pico8)    
+    
     --use_palette(ak54Paired)
     --use_palette(ak54)
     --use_palette(amstradCPC)
@@ -115,8 +118,9 @@ end
 --
 function initSplash()
     log("initSplash()...,.")
-    gameState = GAME_STATE.SPLASH
-    use_palette(palettes.pico8)
+    gameState = GAME_STATE.SPLASH    
+    -- start with splash screen palette 
+    use_palette(palettes.pico8)    
     startTime = love.timer.getTime()
     shader_switch(false)
   end
@@ -167,6 +171,7 @@ function initTitle()
     log("initTitle()...")
     
     gameState = GAME_STATE.TITLE
+    -- switch to main palette for title screen
     use_palette(ak54Paired)
     shader_switch(true)
 end
@@ -246,16 +251,7 @@ end
 function client.connect() -- Called on connect from serverfo
     log(" client.connect()... ")
 
-    --gameState = GAME_STATE.LVL_PLAY
-
     homePlayer.id = client.id
-
-    -- other player inits
-    -- homePlayer.expEmitterIdx = 0
-    -- homePlayer.boostEmitterIdx = 0
-
-    -- home.col = serverPlayer.col
-    --log("col type:"..type(homePlayer.col))
     
     -- Player info
     home.me = castle.user.getMe and castle.user.getMe()
@@ -267,11 +263,6 @@ function client.connect() -- Called on connect from serverfo
     else
         home.me.shortname = home.me.name
     end
-
-    -- Make sure we're using the right palette
-    use_palette(ak54Paired)
-
-    --Sounds.playingLoop:play()
 
 end
 
@@ -298,10 +289,6 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
             -- start game        
             initGameplay()
         end
-
-        -- Make sure we're using the right palette
-        -- (Added here as, with async, was finding palette was still shifting from Plr photo)
-        use_palette(ak54Paired)
 
         homePlayer.xDir = arg[2]
         homePlayer.yDir = arg[3]
@@ -692,7 +679,7 @@ function checkAndGetPlayerPhoto(playerId, photoUrl)
             playerPhotos[playerId] = key
 
             -- Make sure we're using the right palette
-            use_palette(ak54Paired)
+            --use_palette(ak54Paired)
 
         end)
     end
