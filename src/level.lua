@@ -13,7 +13,7 @@ function createLevel(levelNum, levelSize, IS_SERVER)
         grid = {}
     }
 
-    -- TODO: Create new level "grid" for level specified
+    -- Create new level "grid" for level specified
     for r = 1,levelSize do
         level.grid[r]={}
         for c = 1,levelSize do
@@ -23,7 +23,7 @@ function createLevel(levelNum, levelSize, IS_SERVER)
     
     network.async(function()            
         -- load level collision data (Client AND Server)
-        -- TODO: This needs to be dynamic - based on current level
+        -- based on current level
         log("loading level collision data...")
         --local levelDataPath = "assets/level-1-data.png"
         levelData = love.image.newImageData(levelDataPath)
@@ -211,7 +211,9 @@ end
 
 function drawBG(levelSize, draw_zoom_scale)    
     -- draw background gfx
-    spr_sheet("levelgfx-bg", 0,0, levelSize*draw_zoom_scale,levelSize*draw_zoom_scale)
+    if surface_exists("levelgfx-bg") then
+        spr_sheet("levelgfx-bg", 0,0, levelSize*draw_zoom_scale,levelSize*draw_zoom_scale)
+    end
 end
 
 function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel, draw_zoom_scale)

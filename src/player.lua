@@ -226,7 +226,6 @@ function boostPlayer(player)
         pEmitter.ypos = player.smoothY * zoom_scale - zoom_scale
     end
 
-    -- TODO: Delete "dead" systems!!
 end
 
 function drawPlayer(player, draw_zoom_scale)
@@ -278,7 +277,7 @@ function drawPlayer(player, draw_zoom_scale)
     -- only apply smoothing to OTHER players, not us
     if player.id ~= client.id then
         --
-        -- TODO: Check/improve this, coz it SEEMS a bitbloated!
+        -- TODO: Check/improve this, coz it SEEMS a bit bloated!
         --
         player.smoothX = player.smoothX + 0.4 * (x - player.smoothX)
         player.smoothY = player.smoothY + 0.4 * (y - player.smoothY)

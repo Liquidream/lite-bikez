@@ -33,12 +33,9 @@ ui.section("Controls", function()
 
 end)
 
-    -- Only if "host" of session 
-    -- (TODO: Allow subsequent hosts!)
-
-    -- if (client.home and client.home.id==1)
-    --   or not castle-- USE_CASTLE_CONFIG 
-    --   then
+    -- Only allow level select/vote during gameplay
+    -- TODO: only allow this at the END of a session (score screen)
+    if gameState == GAME_STATE.LVL_PLAY then
 
         ui.markdown([[
 #### Level Select
@@ -65,15 +62,11 @@ end)
 *(Voted)*
 ]])
         end
-    
---     else
---         ui.markdown([[
--- #### Current Level
---     ]])
-        
---     end -- if "host"
 
-    ui.markdown('![]('..levelGfxPaths[1]..')')    
+        ui.markdown('![]('..levelGfxPaths[1]..')')    
+    
+    end -- if vote allowed
+
 
     ui.markdown([[
 #### Other Settings

@@ -50,17 +50,208 @@ shader_crt_curve      = 0.025
 shader_glow_strength  = 0.5
 shader_distortion_ray = 3.0
 shader_scan_lines     = 1.0
+gameState = -1 -- nothing by default
+
+
+
+-- Client gets all Love events
+
+function  client.load()
+    local width, height = love.graphics.getDimensions()
+    log(">>>> client getDimensions: "..width..","..height)
+
+    -- (init sound first - as seems to do a pause, 
+    --  which don't want to interfere with splash duration)
+    initSounds()
+
+     -- enable/initialise Sugarcoat engine for rendering
+    initSugarcoat()
+
+    -- default player to dead
+    homePlayer.dead = true
+
+    log("Game initialized.")
+end
+
+
+function initSugarcoat()
+    -- initialise and update the gfx display
+    init_sugar("Light Ryders", GAME_WIDTH, GAME_HEIGHT, GAME_SCALE)
+
+    screen_render_stretch(false)
+    screen_render_integer_scale(false)
+    --screen_render_integer_scale(true)
+
+    shader_switch(useShader)
+
+    set_frame_waiting(60)
+
+    
+    -- start with splash screen palette 
+    use_palette(palettes.pico8)    
+    
+    --use_palette(ak54Paired)
+    --use_palette(ak54)
+    --use_palette(amstradCPC)
+    --use_palette(palettes.pico8)
+    --set_background_color(0)
+
+    network.async(function()
+        -- load splash img first (to show while others dnload)
+        log("loading splash images...")        
+        load_png("splash", "assets/splash.png", palettes.pico8, true)
+        
+        -- load other graphics
+        load_png("titlegfx-text", "assets/title-text.png", ak54Paired, true)
+        load_png("titlegfx-bg", "assets/level-1-bg.png", ak54Paired, true)
+
+        initSplash()
+    end)
+
+    -- new font!
+    load_font('assets/MatchupPro.ttf', 16, 'corefont', true)
+end
+
+
+--
+-- Intro/Splash screen
+--
+function initSplash()
+    log("initSplash()...,.")
+    gameState = GAME_STATE.SPLASH    
+    -- start with splash screen palette 
+    use_palette(palettes.pico8)    
+    startTime = love.timer.getTime()
+    shader_switch(false)
+  end
+
+function updateSplash(dt)
+    if startTime then
+        duration = love.timer.getTime()-startTime 
+        if duration > 3.53 then
+        -- load the title screen      
+        --Sounds.titleLoop:play()
+        initTitle()
+        end
+    end
+end
+
+function drawSplash()
+    cls()
+    local offset = math.sin(duration)*2
+    fade(max(14-(offset-1.1)*25,0))
+    -- title logo
+    if surface_exists("splash") then
+        local w,h = surface_size("splash")
+        local scale = 2
+        w=w*scale
+        h=h*scale
+        spr_sheet("splash", GAME_WIDTH/2-w/2, GAME_HEIGHT/2-h/2, w,h)
+    end
+
+end
+
+
+   
+function fade(i)
+    for c=0,15 do
+        if flr(i+1)>=16 or flr(i+1)<=0 then
+            pal(c,0)
+        else
+            pal(c,fadeBlackTable[c+1][flr(i+1)])
+        end
+    end
+end
+
+--
+-- Title screen
+--
+
+function initTitle()
+    log("initTitle()...")
+    
+    gameState = GAME_STATE.TITLE
+    -- switch to main palette for title screen
+    use_palette(ak54Paired)
+    shader_switch(true)
+end
+
+function updateTitle(dt)
+    -- wait until connected (and for user to press space) to start
+    if client.connected and love.keyboard.isDown("space") then
+        -- tell the server we're ready to start
+        client.send("player_ready")
+    end
+end
+
+
+local pgrid=0
+function drawTitle(levelSize, draw_zoom_scale)    
+    
+    -- Make text more "readable"
+    --print("!!!",50,1,1)
+    printp(0x0330, 0x3123, 0x0330, 0x0, 0x0)
+    printp_color(0, 0, 0)
+
+    -- Reset camera for UI
+    camera(0,0)
+
+    local pcols = {13, 7,  33, 55}
+    local pdist = {288,180,134,127}
+    local vpoint_y=120
+    palt(0,true)
+
+    -- stars
+    srand(197)  --197 --194 --56 --131  --139 --220 --236
+    for i=1,100 do
+        local x=rnd(GAME_WIDTH)
+        local y=rnd(vpoint_y)
+        local s=(irnd(20)==0) and rnd(3) or 0
+        rectfill(x,y,x+s,y+s,1)
+    end
+
+    -- draw grid
+    for i=1,#pcols do
+        clip(0, 0, GAME_WIDTH, pdist[i])
+        for n=-130,130 do
+            w=63+(n-pgrid)*140
+            line(GAME_WIDTH/2,vpoint_y,w,GAME_HEIGHT,pcols[i])
+            y=vpoint_y+n*n*0.75
+            line(0,y,GAME_WIDTH,y,pcols[i])
+        end
+    end
+    pgrid=0.05+pgrid%1
+    clip()
+
+    -- title logo
+    if surface_exists("titlegfx-text") then
+        spr_sheet("titlegfx-text", GAME_WIDTH/2-384/2, GAME_HEIGHT/2-50)
+    end
+
+    
+    -- Reset camera for UI
+    camera(0,0)
+    
+    if client.connected then          
+        pprintc('Press <SPACE> to start', GAME_HEIGHT/2+48, 11)
+    else
+        pprintc('Connecting to the grid...', GAME_HEIGHT/2+48, 19)
+    end
+
+    pprintc('         Code + Art                                                       Music', 
+        GAME_HEIGHT/2+75, 51) --24 
+    
+    pprintc('         Paul Nicholas                                                  Ken Wheeler', 
+        GAME_HEIGHT/2+88, 45) --24 
+
+end
+
+
 
 function client.connect() -- Called on connect from serverfo
-    
+    log(" client.connect()... ")
+
     homePlayer.id = client.id
-
-    -- other player inits
-    -- homePlayer.expEmitterIdx = 0
-    -- homePlayer.boostEmitterIdx = 0
-
-    -- home.col = serverPlayer.col
-    --log("col type:"..type(homePlayer.col))
     
     -- Player info
     home.me = castle.user.getMe and castle.user.getMe()
@@ -73,10 +264,13 @@ function client.connect() -- Called on connect from serverfo
         home.me.shortname = home.me.name
     end
 
-    Sounds.playingLoop:play()
 end
 
 function client.disconnect() -- Called on disconnect from server
+  log("client.disconnect()...")
+
+  gameState = GAME_STATE.TITLE
+
   Sounds.playingLoop:stop()
 end
 
@@ -87,7 +281,15 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
      log("client receive msg = "..msg)
 
      if msg == "player_start" then
-        log("client reset")        
+
+        log("client reset")
+               
+        -- first start?
+        if gameState ~= GAME_STATE.LVL_PLAY then
+            -- start game        
+            initGameplay()
+        end
+
         homePlayer.xDir = arg[2]
         homePlayer.yDir = arg[3]
         homePlayer.x = arg[4]
@@ -128,7 +330,7 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
 
         resetPlayer(homePlayer, share, false)
 
-        -- TODO: Review this, as only needs to be created once (on connection)
+        -- Only create level once (on connection)
         if clientPrivate.level == nil then
             clientPrivate.level=createLevel(1, 512, false) --game size (square)
         end
@@ -150,48 +352,12 @@ function initSounds()
   Sounds.playingLoop:setLooping(true)
 end
 
--- Client gets all Love events
+function initGameplay()
+    gameState = GAME_STATE.LVL_PLAY
 
-function client.load()
-
-    -- Test for Nikki
-    local width, height = love.graphics.getDimensions()
-    log(">>>> Nikki: "..width..","..height)
-
-    -- initialise and update the gfx display
-    init_sugar("Lite Bikez", GAME_WIDTH, GAME_HEIGHT, GAME_SCALE)
-    
-    screen_render_stretch(false)
-    screen_render_integer_scale(false)
-    --screen_render_integer_scale(true)
-
-    shader_switch(useShader)
-
-    set_frame_waiting(60)
-
-    use_palette(ak54Paired)
-    --use_palette(ak54)
-    --use_palette(amstradCPC)
-    --use_palette(palettes.pico8)
-    --set_background_color(0)
-
-    network.async(function()
-        -- load drawing data
-        log("loading title asset images...")
-        load_png("titlegfx-text", "assets/title-text.png", nil, true)
-        load_png("titlegfx-bg", "assets/level-1-bg.png", nil, true)
-    end)
-
-    -- new font!
-    load_font('assets/MatchupPro.ttf', 16, 'corefont', true)
-
-    initSounds()
-
-    -- default player to dead
-    homePlayer.dead = true
-
-    log("Game initialized.")
+    Sounds.playingLoop:play()
 end
+
 
 function shader_switch(enable)
   if not enable then
@@ -341,114 +507,141 @@ function update_shader_parameters()
 end
 
 
-function client.update(dt)
+function  client.update(dt) ---(but now delaying client init!)
+    -- update shader (even if disabled)
     screen_shader_input({ time = t() })
     
-    -- if DEBUG_MODE then
-    --     log("dt="..dt)
-    -- end
-
-    if client.connected
-     and not homePlayer.dead  then
-
-        -- Check for deaths
-        if not homePlayer.dead then
-            home.x = homePlayer.x
-            home.y = homePlayer.y
-            
-            -- update player (controls)
-
-            -- move player
-            updatePlayerPos(homePlayer, dt)
-
-            -- Now check against local collisions 
-            -- (e.g. have we hit ourselves - as that lag-free)
-            checkLevelPlayer(share, homePlayer, clientPrivate.level)
-
-            -- Now check against remote collisions
-            -- (e.g. have we hit another player)
-            if not homePlayer.dead then
-             -- NOTE: Can't reset the level data here
-             -- (even though it'll try)
-             -- Server will do it tho when receives "dead" message
-             checkLevelPlayer(share, homePlayer, share.level)
-            
-
-             -- Update local player grid status, for collisions
-             -- (As can be a lag getting it from the server)
-             updateLevelGrid(homePlayer, clientPrivate.level)
-            end
-
-            if homePlayer.dead then
-                -- tell the server we died
-                client.send("player_dead", homePlayer.killedBy)
-                -- clear local player grid data
-                remove_player_from_grid(clientPrivate.level, homePlayer)
-            end
-        end
-    end
-
-    -- Look for player updates for particle effects
-    -- other players...
-    if share.players then        
-        for id, player in pairs(share.players) do    
-            if player.id ~= homePlayer.id then
-                -- Boost particles?
-                if player.boost then
-                    -- update boost visual effect
-                    boostPlayer(player)
-
-                elseif boostParticles[player.id] then 
-                    -- kill particle system        
-                    boostParticles[player.id].lifetime = 0
-                end
-                -- death?
-                if player.dead 
-                 and (deathParticles[player.id]==nil 
-                 or deathParticles[player.id].lifetime == 0) then
-                    explodePlayer(player)
-                elseif not player.dead 
-                 and deathParticles[player.id] then
-                    -- remove death particles for other players after respawn
-                    -- (coz we don't get that explicit event)
-                    table.remove(deathParticles, player.id)
-                end
-            end
-        end
-    end
-    -- local player
-    if not homePlayer.dead then
-        -- Boost particles?
-        if homePlayer.boost then
-            -- update boost visual effect
-            boostPlayer(homePlayer)
-            
-        elseif boostParticles[homePlayer.id] then 
-            -- kill particle system        
-            boostParticles[homePlayer.id].lifetime = 0
-        end
-        -- explode already taken care of
-    end
+    -- start with the splash screen...
+    if gameState == GAME_STATE.SPLASH then
+        updateSplash(dt)
     
-    -- Update all particle systems
-    for index, psys in pairs(boostParticles) do
-        psys:update(dt)
-    end
-    for index, psys in pairs(deathParticles) do
-        psys:update(dt)
+    
+    elseif gameState == GAME_STATE.TITLE then
+        updateTitle(dt)
+
+    elseif gameState == GAME_STATE.LVL_PLAY then
+        -- --------------------------
+        -- Gameplay
+        -- --------------------------
+
+        -- TODO: put player back to title
+
+        if client.connected
+        and not homePlayer.dead  then
+
+            -- Check for deaths
+            if not homePlayer.dead then
+                home.x = homePlayer.x
+                home.y = homePlayer.y
+                
+                -- update player (controls)
+
+                -- move player
+                updatePlayerPos(homePlayer, dt)
+
+                -- Now check against local collisions 
+                -- (e.g. have we hit ourselves - as that lag-free)
+                checkLevelPlayer(share, homePlayer, clientPrivate.level)
+
+                -- Now check against remote collisions
+                -- (e.g. have we hit another player)
+                if not homePlayer.dead then
+                -- NOTE: Can't reset the level data here
+                -- (even though it'll try)
+                -- Server will do it tho when receives "dead" message
+                checkLevelPlayer(share, homePlayer, share.level)
+                
+
+                -- Update local player grid status, for collisions
+                -- (As can be a lag getting it from the server)
+                updateLevelGrid(homePlayer, clientPrivate.level)
+                end
+
+                if homePlayer.dead then
+                    -- tell the server we died
+                    client.send("player_dead", homePlayer.killedBy)
+                    -- clear local player grid data
+                    remove_player_from_grid(clientPrivate.level, homePlayer)
+                end
+            end
+        end
+
+        -- Look for player updates for particle effects
+        -- other players...
+        if share.players then        
+            for id, player in pairs(share.players) do    
+                if player.id ~= homePlayer.id then
+                    -- Boost particles?
+                    if player.boost then
+                        -- update boost visual effect
+                        boostPlayer(player)
+
+                    elseif boostParticles[player.id] then 
+                        -- kill particle system        
+                        boostParticles[player.id].lifetime = 0
+                    end
+                    -- death?
+                    if player.dead 
+                    and (deathParticles[player.id]==nil 
+                    or deathParticles[player.id].lifetime == 0) then
+                        explodePlayer(player)
+                    elseif not player.dead 
+                    and deathParticles[player.id] then
+                        -- remove death particles for other players after respawn
+                        -- (coz we don't get that explicit event)
+                        table.remove(deathParticles, player.id)
+                    end
+                end
+            end
+        end
+        -- local player
+        if not homePlayer.dead then
+            -- Boost particles?
+            if homePlayer.boost then
+                -- update boost visual effect
+                boostPlayer(homePlayer)
+                
+            elseif boostParticles[homePlayer.id] then 
+                -- kill particle system        
+                boostParticles[homePlayer.id].lifetime = 0
+            end
+            -- explode already taken care of
+        end
+        
+        -- Update all particle systems
+        for index, psys in pairs(boostParticles) do
+            psys:update(dt)
+        end
+        for index, psys in pairs(deathParticles) do
+            psys:update(dt)
+        end
+
     end
 end
 
-function client.draw()
+function  client.draw() --(but now delaying client init!)
     -- Draw game to canvas/screen
     cls()
-    
-    
+        
     -- Rémy's fix for "black display" issue
+    -- (shouldn't need now - fixed in Sugarcoat)
     color(1) color(2)
 
+    -- start with the splash screen...
+    if gameState == GAME_STATE.SPLASH then
+        drawSplash()
     
-    if client.connected then
+    elseif gameState == GAME_STATE.TITLE then
+     --or not client.connected then
+
+        -- draw title/connecting screen
+        drawTitle(512, zoom_scale)
+
+    elseif gameState == GAME_STATE.LVL_PLAY then
+        -- --------------------------
+        -- Gameplay
+        -- --------------------------
+    --elseif client.connected then
         -- Update camera pos
         local cam_edge=40        
         
@@ -462,14 +655,15 @@ function client.draw()
         
         -- Draw whole level
         drawLevel(share.levelSize, share.players, homePlayer, share.level, clientPrivate.level, zoom_scale)
+        
+        -- Reset camera for UI
+        camera(0,0)
+        drawUI(share.players)
     end
-    
-    -- Reset camera for UI
-    camera(0,0)
-    drawUI(share.players)
 end
 
 function checkAndGetPlayerPhoto(playerId, photoUrl)
+
     if playerPhotos[playerId] == nil then
         -- go and download the player photo
         playerPhotos[playerId]="pending..."
@@ -483,6 +677,9 @@ function checkAndGetPlayerPhoto(playerId, photoUrl)
                         
             -- ...and store reference to it
             playerPhotos[playerId] = key
+
+            -- Make sure we're using the right palette
+            --use_palette(ak54Paired)
 
         end)
     end
@@ -546,17 +743,6 @@ function drawUI(players)
     if client.connected then
         -- Draw our ping        
         pprint('Ping: ' .. client.getPing(), 2, 2, 49)--49 --51
-    else
-        -- draw background gfx
-        drawTitle(512, zoom_scale)
-        
-        pprintc('Connecting to the grid...', GAME_HEIGHT/2+48, 11) --24 
-
-        pprintc('         Code + Art                                                       Music', 
-            GAME_HEIGHT/2+75, 51) --24 
-        
-        pprintc('         Paul Nicholas                                                  Ken Wheeler', 
-            GAME_HEIGHT/2+88, 45) --24 
     end
 
     if DEBUG_MODE then
@@ -615,49 +801,6 @@ function pprintc(text, y, col)
     pprint(text, GAME_WIDTH/2-(#text*6)/2, y, col)
 end
 
-local pgrid=0
-function drawTitle(levelSize, draw_zoom_scale)    
-    -- draw background gfx
-    -- if surface_exists("titlegfx-bg") then
-    --     spr_sheet("titlegfx-bg", -16,-16, levelSize*draw_zoom_scale,levelSize*draw_zoom_scale)
-    -- end    
-
-    local pcols = {13, 7,  33, 55}
-    local pdist = {288,180,134,127}
-    local vpoint_y=120
-    palt(0,true)
-
-    -- stars
-    srand(197)  --197 --194 --56 --131  --139 --220 --236
-    for i=1,100 do
-        local x=rnd(GAME_WIDTH)
-        local y=rnd(vpoint_y)
-        local s=(irnd(20)==0) and rnd(3) or 0
-        rectfill(x,y,x+s,y+s,1)
-    end
-
-
-    -- draw grid
-    for i=1,#pcols do
-        clip(0, 0, GAME_WIDTH, pdist[i])
-        for n=-130,130 do
-            w=63+(n-pgrid)*140
-            line(GAME_WIDTH/2,vpoint_y,w,GAME_HEIGHT,pcols[i])
-            y=vpoint_y+n*n*0.75
-            line(0,y,GAME_WIDTH,y,pcols[i])
-        end
-    end
-    pgrid=0.05+pgrid%1
-    clip()
-
-    -- title logo
-    if surface_exists("titlegfx-text") then
-        spr_sheet("titlegfx-text", GAME_WIDTH/2-384/2, GAME_HEIGHT/2-50)
-    end
-
-
-
-end
 
 
 function love.keypressed( key, scancode, isrepeat )

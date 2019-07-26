@@ -41,20 +41,20 @@ local serverPrivate = share --{}   -- Data private to the server
 function server.connect(id) -- Called on connect from client with `id`
     log('client ' .. id .. ' connected')
 
-    local newPlayer = { 
-        id = id,
-        score = 0,
-        announce = false
-    }
-    log("server reset")
-    resetPlayer(newPlayer, share, true)
-    -- tell client start pos
-    server.send(id, "player_start", 
-        newPlayer.xDir, newPlayer.yDir, 
-        newPlayer.x, newPlayer.y, newPlayer.col,
-        levelName, levelDataPath, levelGfxPaths)
+    -- local newPlayer = { 
+    --     id = id,
+    --     score = 0,
+    --     announce = false
+    -- }
+    -- log("server player reset")
+    -- resetPlayer(newPlayer, share, true)
+    -- -- tell client start pos
+    -- server.send(id, "player_start", 
+    --     newPlayer.xDir, newPlayer.yDir, 
+    --     newPlayer.x, newPlayer.y, newPlayer.col,
+    --     levelName, levelDataPath, levelGfxPaths)
     
-    share.players[id] = newPlayer
+    -- share.players[id] = newPlayer
 end
 
 function server.disconnect(id) -- Called on disconnect from client with `id`
@@ -77,7 +77,22 @@ function server.receive(id, ...) -- Called when client with `id` does `client.se
     local msg = arg[1]
     log("server msg = "..msg.."(id="..id..")")
 
-    if msg == "player_update" then
+    if msg == "player_ready" then        
+        local newPlayer = { 
+            id = id,
+            score = 0,
+            announce = false
+        }
+        log("server player reset")
+        resetPlayer(newPlayer, share, true)
+        -- tell client start pos
+        server.send(id, "player_start", 
+            newPlayer.xDir, newPlayer.yDir, 
+            newPlayer.x, newPlayer.y, newPlayer.col,
+            levelName, levelDataPath, levelGfxPaths)        
+        share.players[id] = newPlayer
+
+    elseif msg == "player_update" then
         player.xDir = arg[2]
         player.yDir = arg[3]
         player.x = arg[4]
@@ -104,28 +119,6 @@ function server.receive(id, ...) -- Called when client with `id` does `client.se
         -- cast vote
         player.vote = levelName
 
-
-    -- elseif msg == "level_select" then
-    --     log("server: changing level!")
-    --     -- player changed level
-    --     log("levelName = "..arg[2])
-    --     log("levelDataPath = "..arg[3])
-    --     log("#levelGfxPaths = "..#arg[4])
-    --     levelName = arg[2]
-    --     levelDataPath = arg[3]
-    --     levelGfxPaths = arg[4]        
-    --     -- temp switch level!
-    --     serverPrivate.level = createLevel(1, 512, true) --game size (square)
-    --     share.levelSize = serverPrivate.level.levelSize
-    --     -- reset all players
-    --     log("server resetting players to new level")
-    --     for clientId, player in pairs(share.players) do
-    --         resetPlayer(player, share, true)
-    --         server.send(clientId, "player_start", 
-    --         player.xDir, player.yDir, 
-    --         player.x, player.y, player.col,
-    --         levelName, levelDataPath, levelGfxPaths)
-    --     end
     end
 end
 
@@ -224,6 +217,7 @@ function server.update(dt)
 
 
     --log("--- check votes -----------------")
+    
     -- check (& reset) vote counts
     for key, level in pairs(LEVEL_DATA_LIST) do
         -- do we have a majority?
