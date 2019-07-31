@@ -109,6 +109,7 @@ function initSugarcoat()
     end)
 
     -- new font!
+    load_font('assets/MatchupPro.ttf', 32, 'corefont-big', true)
     load_font('assets/MatchupPro.ttf', 16, 'corefont', true)
 end
 
@@ -233,18 +234,21 @@ function drawTitle(levelSize, draw_zoom_scale)
     -- Reset camera for UI
     camera(0,0)
     
-    if client.connected then          
-        pprintc('Press <SPACE> to start', GAME_HEIGHT/2+48, 11)
-    else
-        pprintc('Connecting to the grid...', GAME_HEIGHT/2+48, 19)
-    end
-
-    pprintc('         Code + Art                                                       Music', 
-        GAME_HEIGHT/2+75, 51) --24 
+    use_font("corefont-big")    
     
-    pprintc('         Paul Nicholas                                                  Ken Wheeler', 
-        GAME_HEIGHT/2+88, 45) --24 
-
+        if client.connected then          
+            pprintc('Press <SPACE> to start', GAME_HEIGHT/2+30, 11)
+        else
+            pprintc('Connecting to the grid...', GAME_HEIGHT/2+30, 19)
+        end
+        
+        pprintc('    Code + Art                        Music', 
+        GAME_HEIGHT/2+75, 51) --24 
+        
+        pprintc('   Paul Nicholas                  Ken Wheeler', 
+        GAME_HEIGHT/2+98, 45)
+    
+    use_font("corefont")
 end
 
 
@@ -779,7 +783,9 @@ function drawUI(players)
     -- did we die?
     if homePlayer.dead and homePlayer.killedBy then
         -- display info about our "killer"
-        pprintc('YOU DIED', GAME_HEIGHT/2, 24)
+        use_font("corefont-big")
+        pprintc('YOU DIED', GAME_HEIGHT/2 - 10, 24)
+        use_font("corefont")
         local msg = ""
         if homePlayer.killedBy > 0 then
             if homePlayer.killedBy ~= homePlayer.id then
@@ -810,8 +816,22 @@ function drawUI(players)
     end
 
     
-    
+    -- draw game timer
+    if share.timer then
+        local s = share.timer * 1000
+        local ms = s % 1000
+        s = (s - ms) / 1000
+        local secs = s % 60
+        s = (s - secs) / 60
+        local mins = s % 60
+        -- local mins = flr(share.timer/1000) % 60
+        -- local secs = flr(share.timer/1000) - (minutes * 60)
+        use_font("corefont-big")
+        pprint(mins..":"..secs, 10, GAME_HEIGHT-30, 1)
+        use_font("corefont")
+    end
 
+    
 
     -- Reset pretty print 
     -- (otherwise it affects the drawing of players)
@@ -825,7 +845,8 @@ end
 
 -- print centered
 function pprintc(text, y, col)
-    pprint(text, GAME_WIDTH/2-(#text*6)/2, y, col)
+    local letterWidth = (get_font()=="corefont") and 6 or 12
+    pprint(text, GAME_WIDTH/2-(#text*letterWidth)/2, y, col)
 end
 
 

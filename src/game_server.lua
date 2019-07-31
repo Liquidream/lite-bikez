@@ -140,6 +140,8 @@ function server.load()
     -- create message notifications/history (kills/deaths/etc.)
     share.messages={}
     share.messageCount=0
+    share.timer = GAME_LENGTH
+    serverPrivate.lastTime = love.timer.getTime()
 end
 
 function server.update(dt)
@@ -221,29 +223,52 @@ function server.update(dt)
     -- check (& reset) vote counts
     for key, level in pairs(LEVEL_DATA_LIST) do
         -- do we have a majority?
-        --log("  > "..key.." = "..tostring(level.votes))
         if level.votes >= math.floor(#share.players/2)+1 then
             -- switch level
-            levelName = key
-            levelDataPath = LEVEL_DATA_LIST[levelName].imgData
-            levelGfxPaths = LEVEL_DATA_LIST[levelName].imgGfxList
-            -- 
-            serverPrivate.level = createLevel(1, 512, true) --game size (square)
-            share.levelSize = serverPrivate.level.levelSize
-            -- reset all players
-            log("server resetting players to new level")
-            for clientId, player in pairs(share.players) do                
-                -- reset player client
-                resetPlayer(player, share, true)                
-                -- reset player vote
-                player.vote = nil
-                server.send(clientId, "player_start", 
-                    player.xDir, player.yDir, 
-                    player.x, player.y, player.col,
-                    levelName, levelDataPath, levelGfxPaths)
-            end
+            loadLevel(key)
         end
         -- reset count either way (for this frame)
         level.votes = 0
+    end
+
+    -- update game timer
+    if math.floor(serverPrivate.lastTime) ~= math.floor(love.timer.getTime()) then        
+        share.timer = share.timer - 1
+        -- check for "end game" #MCU
+        if share.timer <= 0 then
+            -- level over - declare winner? (nah, prob just show a table)
+            share.game_ended = not share.game_ended
+            -- countdown to restart
+            share.timer = share.game_ended and 60 or GAME_LENGTH
+            -- starting a new game?
+            if not share.game_ended then
+                loadLevel(serverPrivate.levelName)
+            end
+        end
+        serverPrivate.lastTime = love.timer.getTime()
+    end
+    
+end
+
+function loadLevel(levelName)
+    levelDataPath = LEVEL_DATA_LIST[levelName].imgData
+    levelGfxPaths = LEVEL_DATA_LIST[levelName].imgGfxList
+    -- 
+    serverPrivate.level = createLevel(1, 512, true) --game size (square)
+    serverPrivate.levelName = levelName
+    share.levelSize = serverPrivate.level.levelSize
+    share.timer = GAME_LENGTH
+
+    -- reset all players
+    log("server resetting players to new level")
+    for clientId, player in pairs(share.players) do                
+        -- reset player client
+        resetPlayer(player, share, true)                
+        -- reset player vote
+        player.vote = nil
+        server.send(clientId, "player_start", 
+            player.xDir, player.yDir, 
+            player.x, player.y, player.col,
+            levelName, levelDataPath, levelGfxPaths)
     end
 end
