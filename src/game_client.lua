@@ -109,8 +109,10 @@ function initSugarcoat()
     end)
 
     -- new font!
-    load_font('assets/MatchupPro.ttf', 32, 'corefont-big', true)
-    load_font('assets/MatchupPro.ttf', 16, 'corefont', true)
+    load_font('assets/SoftballGold.ttf', 32, 'corefont-big', true)
+    load_font('assets/SoftballGold.ttf', 16, 'corefont', true)
+    -- load_font('assets/MatchupPro.ttf', 32, 'corefont-big', true)
+    -- load_font('assets/MatchupPro.ttf', 16, 'corefont', true)
 end
 
 
@@ -234,21 +236,21 @@ function drawTitle(levelSize, draw_zoom_scale)
     -- Reset camera for UI
     camera(0,0)
     
-    use_font("corefont-big")    
+    --use_font("corefont-big")    
     
-        if client.connected then          
-            pprintc('Press <SPACE> to start', GAME_HEIGHT/2+30, 11)
-        else
-            pprintc('Connecting to the grid...', GAME_HEIGHT/2+30, 19)
-        end
-        
-        pprintc('    Code + Art                        Music', 
+    if client.connected then          
+        pprintc('Press <SPACE> to start', GAME_HEIGHT/2+48, 11)
+    else
+        pprintc('Connecting to the grid...', GAME_HEIGHT/2+48, 19)
+    end
+
+    pprintc('      Code + Art                                                      Music', 
         GAME_HEIGHT/2+75, 51) --24 
-        
-        pprintc('   Paul Nicholas                  Ken Wheeler', 
-        GAME_HEIGHT/2+98, 45)
     
-    use_font("corefont")
+    pprintc('    PAUL NICHOLAS                                                KEN WHEELER', 
+        GAME_HEIGHT/2+92, 45) --24 
+    
+    --use_font("corefont")
 end
 
 
@@ -802,12 +804,12 @@ function drawUI(players)
 
     -- draw game message history
     if share.messageCount and share.messageCount > 0 then
-        local yOff = share.messageCount*8
+        local yOff = share.messageCount*10
         for i=1,share.messageCount do
             local msg = share.messages[i]
             if msg then
                 --local ourMsg = msg.taggedIds[1]==homePlayer.id or msg.taggedIds[2]==homePlayer.id
-                pprint(msg.text, GAME_WIDTH-165, GAME_HEIGHT-22-yOff+(i*8), 
+                pprint(msg.text, GAME_WIDTH-180, GAME_HEIGHT-22-yOff+(i*10), 
                  msg.taggedIds[2]==homePlayer.id and 24 
                  or msg.taggedIds[1]==homePlayer.id and 11 
                  or msg.col)
@@ -827,7 +829,7 @@ function drawUI(players)
         -- local mins = flr(share.timer/1000) % 60
         -- local secs = flr(share.timer/1000) - (minutes * 60)
         use_font("corefont-big")
-        pprint(mins..":"..secs, 10, GAME_HEIGHT-30, 1)
+        pprint(mins..":"..(secs<10 and "0" or "")..secs, 10, GAME_HEIGHT-30, 1)
         use_font("corefont")
     end
 
