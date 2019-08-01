@@ -159,66 +159,88 @@ function server.update(dt)
         player.me = homes[clientId].me
     end
 
-    -- Go through all players and update level grid, 
-    -- based on their direction/state for this frame
-    for id, home in pairs(server.homes) do
-        -- Current player
-        local player = share.players[id]
+    if not share.game_ended then
+        -- Go through all players and update level grid, 
+        -- based on their direction/state for this frame
+        for id, home in pairs(server.homes) do
+            -- Current player
+            local player = share.players[id]
 
-        if player then
-            if not player.dead then
-                -- update with latest position
-                -- (if not too big a change - else rely on server value
-                --  as could be after a player restart and still getting old player pos msg)
-                -- IDEA: maybe have a "lifecount" to check against!
-                if home.x 
-                and math.abs(player.x-home.x)<10
-                and math.abs(player.y-home.y)<10
-                then
-                    player.x = home.x
-                    player.y = home.y
-                    player.gridX = home.gridX
-                    player.gridY = home.gridY
-                    player.boost = home.boost
+            if player then
+                if not player.dead then
+                    -- update with latest position
+                    -- (if not too big a change - else rely on server value
+                    --  as could be after a player restart and still getting old player pos msg)
+                    -- IDEA: maybe have a "lifecount" to check against!
+                    if home.x 
+                    and math.abs(player.x-home.x)<10
+                    and math.abs(player.y-home.y)<10
+                    then
+                        player.x = home.x
+                        player.y = home.y
+                        player.gridX = home.gridX
+                        player.gridY = home.gridY
+                        player.boost = home.boost
+                    end
+
+                    -- Have to do this on the server,
+                    -- as it's a collation of all player trails
+                    -- (but also doing it at client too)
+                    updateLevelGrid(share.players[id], share.level)
+
+                    -- -- Check for deaths
+                    -- if player.dead then
+                    --     -- Reset player
+                    --     resetPlayer(player, share)
+                    -- end
+                elseif (love.timer.getTime()-player.killedAt) >= 3 then
+                    -- Respawn player
+                    resetPlayer(player, share, true)        
+                    -- tell client start pos
+                    server.send(id, "player_start", 
+                        player.xDir, player.yDir, 
+                        player.x, player.y, player.col,
+                        levelName, levelDataPath, levelGfxPaths)
+
                 end
 
-                -- Have to do this on the server,
-                -- as it's a collation of all player trails
-                -- (but also doing it at client too)
-                updateLevelGrid(share.players[id], share.level)
+                if not player.announced and player.me then
+                    -- announce new player
+                    createMessage(share, player.me.shortname.." joined the game", 
+                        18, { player.id, player.id })
+                    player.announced = true
+                end
 
-                -- -- Check for deaths
-                -- if player.dead then
-                --     -- Reset player
-                --     resetPlayer(player, share)
-                -- end
-            elseif (love.timer.getTime()-player.killedAt) >= 3 then
-                -- Respawn player
-                resetPlayer(player, share, true)        
-                -- tell client start pos
-                server.send(id, "player_start", 
-                    player.xDir, player.yDir, 
-                    player.x, player.y, player.col,
-                    levelName, levelDataPath, levelGfxPaths)
-
+                -- check for vote
+                if player.vote then
+                    LEVEL_DATA_LIST[player.vote].votes = LEVEL_DATA_LIST[player.vote].votes + 1
+                end
             end
+        end -- all players
 
-            if not player.announced and player.me then
-                -- announce new player
-                createMessage(share, player.me.shortname.." joined the game", 
-                    18, { player.id, player.id })
-                player.announced = true
-            end
+    else
+        
+        -- round over update code...
 
-            -- check for vote
-            if player.vote then
-                LEVEL_DATA_LIST[player.vote].votes = LEVEL_DATA_LIST[player.vote].votes + 1
-            end
+    end
+
+
+    -- sort players by score
+    if math.floor(love.timer.getTime())%2==0 then
+        -- make a table of players
+        -- (as can't sort userdata)
+        local scoreTable = {}
+        for clientId, player in pairs(share.players) do
+            scoreTable[clientId]=clientId
         end
-    end -- all players
 
+        table.sort(scoreTable, function (a, b)
+            return a.score < b.score
+        end)
+        -- share scoretable
+        share.scoreTable = scoreTable
+    end
 
-    --log("--- check votes -----------------")
     
     -- check (& reset) vote counts
     for key, level in pairs(LEVEL_DATA_LIST) do

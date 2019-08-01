@@ -221,7 +221,7 @@ function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel, draw_z
     
     -- draw background gfx
     drawBG(levelSize, draw_zoom_scale)
-    --spr_sheet("levelgfx-bg", 0,0, level.levelSize*draw_zoom_scale,level.levelSize*draw_zoom_scale)
+    
        
     -- draw players
     if levelSize and otherPlayers and homePlayer then

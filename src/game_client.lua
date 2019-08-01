@@ -557,6 +557,11 @@ function  client.update(dt) ---(but now delaying client init!)
         if client.connected
         and not homePlayer.dead  then
 
+            -- Check for round over
+            if share.game_ended then
+                gameState = GAME_STATE.ROUND_OVER
+            end
+
             -- Check for deaths
             if not homePlayer.dead then
                 home.x = homePlayer.x
@@ -649,6 +654,10 @@ function  client.update(dt) ---(but now delaying client init!)
             psys:update(dt)
         end
 
+
+    elseif gameState == GAME_STATE.ROUND_OVER then
+        -- todo: anything?
+
     end
 end
 
@@ -670,7 +679,8 @@ function  client.draw() --(but now delaying client init!)
         -- draw title/connecting screen
         drawTitle(512, zoom_scale)
 
-    elseif gameState == GAME_STATE.LVL_PLAY then
+    elseif gameState == GAME_STATE.LVL_PLAY 
+     or gameState == GAME_STATE.ROUND_OVER then
         -- --------------------------
         -- Gameplay
         -- --------------------------
@@ -736,7 +746,15 @@ function drawUI(players)
         local playerPos = 1
         local G=25
         local xoff=(GAME_WIDTH /2) + G/2 - (#players * G+2)
-        for clientId, player in pairs(players) do
+
+
+        --log("#share.scoreTable="..#share.scoreTable)
+
+        --for clientId, player in pairs(players) do
+        for i=1,#players do
+            local clientId = share.scoreTable[i]
+            local player = players[clientId]
+
             -- Does player have a photo?
             if player.me 
              and player.me.photoUrl then               
@@ -799,6 +817,11 @@ function drawUI(players)
             msg = "You hit a wall!"
         end
         pprintc(msg, GAME_HEIGHT/2+20, 28) --25
+
+    end
+
+    if gameState == GAME_STATE.ROUND_OVER then
+        -- draw scoreboard
 
     end
 
