@@ -1,8 +1,6 @@
 
 require("common")
 
-local Sounds = require 'sounds'
-
 -- defaults
 levelName = LEVEL_LIST[1]
 levelDataPath = LEVEL_DATA_LIST[levelName].imgData

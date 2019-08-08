@@ -1,8 +1,6 @@
 
 require("common")
 
-local Sounds = require 'sounds'
-
 local MOVE_SPEED = 1
 
 function killPlayer(player, level, share, killedBy, IS_SERVER)
