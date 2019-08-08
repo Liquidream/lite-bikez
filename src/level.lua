@@ -1,6 +1,8 @@
 
 require("common")
 
+local Sounds = require 'sounds'
+
 -- defaults
 levelName = LEVEL_LIST[1]
 levelDataPath = LEVEL_DATA_LIST[levelName].imgData
@@ -157,6 +159,8 @@ function checkLevelPlayer(share, player, level)
      or player.y > level.levelSize-1
     then
         -- Player has hit boundary of game
+        -- TODO(jason): maybe diff sound for hitting walls
+        Sounds.die:play()
         killPlayer(player, level, share, -1, false)
         return
     end
@@ -188,6 +192,8 @@ function checkLevelPlayer(share, player, level)
         local hitObstacle = r > 0 -- red means level obstacles/boundary
         if hitObstacle then
             -- Player has hit obstacle/boundary of game
+            -- TODO(jason): maybe diff sound for hitting walls
+            Sounds.die:play()
             killPlayer(player, level, share, -1, false)
             return
         end
@@ -198,6 +204,7 @@ function checkLevelPlayer(share, player, level)
             -- Player hit something (someone)
             log("test > "..type(blockOwner))
             log("test > "..blockOwner)
+            Sounds.die:play()
             killPlayer(player, level, share, blockOwner, false)
             return
         else

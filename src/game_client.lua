@@ -118,6 +118,7 @@ end
 --
 function initSplash()
     log("initSplash()...,.")
+    Sounds.casetteTape:play()
     gameState = GAME_STATE.SPLASH    
     -- start with splash screen palette 
     use_palette(palettes.pico8)    
@@ -350,6 +351,24 @@ function initSounds()
   Sounds.playingLoop = Sound:new('music_cocaine_lambo.mp3', 1)
   Sounds.playingLoop:setVolume(0.7)
   Sounds.playingLoop:setLooping(true)
+
+  Sounds.casetteTape = Sound:new('casette_intro.mp3', 1)
+  Sounds.casetteTape:setVolume(0.7)
+
+  Sounds.bikeBirth = Sound:new('bike_birth.mp3', 1)
+  Sounds.bikeBirth:setVolume(0.5)
+
+  Sounds.bikeStart = Sound:new('bike_start.mp3', 1)
+  Sounds.bikeStart:setVolume(0.5)
+
+  Sounds.die = Sound:new('die.mp3', 1)
+  Sounds.die:setVolume(0.5)
+
+  Sounds.earnFrag = Sound:new('earn_frag.mp3', 3)
+  Sounds.earnFrag:setVolume(0.5)
+
+  Sounds.speedBoost = Sound:new('speed_boost.mp3', 3)
+  Sounds.speedBoost:setVolume(0.5)
 end
 
 function initGameplay()
