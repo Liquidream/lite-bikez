@@ -331,6 +331,9 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
 
         resetPlayer(homePlayer, share, false)
 
+        Sounds.bikeBirth:play()
+        Sounds.bikeStart:play()
+
         -- Only create level once (on connection)
         if clientPrivate.level == nil then
             clientPrivate.level=createLevel(1, 512, false) --game size (square)
@@ -577,6 +580,8 @@ function  client.update(dt) ---(but now delaying client init!)
                 end
 
                 if homePlayer.dead then
+                    -- TODO(jason): maybe diff sound for hitting walls vs. player trails
+                    Sounds.die:play()
                     -- tell the server we died
                     client.send("player_dead", homePlayer.killedBy)
                     -- clear local player grid data

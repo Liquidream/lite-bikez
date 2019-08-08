@@ -56,9 +56,6 @@ end
 function resetPlayer(player, share, IS_SERVER)
     
     player.dead = false
-
-    Sounds.bikeBirth:play()
-    Sounds.bikeStart:play()
     
     -- Start at a random position
     resetRNG()
@@ -200,7 +197,6 @@ function boostPlayer(player)
     --log("in boostPlayer("..player.id..")...")
     if boostParticles[player.id] == nil 
      or boostParticles[player.id].lifetime == 0 then
-        Sounds.speedBoost:play()
         -- create a new particle system
         local pEmitter = Sprinklez:createSystem(
             player.smoothX * zoom_scale, 
