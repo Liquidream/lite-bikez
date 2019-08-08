@@ -608,6 +608,9 @@ function  client.update(dt) ---(but now delaying client init!)
                     if player.dead 
                     and (deathParticles[player.id]==nil 
                     or deathParticles[player.id].lifetime == 0) then
+                        if player.killedBy == homePlayer.id then
+                          Sounds.earnFrag:play()
+                        end
                         explodePlayer(player)
                     elseif not player.dead 
                     and deathParticles[player.id] then
