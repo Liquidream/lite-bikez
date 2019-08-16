@@ -119,6 +119,9 @@ function server.receive(id, ...) -- Called when client with `id` does `client.se
         -- cast vote
         player.vote = levelName
 
+        -- announce it
+        createMessage(share, player.me.shortname.." voted to change level", 
+                        18, { player.id, player.id })
     end
 end
 
@@ -211,10 +214,10 @@ function server.update(dt)
                     player.announced = true
                 end
 
-                -- check for vote
-                if player.vote then
-                    LEVEL_DATA_LIST[player.vote].votes = LEVEL_DATA_LIST[player.vote].votes + 1
-                end
+                -- -- check for vote (this frame)
+                -- if player.vote then
+                --     LEVEL_DATA_LIST[player.vote].votes = LEVEL_DATA_LIST[player.vote].votes + 1
+                -- end
             end
         end -- all players
 
@@ -222,6 +225,17 @@ function server.update(dt)
         
         -- round over update code...
 
+        -- Go through all players and check for votes for this frame
+        for id, home in pairs(server.homes) do
+          -- Current player
+          local player = share.players[id]
+          if player then
+            -- check for vote (this frame)
+            if player.vote then
+              LEVEL_DATA_LIST[player.vote].votes = LEVEL_DATA_LIST[player.vote].votes + 1
+            end
+          end
+        end
     end
 
 
@@ -260,12 +274,14 @@ function server.update(dt)
         if share.timer <= 0 then
             -- level over - declare winner? (nah, prob just show a table)
             share.game_ended = not share.game_ended
+            log("share.timer reached 0")
+            log("share.game_ended = "..tostring(share.game_ended))
             -- countdown to restart
-            share.timer = share.game_ended and 60 or GAME_LENGTH
+            share.timer = share.game_ended and VOTE_LENGTH or GAME_LENGTH 
             -- starting a new game?
             if not share.game_ended then
                 loadLevel(serverPrivate.levelName)
-            end
+            end            
         end
         serverPrivate.lastTime = love.timer.getTime()
     end

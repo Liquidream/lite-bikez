@@ -552,15 +552,21 @@ function  client.update(dt) ---(but now delaying client init!)
         -- Gameplay
         -- --------------------------
 
+        
+        -- Check for round over (regardless of alive or dead)
+        if share.game_ended then
+          gameState = GAME_STATE.ROUND_OVER
+        end
+        
+        
         -- TODO: put player back to title
-
         if client.connected
         and not homePlayer.dead  then
 
-            -- Check for round over
-            if share.game_ended then
-                gameState = GAME_STATE.ROUND_OVER
-            end
+            -- -- Check for round over
+            -- if share.game_ended then
+            --     gameState = GAME_STATE.ROUND_OVER
+            -- end
 
             -- Check for deaths
             if not homePlayer.dead then
@@ -741,56 +747,97 @@ function drawUI(players)
     printp(0x0330, 0x3123, 0x0330, 0x0, 0x0)
     printp_color(0, 0, 0)
     
-    -- Players    
-    if players then
-        local playerPos = 1
-        local G=25
-        local xoff=(GAME_WIDTH /2) + G/2 - (#players * G+2)
+    --
+    -- In-Game UI #######
+    --
+    if gameState == GAME_STATE.LVL_PLAY then
+
+      -- Players    
+      if players then
+          local playerPos = 1
+          local G=25
+          local xoff=(GAME_WIDTH /2) + G/2 - (#players * G+2)
 
 
-        --log("#share.scoreTable="..#share.scoreTable)
+          --log("#share.scoreTable="..#share.scoreTable)
 
-        --for clientId, player in pairs(players) do
-        for i=1,#players do
-            local clientId = share.scoreTable[i]
-            local player = players[clientId]
+          --for clientId, player in pairs(players) do
+          for i=1,#players do
+              local clientId = share.scoreTable[i]
+              local player = players[clientId]
 
-            -- Does player have a photo?
-            if player.me 
-             and player.me.photoUrl then               
-                -- Go get the photo (if we haven't already)
-                checkAndGetPlayerPhoto(player.id, player.me.photoUrl)
-            end
+              -- Does player have a photo?
+              if player then
+                if player.me 
+                and player.me.photoUrl then               
+                    -- Go get the photo (if we haven't already)
+                    checkAndGetPlayerPhoto(player.id, player.me.photoUrl)
+                end
 
 
-            local x=xoff+(playerPos-1)*(G+10)
-            local y=2
-            --
-            -- Draw photo (if we have one?)
-            --
-            if playerPhotos[player.id] ~= nil 
-            and playerPhotos[player.id] ~= "pending..." then
-                -- draw bg frame in player's colour
-                rectfill(x-2, y-2, x+G+2, y+G+2, player.col)
-                -- draw the actual photo
-                sugar.gfx.spritesheet(playerPhotos[player.id])
-                local w,h = sugar.gfx.surface_size(playerPhotos[player.id])
-                sugar.gfx.sspr(0, 0, w, h, x, y,  G, G)
-                -- draw a shortened version of player name (if longer than 1 chars)
-                pprint(string.sub(player.me.shortname,1,8),
-                        x+12-((#player.me.shortname/2)*7), G+6, 28)
-                -- draw player score
-                pprint(player.score, x+7, G+18, 28)
-            else
-                -- ...otherwise, draw a shape with player col
-                rectfill(x, y, x+G, y+G, player.col)
-            end
-            
-            playerPos = playerPos + 1
-        end
+                local x=xoff+(playerPos-1)*(G+10)
+                local y=2
+                --
+                -- Draw photo (if we have one?)
+                --
+                if playerPhotos[player.id] ~= nil 
+                and playerPhotos[player.id] ~= "pending..." then
+                    -- draw bg frame in player's colour
+                    rectfill(x-2, y-2, x+G+2, y+G+2, player.col)
+                    -- draw the actual photo
+                    sugar.gfx.spritesheet(playerPhotos[player.id])
+                    local w,h = sugar.gfx.surface_size(playerPhotos[player.id])
+                    sugar.gfx.sspr(0, 0, w, h, x, y,  G, G)
+                    -- draw a shortened version of player name (if longer than 1 chars)
+                    pprint(string.sub(player.me.shortname,1,8),
+                            x+12-((#player.me.shortname/2)*7), G+6, 28)
+                    -- draw player score
+                    pprint(player.score, x+7, G+18, 28)
+                else
+                    -- ...otherwise, draw a shape with player col
+                    rectfill(x, y, x+G, y+G, player.col)
+                end
+                
+                playerPos = playerPos + 1
+              end
+          end
+      end
+
+      
+      -- did we die?
+      if homePlayer.dead and homePlayer.killedBy then
+          -- display info about our "killer"
+          use_font("corefont-big")
+          pprintc('YOU DIED', GAME_HEIGHT/2 - 10, 24)
+          use_font("corefont")
+          local msg = ""
+          if homePlayer.killedBy > 0 then
+              if homePlayer.killedBy ~= homePlayer.id then
+                  msg = share.players[homePlayer.killedBy].me.shortname.." squished you!"
+              else
+                  msg = "You squished yourself!"
+              end
+          else
+              msg = "You hit a wall!"
+          end
+          pprintc(msg, GAME_HEIGHT/2+20, 28) --25
+
+      end
+
+    elseif gameState == GAME_STATE.ROUND_OVER then
+        -- draw scoreboard
+
+        use_font("corefont-big")
+        pprintc('ROUND OVER', GAME_HEIGHT/2 - 10, 24)
+        use_font("corefont")
+        pprintc("Place your vote for the next round...", GAME_HEIGHT/2+20, 28)
+
+
+
     end
 
     
+      
     if client.connected then
         -- Draw our ping        
         pprint('Ping: ' .. client.getPing(), 2, 2, 49)--49 --51
@@ -800,30 +847,6 @@ function drawUI(players)
         pprint('FPS: ' .. love.timer.getFPS(), 2, 16, 49)--49 --51
     end
 
-    -- did we die?
-    if homePlayer.dead and homePlayer.killedBy then
-        -- display info about our "killer"
-        use_font("corefont-big")
-        pprintc('YOU DIED', GAME_HEIGHT/2 - 10, 24)
-        use_font("corefont")
-        local msg = ""
-        if homePlayer.killedBy > 0 then
-            if homePlayer.killedBy ~= homePlayer.id then
-                msg = share.players[homePlayer.killedBy].me.shortname.." squished you!"
-            else
-                msg = "You squished yourself!"
-            end
-        else
-            msg = "You hit a wall!"
-        end
-        pprintc(msg, GAME_HEIGHT/2+20, 28) --25
-
-    end
-
-    if gameState == GAME_STATE.ROUND_OVER then
-        -- draw scoreboard
-
-    end
 
     -- draw game message history
     if share.messageCount and share.messageCount > 0 then

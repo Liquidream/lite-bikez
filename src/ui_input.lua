@@ -33,14 +33,17 @@ ui.section("Controls", function()
 
 end)
 
+
+    --log("gameState = "..gameState)
+
     -- Only allow level select/vote during gameplay
     -- TODO: only allow this at the END of a session (score screen)
-    if gameState == GAME_STATE.LVL_PLAY then
+    if gameState == GAME_STATE.ROUND_OVER then
 
         ui.markdown([[
 #### Level Select
 ]])
-        ui.dropdown("Vote to change battle arena:", levelName, LEVEL_LIST,
+        ui.dropdown("Vote to change battle arena:", client.home.vote or levelName, LEVEL_LIST,
             { onChange=function(value) 
                 -- Get details of selected level            
                 log("value="..value)
@@ -63,7 +66,14 @@ end)
 ]])
         end
 
-        ui.markdown('![]('..levelGfxPaths[1]..')')    
+        if not client.home.vote then
+          -- show current map
+          ui.markdown('![]('..levelGfxPaths[1]..')')    
+        else
+          -- show map that was voted for
+          ui.markdown('![]('..LEVEL_DATA_LIST[client.home.vote].imgGfxList[1]..')')    
+        end
+        --ui.markdown('![]('..levelGfxPaths[1]..')')    
     
     end -- if vote allowed
 
