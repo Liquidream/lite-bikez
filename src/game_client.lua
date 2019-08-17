@@ -765,7 +765,7 @@ function drawUI(players)
           local playerPos = 1
           local G=25
           local gap = (GAME_WIDTH-100)/(#players+1)
-          local xoff = (GAME_WIDTH /2) - (((#players-1)*gap)/2)
+          local xoff = (GAME_WIDTH /2) - (((#players-1)*gap)/2) - (G/2)
           --local xoff=(GAME_WIDTH /2) + G/2 - (#players * gap+2)
 
 
@@ -785,7 +785,7 @@ function drawUI(players)
 
                 local x=xoff+(playerPos-1)*gap
                 --local x=xoff+(playerPos-1)*(G+10)
-                local y=2
+                local y=4
                 --
                 -- Draw photo (if we have one?)
                 --
