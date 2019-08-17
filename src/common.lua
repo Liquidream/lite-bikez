@@ -102,8 +102,8 @@ GAME_HEIGHT = 288 -- within the default Castle window size
 GAME_SCALE = 3
 GAME_STATE = { SPLASH=0, TITLE=1, INFO=2, LVL_INTRO=3, LVL_PLAY=4, 
                 LVL_END=5, LOSE_LIFE=6, GAME_OVER=7, ROUND_OVER=8 }
-GAME_LENGTH = 15 --60*5 -- 5 mins
-VOTE_LENGTH = 10 --60
+GAME_LENGTH = 30 --60*5 -- 5 mins
+VOTE_LENGTH = 30 --60
 
 PLAYER_START_SPEED = 5
 PLAYER_NORM_SPEED = 75
@@ -194,4 +194,28 @@ function split(s, delimiter)
         table.insert(result, match);
     end
     return result;
+end
+
+-- https://stackoverflow.com/a/15706820
+function spairs(t, order)
+  -- collect the keys
+  local keys = {}
+  for k in pairs(t) do keys[#keys+1] = k end
+
+  -- if order function given, sort by it by passing the table and keys a, b,
+  -- otherwise just sort the keys 
+  if order then
+      table.sort(keys, function(a,b) return order(t, a, b) end)
+  else
+      table.sort(keys)
+  end
+
+  -- return the iterator function
+  local i = 0
+  return function()
+      i = i + 1
+      if keys[i] then
+          return keys[i], t[keys[i]]
+      end
+  end
 end

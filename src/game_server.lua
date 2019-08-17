@@ -292,6 +292,7 @@ function loadLevel(levelName)
     log("server resetting players to new level")
     for clientId, player in pairs(share.players) do                
         -- reset player client
+        player.score = 0
         resetPlayer(player, share, true)                
         -- reset player vote
         player.vote = nil

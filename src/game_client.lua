@@ -767,8 +767,6 @@ function drawUI(players)
           local xoff=(GAME_WIDTH /2) + G/2 - (#players * G+2)
 
 
-          --log("#share.scoreTable="..#share.scoreTable)
-
           --for clientId, player in pairs(players) do
           for i=1,#players do
               local clientId = share.scoreTable[i]
@@ -777,7 +775,7 @@ function drawUI(players)
               -- Does player have a photo?
               if player then
                 if player.me 
-                and player.me.photoUrl then               
+                 and player.me.photoUrl then               
                     -- Go get the photo (if we haven't already)
                     checkAndGetPlayerPhoto(player.id, player.me.photoUrl)
                 end
@@ -807,11 +805,9 @@ function drawUI(players)
                 end
                 
                 playerPos = playerPos + 1
-              end
+              end --if player
           end
       end
-
-      
       -- did we die?
       if homePlayer.dead and homePlayer.killedBy then
           -- display info about our "killer"
@@ -832,15 +828,69 @@ function drawUI(players)
 
       end
 
+
     elseif gameState == GAME_STATE.ROUND_OVER then
-        -- draw scoreboard
+        
+      -- draw scoreboard
+      use_font("corefont-big")
+      pprint('- SCORES -', 3, 5, 45)
+      use_font("corefont")
 
-        use_font("corefont-big")
-        pprintc('ROUND OVER', GAME_HEIGHT/2 - 10, 24)
-        use_font("corefont")
-        pprintc("Place your vote for the next round...", GAME_HEIGHT/2+20, 28)
+      if players then
+        local playerPos = 1
+        local G=17
+        local yoff=45
+        local scoreTable = "-----------------------------------"
+        -- this uses an custom sorting function ordering by score descending
+        for id,player in spairs(players, function(t,a,b) 
+          return a.score > b.score    
+        end) 
+        do
+          scoreTable = scoreTable.."\n"..
+           playerPos..") "..player.me.name.." | score = "..player.score
 
+          -- Does player have a photo?
+          if player then
+            if player.me 
+             and player.me.photoUrl then               
+                -- Go get the photo (if we haven't already)
+                checkAndGetPlayerPhoto(player.id, player.me.photoUrl)
+            end
 
+            local x=8
+            local y=yoff+(playerPos-1)*(G+10)
+            --
+            -- Draw photo (if we have one?)
+            --
+            if playerPhotos[player.id] ~= nil 
+            and playerPhotos[player.id] ~= "pending..." then
+                -- draw bg frame in player's colour
+                rectfill(x-1, y-1, x+G+1, y+G+1, player.col)
+                -- draw the actual photo
+                sugar.gfx.spritesheet(playerPhotos[player.id])
+                local w,h = sugar.gfx.surface_size(playerPhotos[player.id])
+                sugar.gfx.sspr(0, 0, w, h, x, y,  G, G)
+                -- draw player score + full name
+                pprint(player.score.." : "..player.me.name, x+G+7, y+1, playerPos==1 and 24 or 45)
+                
+            else
+                -- ...otherwise, draw a shape with player col
+                rectfill(x, y, x+G, y+G, player.col)
+            end
+
+          end --if player
+
+          playerPos = playerPos + 1
+        end
+
+        --log(scoreTable)
+      end
+
+      -- 
+      use_font("corefont-big")
+      pprintc('ROUND OVER', GAME_HEIGHT/2 - 10, 24)
+      use_font("corefont")
+      pprintc("Please vote for the next round...", GAME_HEIGHT/2+20, 28)
 
     end
 
