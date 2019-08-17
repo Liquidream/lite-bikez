@@ -767,9 +767,9 @@ function drawUI(players)
           local xoff=(GAME_WIDTH /2) + G/2 - (#players * G+2)
 
 
-          --for clientId, player in pairs(players) do
-          for i=1,#players do
-              local clientId = share.scoreTable[i]
+          for clientId, player in pairs(players) do
+          --for i=1,#players do
+            --  local clientId = share.scoreTable[i]
               local player = players[clientId]
 
               -- Does player have a photo?
