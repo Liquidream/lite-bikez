@@ -764,7 +764,8 @@ function drawUI(players)
       if players then
           local playerPos = 1
           local G=25
-          local xoff=(GAME_WIDTH /2) + G/2 - (#players * G+2)
+          local gap = (GAME_WIDTH-50)/#players
+          local xoff=(GAME_WIDTH /2) + G/2 - (#players * gap+2)
 
 
           for clientId, player in pairs(players) do
