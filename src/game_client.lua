@@ -96,7 +96,7 @@ function initSugarcoat()
     --use_palette(palettes.pico8)
     --set_background_color(0)
 
-    network.async(function()
+    --network.async(function()
         -- load splash img first (to show while others dnload)
         log("loading splash images...")        
         load_png("splash", "assets/splash.png", palettes.pico8, true)
@@ -105,14 +105,15 @@ function initSugarcoat()
         load_png("titlegfx-text", "assets/title-text.png", ak54Paired, true)
         load_png("titlegfx-bg", "assets/level-1-bg.png", ak54Paired, true)
 
+        --end)
+        
+        -- new font!
+        load_font('assets/SoftballGold.ttf', 32, 'corefont-big', true)
+        load_font('assets/SoftballGold.ttf', 16, 'corefont', true)
+        -- load_font('assets/MatchupPro.ttf', 32, 'corefont-big', true)
+        -- load_font('assets/MatchupPro.ttf', 16, 'corefont', true)
+        
         initSplash()
-    end)
-
-    -- new font!
-    load_font('assets/SoftballGold.ttf', 32, 'corefont-big', true)
-    load_font('assets/SoftballGold.ttf', 16, 'corefont', true)
-    -- load_font('assets/MatchupPro.ttf', 32, 'corefont-big', true)
-    -- load_font('assets/MatchupPro.ttf', 16, 'corefont', true)
 end
 
 
@@ -755,7 +756,10 @@ function drawUI(players)
 
     -- Make text more "readable"
     --print("!!!",50,1,1)
-    printp(0x0330, 0x3123, 0x0330, 0x0, 0x0)
+    printp(0x2222, 
+           0x2122, 
+           0x2222, 
+           0x0)
     printp_color(0, 0, 0)
     
     --
