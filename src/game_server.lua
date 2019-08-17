@@ -40,21 +40,6 @@ local serverPrivate = share --{}   -- Data private to the server
 
 function server.connect(id) -- Called on connect from client with `id`
     log('client ' .. id .. ' connected')
-
-    -- local newPlayer = { 
-    --     id = id,
-    --     score = 0,
-    --     announce = false
-    -- }
-    -- log("server player reset")
-    -- resetPlayer(newPlayer, share, true)
-    -- -- tell client start pos
-    -- server.send(id, "player_start", 
-    --     newPlayer.xDir, newPlayer.yDir, 
-    --     newPlayer.x, newPlayer.y, newPlayer.col,
-    --     levelName, levelDataPath, levelGfxPaths)
-    
-    -- share.players[id] = newPlayer
 end
 
 function server.disconnect(id) -- Called on disconnect from client with `id`
@@ -89,7 +74,7 @@ function server.receive(id, ...) -- Called when client with `id` does `client.se
         server.send(id, "player_start", 
             newPlayer.xDir, newPlayer.yDir, 
             newPlayer.x, newPlayer.y, newPlayer.col,
-            levelName, levelDataPath, levelGfxPaths)        
+            serverPrivate.levelName, levelDataPath, levelGfxPaths)        
         share.players[id] = newPlayer
 
     elseif msg == "player_update" then
@@ -119,6 +104,9 @@ function server.receive(id, ...) -- Called when client with `id` does `client.se
         -- cast vote
         player.vote = levelName
 
+        -- announce it
+        createMessage(share, player.me.shortname.." voted to change", 
+                        18, { player.id, player.id })
     end
 end
 
@@ -133,13 +121,16 @@ function server.load()
     log("server load...")
     
     -- create level
-    serverPrivate.level = createLevel(1, 512, true) --game size (square)
+    serverPrivate.level = createLevel(START_LEVEL, 512, true) --game size (square)
+    serverPrivate.levelName = LEVEL_LIST[START_LEVEL]
     share.levelSize = serverPrivate.level.levelSize
     -- create players
     share.players = {}
     -- create message notifications/history (kills/deaths/etc.)
     share.messages={}
     share.messageCount=0
+    share.timer = GAME_LENGTH
+    serverPrivate.lastTime = love.timer.getTime()
 end
 
 function server.update(dt)
@@ -157,93 +148,157 @@ function server.update(dt)
         player.me = homes[clientId].me
     end
 
-    -- Go through all players and update level grid, 
-    -- based on their direction/state for this frame
-    for id, home in pairs(server.homes) do
-        -- Current player
-        local player = share.players[id]
+    if not share.game_ended then
+        -- Go through all players and update level grid, 
+        -- based on their direction/state for this frame
+        for id, home in pairs(server.homes) do
+            -- Current player
+            local player = share.players[id]
 
-        if player then
-            if not player.dead then
-                -- update with latest position
-                -- (if not too big a change - else rely on server value
-                --  as could be after a player restart and still getting old player pos msg)
-                -- IDEA: maybe have a "lifecount" to check against!
-                if home.x 
-                and math.abs(player.x-home.x)<10
-                and math.abs(player.y-home.y)<10
-                then
-                    player.x = home.x
-                    player.y = home.y
-                    player.gridX = home.gridX
-                    player.gridY = home.gridY
-                    player.boost = home.boost
+            if player then
+                if not player.dead then
+                    -- update with latest position
+                    -- (if not too big a change - else rely on server value
+                    --  as could be after a player restart and still getting old player pos msg)
+                    -- IDEA: maybe have a "lifecount" to check against!
+                    if home.x 
+                    and math.abs(player.x-home.x)<10
+                    and math.abs(player.y-home.y)<10
+                    then
+                        player.x = home.x
+                        player.y = home.y
+                        player.gridX = home.gridX
+                        player.gridY = home.gridY
+                        player.boost = home.boost
+                    end
+
+                    -- Have to do this on the server,
+                    -- as it's a collation of all player trails
+                    -- (but also doing it at client too)
+                    updateLevelGrid(share.players[id], share.level)
+
+                    -- -- Check for deaths
+                    -- if player.dead then
+                    --     -- Reset player
+                    --     resetPlayer(player, share)
+                    -- end
+                elseif (love.timer.getTime()-player.killedAt) >= 3 then
+                    -- Respawn player
+                    resetPlayer(player, share, true)        
+                    -- tell client start pos
+                    server.send(id, "player_start", 
+                        player.xDir, player.yDir, 
+                        player.x, player.y, player.col,
+                        serverPrivate.levelName, levelDataPath, levelGfxPaths)
+
                 end
 
-                -- Have to do this on the server,
-                -- as it's a collation of all player trails
-                -- (but also doing it at client too)
-                updateLevelGrid(share.players[id], share.level)
+                if not player.announced and player.me then
+                    -- announce new player
+                    createMessage(share, player.me.shortname.." joined the game", 
+                        18, { player.id, player.id })
+                    player.announced = true
+                end
 
-                -- -- Check for deaths
-                -- if player.dead then
-                --     -- Reset player
-                --     resetPlayer(player, share)
+                -- -- check for vote (this frame)
+                -- if player.vote then
+                --     LEVEL_DATA_LIST[player.vote].votes = LEVEL_DATA_LIST[player.vote].votes + 1
                 -- end
-            elseif (love.timer.getTime()-player.killedAt) >= 3 then
-                -- Respawn player
-                resetPlayer(player, share, true)        
-                -- tell client start pos
-                server.send(id, "player_start", 
-                    player.xDir, player.yDir, 
-                    player.x, player.y, player.col,
-                    levelName, levelDataPath, levelGfxPaths)
-
             end
+        end -- all players
 
-            if not player.announced and player.me then
-                -- announce new player
-                createMessage(share, player.me.shortname.." joined the game", 
-                    18, { player.id, player.id })
-                player.announced = true
-            end
+    else
+        
+        -- round over update code...
 
-            -- check for vote
+        -- Go through all players and check for votes for this frame
+        for id, home in pairs(server.homes) do
+          -- Current player
+          local player = share.players[id]
+          if player then
+            -- check for vote (this frame)
             if player.vote then
-                LEVEL_DATA_LIST[player.vote].votes = LEVEL_DATA_LIST[player.vote].votes + 1
+              LEVEL_DATA_LIST[player.vote].votes = LEVEL_DATA_LIST[player.vote].votes + 1
             end
+          end
         end
-    end -- all players
+    end
 
 
-    --log("--- check votes -----------------")
+    -- sort players by score
+    if math.floor(love.timer.getTime())%2==0 then
+        -- make a table of players
+        -- (as can't sort userdata)
+        local scoreTable = {}
+        for clientId, player in pairs(share.players) do
+            scoreTable[clientId]=clientId
+        end
+
+        table.sort(scoreTable, function (a, b)
+            return a.score < b.score
+        end)
+        -- share scoretable
+        share.scoreTable = scoreTable
+    end
+
     
     -- check (& reset) vote counts
     for key, level in pairs(LEVEL_DATA_LIST) do
         -- do we have a majority?
-        --log("  > "..key.." = "..tostring(level.votes))
         if level.votes >= math.floor(#share.players/2)+1 then
             -- switch level
-            levelName = key
-            levelDataPath = LEVEL_DATA_LIST[levelName].imgData
-            levelGfxPaths = LEVEL_DATA_LIST[levelName].imgGfxList
-            -- 
-            serverPrivate.level = createLevel(1, 512, true) --game size (square)
-            share.levelSize = serverPrivate.level.levelSize
-            -- reset all players
-            log("server resetting players to new level")
-            for clientId, player in pairs(share.players) do                
-                -- reset player client
-                resetPlayer(player, share, true)                
-                -- reset player vote
-                player.vote = nil
-                server.send(clientId, "player_start", 
-                    player.xDir, player.yDir, 
-                    player.x, player.y, player.col,
-                    levelName, levelDataPath, levelGfxPaths)
-            end
+            loadLevel(key)
+            -- start new game
+            share.game_ended = false
+            -- countdown to restart
+            share.timer = GAME_LENGTH 
         end
         -- reset count either way (for this frame)
         level.votes = 0
+    end
+
+    -- update game timer
+    if math.floor(serverPrivate.lastTime) ~= math.floor(love.timer.getTime()) then        
+        share.timer = share.timer - 1
+        -- check for "end game" #MCU
+        if share.timer <= 0 then
+            -- level over - declare winner? (nah, prob just show a table)
+            share.game_ended = not share.game_ended
+            log("share.timer reached 0")
+            log("share.game_ended = "..tostring(share.game_ended))
+            -- countdown to restart
+            share.timer = share.game_ended and VOTE_LENGTH or GAME_LENGTH 
+            -- starting a new game?
+            if not share.game_ended then
+                loadLevel(serverPrivate.levelName)            
+            end            
+        end
+        serverPrivate.lastTime = love.timer.getTime()
+    end
+    
+end
+
+function loadLevel(levelName)
+  log("loadLevel("..tostring(levelName)..")")
+    levelDataPath = LEVEL_DATA_LIST[levelName].imgData
+    levelGfxPaths = LEVEL_DATA_LIST[levelName].imgGfxList
+    -- 
+    serverPrivate.level = createLevel(1, 512, true) --game size (square)
+    serverPrivate.levelName = levelName
+    share.levelSize = serverPrivate.level.levelSize
+    share.timer = GAME_LENGTH
+
+    -- reset all players
+    log("server resetting players to new level")
+    for clientId, player in pairs(share.players) do                
+        -- reset player client
+        player.score = 0
+        resetPlayer(player, share, true)                
+        -- reset player vote
+        player.vote = nil
+        server.send(clientId, "player_start", 
+            player.xDir, player.yDir, 
+            player.x, player.y, player.col,
+            levelName, levelDataPath, levelGfxPaths)
     end
 end

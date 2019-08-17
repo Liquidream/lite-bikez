@@ -100,7 +100,10 @@ DEBUG_MODE = false
 GAME_WIDTH = 512  -- 16:9 aspect ratio that fits nicely
 GAME_HEIGHT = 288 -- within the default Castle window size
 GAME_SCALE = 3
-GAME_STATE = { SPLASH=0, TITLE=1, INFO=2, LVL_INTRO=3, LVL_PLAY=4, LVL_END=5, LOSE_LIFE=6, GAME_OVER=7 }
+GAME_STATE = { SPLASH=0, TITLE=1, INFO=2, LVL_INTRO=3, LVL_PLAY=4, 
+                LVL_END=5, LOSE_LIFE=6, GAME_OVER=7, ROUND_OVER=8 }
+GAME_LENGTH = 60*3 -- 3 mins
+VOTE_LENGTH = 30   -- 30 secs
 
 PLAYER_START_SPEED = 5
 PLAYER_NORM_SPEED = 75
@@ -108,13 +111,15 @@ PLAYER_SLOW_SPEED = 50  -- Speed player goes to AFTER boosting
 PLAYER_ACC_SPEED = 1
 PLAYER_MAX_BOOST = 100 -- Cap the duration players can boost for
 
-MAX_MESSAGES = 6
+MAX_MESSAGES = 4
 MAX_MSG_LIFE = 10
 
 LEVEL_LIST = {
     "Pillars of Doom",
     "Castle of Chaos"
 }
+
+START_LEVEL = 1
 
 
 LEVEL_DATA_LIST = {
@@ -189,4 +194,28 @@ function split(s, delimiter)
         table.insert(result, match);
     end
     return result;
+end
+
+-- https://stackoverflow.com/a/15706820
+function spairs(t, order)
+  -- collect the keys
+  local keys = {}
+  for k in pairs(t) do keys[#keys+1] = k end
+
+  -- if order function given, sort by it by passing the table and keys a, b,
+  -- otherwise just sort the keys 
+  if order then
+      table.sort(keys, function(a,b) return order(t, a, b) end)
+  else
+      table.sort(keys)
+  end
+
+  -- return the iterator function
+  local i = 0
+  return function()
+      i = i + 1
+      if keys[i] then
+          return keys[i], t[keys[i]]
+      end
+  end
 end

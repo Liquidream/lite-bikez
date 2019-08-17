@@ -14,6 +14,7 @@ function createLevel(levelNum, levelSize, IS_SERVER)
     }
 
     -- Create new level "grid" for level specified
+    log(">>>> clearing grid - IS_SERVER="..tostring(IS_SERVER))
     for r = 1,levelSize do
         level.grid[r]={}
         for c = 1,levelSize do
@@ -89,6 +90,15 @@ function remove_player_from_grid(level, player)
             end
         end
     end
+end
+
+function remove_all_players_from_grid(level)
+  for r = 1,levelSize do
+    level.grid[r]={}
+    for c = 1,levelSize do
+        level.grid[r][c]=0
+    end  
+  end
 end
 
 -- Update player pos/direction/state
@@ -221,7 +231,7 @@ function drawLevel(levelSize, otherPlayers, homePlayer, level, homeLevel, draw_z
     
     -- draw background gfx
     drawBG(levelSize, draw_zoom_scale)
-    --spr_sheet("levelgfx-bg", 0,0, level.levelSize*draw_zoom_scale,level.levelSize*draw_zoom_scale)
+    
        
     -- draw players
     if levelSize and otherPlayers and homePlayer then
