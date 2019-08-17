@@ -284,11 +284,9 @@ function server.update(dt)
             -- countdown to restart
             share.timer = share.game_ended and VOTE_LENGTH or GAME_LENGTH 
             -- starting a new game?
-            --if not share.game_ended then
-                loadLevel(serverPrivate.levelName)
-           -- else
-            --  log("NOT LOADING LEVEL (vote mode?)")
-           -- end            
+            if not share.game_ended then
+                loadLevel(serverPrivate.levelName)            
+            end            
         end
         serverPrivate.lastTime = love.timer.getTime()
     end
