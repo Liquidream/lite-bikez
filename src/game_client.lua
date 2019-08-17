@@ -843,7 +843,7 @@ function drawUI(players)
         local scoreTable = "-----------------------------------"
         -- this uses an custom sorting function ordering by score descending
         for id,player in spairs(players, function(t,a,b) 
-          return a.score > b.score    
+          return t[a].score > t[b].score    
         end) 
         do
           scoreTable = scoreTable.."\n"..
