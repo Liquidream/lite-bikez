@@ -24,12 +24,12 @@ function killPlayer(player, level, share, killedBy, IS_SERVER)
                 -- (if not ourselves!)
                 share.players[player.killedBy].score = share.players[player.killedBy].score + 1
                 -- tell the world
-                createMessage(share, player.me.shortname.." was squished by "..share.players[player.killedBy].me.shortname, 
+                createMessage(share, player.me.shortname.." squished by "..share.players[player.killedBy].me.shortname, 
                     37, { player.killedBy, player.id })
             
             elseif player.killedBy > 0 then
                 -- tell the world
-                createMessage(share, player.me.shortname.." squished themselves", 
+                createMessage(share, player.me.shortname.." squished self", 
                     37, { player.killedBy, player.id })
             else
                 -- tell the world
