@@ -112,7 +112,7 @@ function initSugarcoat()
         load_font('assets/SoftballGold.ttf', 16, 'corefont', true)
         -- load_font('assets/MatchupPro.ttf', 32, 'corefont-big', true)
         -- load_font('assets/MatchupPro.ttf', 16, 'corefont', true)
-        
+
         initSplash()
 end
 
@@ -315,26 +315,19 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
         log(">>> arg #9 =".. #arg[9])
 
         log(">>> curr datapath=".. levelDataPath)
-        -- new level?
-        --if arg[8] ~= levelDataPath then
-            -- level changed!
-            levelName = arg[7]
-            levelDataPath = arg[8]
-            levelGfxPaths = arg[9]
-            
-            homePlayer.vote = nil
 
-            log(">>> ".. levelDataPath)
-            log(">>> #levelGfxPaths=".. #levelGfxPaths)
+        -- Always recreate level - as could be same level after a vote round
+        -- (So ALL level data needs to be recreated)
+        levelName = arg[7]
+        levelDataPath = arg[8]
+        levelGfxPaths = arg[9]
+        
+        homePlayer.vote = nil
 
-            clientPrivate.level=createLevel(1, 512, false) --game size (square)
-        --end
+        log(">>> ".. levelDataPath)
+        log(">>> #levelGfxPaths=".. #levelGfxPaths)
 
-        --homePlayer.col= { arg[6][1], arg[6][2], arg[6][3] }
-        -- log("-----------------")
-        -- log(">>> ".. type(arg[6][1]))
-        -- log(">>> ".. arg[6][2])
-        -- log(">>> ".. arg[6][3])
+        clientPrivate.level=createLevel(1, 512, false) --game size (square)
 
         resetPlayer(homePlayer, share, false)
 
@@ -870,7 +863,7 @@ function drawUI(players)
             local msg = share.messages[i]
             if msg then
                 --local ourMsg = msg.taggedIds[1]==homePlayer.id or msg.taggedIds[2]==homePlayer.id
-                pprint(msg.text, GAME_WIDTH-180, GAME_HEIGHT-22-yOff+(i*10), 
+                pprint(msg.text, GAME_WIDTH-185, GAME_HEIGHT-22-yOff+(i*10), 
                  msg.taggedIds[2]==homePlayer.id and 24 
                  or msg.taggedIds[1]==homePlayer.id and 11 
                  or msg.col)

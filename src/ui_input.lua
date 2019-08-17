@@ -43,6 +43,7 @@ end)
         ui.markdown([[
 #### Level Select
 ]])
+
         ui.dropdown("Vote to change battle arena:", client.home.vote or levelName, LEVEL_LIST,
             { onChange=function(value) 
                 -- Get details of selected level            

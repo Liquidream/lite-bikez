@@ -40,21 +40,6 @@ local serverPrivate = share --{}   -- Data private to the server
 
 function server.connect(id) -- Called on connect from client with `id`
     log('client ' .. id .. ' connected')
-
-    -- local newPlayer = { 
-    --     id = id,
-    --     score = 0,
-    --     announce = false
-    -- }
-    -- log("server player reset")
-    -- resetPlayer(newPlayer, share, true)
-    -- -- tell client start pos
-    -- server.send(id, "player_start", 
-    --     newPlayer.xDir, newPlayer.yDir, 
-    --     newPlayer.x, newPlayer.y, newPlayer.col,
-    --     levelName, levelDataPath, levelGfxPaths)
-    
-    -- share.players[id] = newPlayer
 end
 
 function server.disconnect(id) -- Called on disconnect from client with `id`
@@ -89,7 +74,7 @@ function server.receive(id, ...) -- Called when client with `id` does `client.se
         server.send(id, "player_start", 
             newPlayer.xDir, newPlayer.yDir, 
             newPlayer.x, newPlayer.y, newPlayer.col,
-            levelName, levelDataPath, levelGfxPaths)        
+            serverPrivate.levelName, levelDataPath, levelGfxPaths)        
         share.players[id] = newPlayer
 
     elseif msg == "player_update" then
@@ -120,7 +105,7 @@ function server.receive(id, ...) -- Called when client with `id` does `client.se
         player.vote = levelName
 
         -- announce it
-        createMessage(share, player.me.shortname.." voted to change level", 
+        createMessage(share, player.me.shortname.." voted to change", 
                         18, { player.id, player.id })
     end
 end
@@ -204,7 +189,7 @@ function server.update(dt)
                     server.send(id, "player_start", 
                         player.xDir, player.yDir, 
                         player.x, player.y, player.col,
-                        levelName, levelDataPath, levelGfxPaths)
+                        serverPrivate.levelName, levelDataPath, levelGfxPaths)
 
                 end
 
