@@ -315,7 +315,7 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
 
         log(">>> curr datapath=".. levelDataPath)
         -- new level?
-        if arg[8] ~= levelDataPath then
+        --if arg[8] ~= levelDataPath then
             -- level changed!
             levelName = arg[7]
             levelDataPath = arg[8]
@@ -327,7 +327,7 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
             log(">>> #levelGfxPaths=".. #levelGfxPaths)
 
             clientPrivate.level=createLevel(1, 512, false) --game size (square)
-        end
+        --end
 
         --homePlayer.col= { arg[6][1], arg[6][2], arg[6][3] }
         -- log("-----------------")
@@ -538,6 +538,14 @@ end
 function  client.update(dt) ---(but now delaying client init!)
     -- update shader (even if disabled)
     screen_shader_input({ time = t() })
+
+
+    
+
+        -- Check for round over (regardless of alive or dead)
+-- #need to handle this better (as can't wait for this to sync to players)        
+-- # or clients keep tripping to round ended and stay there
+
     
     -- start with the splash screen...
     if gameState == GAME_STATE.SPLASH then
@@ -547,17 +555,19 @@ function  client.update(dt) ---(but now delaying client init!)
     elseif gameState == GAME_STATE.TITLE then
         updateTitle(dt)
 
-    elseif gameState == GAME_STATE.LVL_PLAY then
-        -- --------------------------
-        -- Gameplay
-        -- --------------------------
-
-        
-        -- Check for round over (regardless of alive or dead)
-        if share.game_ended then
-          gameState = GAME_STATE.ROUND_OVER
-        end
-        
+    -- anything else (play/vote)
+    elseif gameState >0 then
+      -- Play/Vote state check
+      if not share.game_ended then
+        gameState = GAME_STATE.LVL_PLAY 
+      else
+        gameState = GAME_STATE.ROUND_OVER
+      end
+    
+      -- --------------------------
+      -- Gameplay
+      -- --------------------------
+      if gameState == GAME_STATE.LVL_PLAY then
         
         -- TODO: put player back to title
         if client.connected
@@ -661,9 +671,10 @@ function  client.update(dt) ---(but now delaying client init!)
         end
 
 
-    elseif gameState == GAME_STATE.ROUND_OVER then
+      elseif gameState == GAME_STATE.ROUND_OVER then
         -- todo: anything?
 
+      end
     end
 end
 

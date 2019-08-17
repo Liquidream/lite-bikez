@@ -119,6 +119,8 @@ LEVEL_LIST = {
     "Castle of Chaos"
 }
 
+START_LEVEL = 1
+
 
 LEVEL_DATA_LIST = {
     ["Pillars of Doom"] = {

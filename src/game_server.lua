@@ -136,7 +136,8 @@ function server.load()
     log("server load...")
     
     -- create level
-    serverPrivate.level = createLevel(1, 512, true) --game size (square)
+    serverPrivate.level = createLevel(START_LEVEL, 512, true) --game size (square)
+    serverPrivate.levelName = LEVEL_LIST[START_LEVEL]
     share.levelSize = serverPrivate.level.levelSize
     -- create players
     share.players = {}
@@ -262,6 +263,10 @@ function server.update(dt)
         if level.votes >= math.floor(#share.players/2)+1 then
             -- switch level
             loadLevel(key)
+            -- start new game
+            share.game_ended = false
+            -- countdown to restart
+            share.timer = GAME_LENGTH 
         end
         -- reset count either way (for this frame)
         level.votes = 0
@@ -279,9 +284,11 @@ function server.update(dt)
             -- countdown to restart
             share.timer = share.game_ended and VOTE_LENGTH or GAME_LENGTH 
             -- starting a new game?
-            if not share.game_ended then
+            --if not share.game_ended then
                 loadLevel(serverPrivate.levelName)
-            end            
+           -- else
+            --  log("NOT LOADING LEVEL (vote mode?)")
+           -- end            
         end
         serverPrivate.lastTime = love.timer.getTime()
     end
@@ -289,6 +296,7 @@ function server.update(dt)
 end
 
 function loadLevel(levelName)
+  log("loadLevel("..tostring(levelName)..")")
     levelDataPath = LEVEL_DATA_LIST[levelName].imgData
     levelGfxPaths = LEVEL_DATA_LIST[levelName].imgGfxList
     -- 
