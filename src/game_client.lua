@@ -245,13 +245,22 @@ function drawTitle(levelSize, draw_zoom_scale)
         pprintc('Connecting to the grid...', GAME_HEIGHT/2+48, 19)
     end
 
-    pprintc('      Code + Art                                                      Music', 
-        GAME_HEIGHT/2+75, 51) --24 
+    if math.floor( love.timer.getTime())%6 < 3 then
+      pprint('    Code + Art                                                        Music', 
+         30, GAME_HEIGHT/2+75, 51) --24 
+      
+      pprint('  PAUL NICHOLAS                                                KEN WHEELER', 
+         30, GAME_HEIGHT/2+92, 45) --24 
     
-    pprintc('    PAUL NICHOLAS                                                KEN WHEELER', 
-        GAME_HEIGHT/2+92, 45) --24 
+    else
+      pprint('    Code + Art                                                         SFX', 
+         30, GAME_HEIGHT/2+75, 51) --24 
     
-    --use_font("corefont")
+      pprint('  PAUL NICHOLAS                                                JASON RIGGS', 
+         30, GAME_HEIGHT/2+92, 45) --24 
+    end
+
+    
 end
 
 
