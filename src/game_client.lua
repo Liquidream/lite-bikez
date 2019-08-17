@@ -848,11 +848,11 @@ function drawUI(players)
       
     if client.connected then
         -- Draw our ping        
-        pprint('Ping: ' .. client.getPing(), 2, 2, 49)--49 --51
+        pprint('Ping: ' .. client.getPing(),   85, GAME_HEIGHT-22, 49)--49 --51
     end
 
     if DEBUG_MODE then
-        pprint('FPS: ' .. love.timer.getFPS(), 2, 16, 49)--49 --51
+        pprint('FPS: ' .. love.timer.getFPS(), 85, GAME_HEIGHT-36, 49)--49 --51
     end
 
 
@@ -883,7 +883,7 @@ function drawUI(players)
         -- local mins = flr(share.timer/1000) % 60
         -- local secs = flr(share.timer/1000) - (minutes * 60)
         use_font("corefont-big")
-        pprint(mins..":"..(secs<10 and "0" or "")..secs, 10, GAME_HEIGHT-30, 1)
+        pprint(mins..":"..(secs<10 and "0" or "")..secs, 8, GAME_HEIGHT-36, 1)
         use_font("corefont")
     end
 
