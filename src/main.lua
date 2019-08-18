@@ -16,6 +16,8 @@ if CASTLE_PREFETCH then
     "assets/level-2-data.png",
     "assets/level-2-gfx-a.png",
     "assets/level-2-gfx-b.png",
+    "assets/level-2-gfx-c.png",
+    "assets/level-2-gfx-d.png",
     "assets/level-3-data.png",
     "assets/level-3-gfx-a.png",
     "assets/level-3-gfx-b.png",

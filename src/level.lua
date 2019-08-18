@@ -2,7 +2,7 @@
 require("common")
 
 -- defaults
-levelName = LEVEL_LIST[1]
+levelName = LEVEL_LIST[START_LEVEL]
 levelDataPath = LEVEL_DATA_LIST[levelName].imgData
 levelGfxPaths = LEVEL_DATA_LIST[levelName].imgGfxList
 

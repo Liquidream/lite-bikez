@@ -116,7 +116,8 @@ MAX_MSG_LIFE = 10
 
 LEVEL_LIST = {
     "Pillars of Doom",
-    "Castle of Chaos"
+    "Castle of Chaos",
+    "Grid City"
 }
 
 START_LEVEL = 1
@@ -140,13 +141,16 @@ LEVEL_DATA_LIST = {
             "assets/level-3-gfx-c.png",
             "assets/level-3-gfx-d.png"} ,
             votes=0
-    }, 
-    -- ["Corridors of Chaos"] = {
-    --     imgData="assets/level-2-data.png",
-    --     imgGfxList={
-    --         "assets/level-2-gfx-a.png",
-    --         "assets/level-2-gfx-b.png"} 
-    -- },    
+    },
+    ["Grid City"] = {
+      imgData="assets/level-2-data.png",
+      imgGfxList={
+          "assets/level-2-gfx-a.png",
+          "assets/level-2-gfx-b.png",
+          "assets/level-2-gfx-c.png",
+          "assets/level-2-gfx-d.png"},
+      votes=0
+  },
 }
 
 --
