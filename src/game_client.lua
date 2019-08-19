@@ -179,6 +179,9 @@ function initTitle()
     -- switch to main palette for title screen
     use_palette(ak54Paired)
     shader_switch(true)
+    
+    -- start title music
+    Sounds.title:play()
 end
 
 function updateTitle(dt)
@@ -393,6 +396,10 @@ function initSounds()
   Sounds.casetteTape = Sound:new('casette_intro.mp3', 1)
   Sounds.casetteTape:setVolume(0.7)
 
+  Sounds.title = Sound:new('title_loop.mp3', 1)
+  Sounds.title:setVolume(0.7)
+  Sounds.title:setLooping(true)
+
   Sounds.bikeBirth = Sound:new('bike_birth.mp3', 1)
   Sounds.bikeBirth:setVolume(0.5)
 
@@ -411,7 +418,10 @@ end
 
 function initGameplay()
   log("in initGameplay()...")
-    gameState = GAME_STATE.LVL_PLAY
+  gameState = GAME_STATE.LVL_PLAY
+
+  -- stop title music
+  Sounds.title:stop()
 end
 
 -- pick a new track at random
@@ -891,14 +901,14 @@ function drawUI(players)
         local playerPos = 1
         local G=17
         local yoff=45
-        local scoreTable = "-----------------------------------"
+        --local scoreTable = "-----------------------------------"
         -- this uses an custom sorting function ordering by score descending
         for id,player in spairs(players, function(t,a,b) 
           return t[a].score > t[b].score    
         end) 
         do
-          scoreTable = scoreTable.."\n"..
-           playerPos..") "..player.me.name.." | score = "..player.score
+          -- scoreTable = scoreTable.."\n"..
+          --  playerPos..") "..player.me.name.." | score = "..player.score
 
           -- Does player have a photo?
           if player then

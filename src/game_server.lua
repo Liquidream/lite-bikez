@@ -131,7 +131,7 @@ function server.load()
     share.messages={}
     share.messageCount=0
     -- start in "round ended" mode, so can select starting level
-    share.timer = VOTE_LENGTH/2
+    share.timer = VOTE_LENGTH
     share.game_ended = true    
 end
 
