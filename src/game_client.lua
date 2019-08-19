@@ -51,7 +51,7 @@ shader_glow_strength  = 0.5
 shader_distortion_ray = 3.0
 shader_scan_lines     = 1.0
 gameState = -1 -- nothing by default
-
+lastGameState = -1
 
 
 -- Client gets all Love events
@@ -288,7 +288,10 @@ function client.disconnect() -- Called on disconnect from server
 
   gameState = GAME_STATE.TITLE
 
-  Sounds.playingLoop:stop()
+  -- stop loop (if any)
+  if Sounds.playingTrack then
+    Sounds.playingLoops[Sounds.playingTrack]:stop()
+  end
 end
 
 function client.receive(...) -- Called when server does `server.send(id, ...)` with our `id`
@@ -301,10 +304,16 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
 
         log("client reset")
                
-        -- first start?
-        if gameState ~= GAME_STATE.LVL_PLAY then
+        -- first start or level switch?
+        if gameState ~= GAME_STATE.LVL_PLAY
+          and gameState ~= GAME_STATE.ROUND_OVER 
+          or arg[7] ~= levelName then
             -- start game        
             initGameplay()
+            log(">>>>>>>>>>>>>  1")
+            
+            -- pick a new track at random
+            ChangeTrack()
         end
 
         homePlayer.xDir = arg[2]
@@ -324,6 +333,9 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
         log(">>> arg #9 =".. #arg[9])
 
         log(">>> curr datapath=".. levelDataPath)
+
+        log(">>> levelName=".. levelName)
+
 
         -- Always recreate level - as could be same level after a vote round
         -- (So ALL level data needs to be recreated)
@@ -360,9 +372,23 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
 end
 
 function initSounds()
-  Sounds.playingLoop = Sound:new('music_cocaine_lambo.mp3', 1)
-  Sounds.playingLoop:setVolume(0.7)
-  Sounds.playingLoop:setLooping(true)
+  -- init "mix tape"
+  -- Music playlist
+  local MUSIC_MIX_TAPE = {
+    "music_cocaine_lambo.mp3",
+    "music_microwave_robocop.mp3",
+    "music_payphone_cybersex.mp3",
+    "music_profunctor_optics.mp3",
+    "music_skyking.mp3",
+    "music_zima_hangover.mp3",
+  }
+  Sounds.playingLoops = {}
+  Sounds.playingTrack = nil
+  for i, song in ipairs(MUSIC_MIX_TAPE) do
+    Sounds.playingLoops[i] = Sound:new(song, 1)
+    Sounds.playingLoops[i]:setVolume(0.7)
+    Sounds.playingLoops[i]:setLooping(true)
+  end
 
   Sounds.casetteTape = Sound:new('casette_intro.mp3', 1)
   Sounds.casetteTape:setVolume(0.7)
@@ -384,9 +410,19 @@ function initSounds()
 end
 
 function initGameplay()
+  log("in initGameplay()...")
     gameState = GAME_STATE.LVL_PLAY
+end
 
-    Sounds.playingLoop:play()
+-- pick a new track at random
+function ChangeTrack()
+  -- Stop existing song (if any)
+  if Sounds.playingTrack then
+    Sounds.playingLoops[Sounds.playingTrack]:stop()
+  end
+  -- Pick a song from mixtape
+  Sounds.playingTrack = irnd(#Sounds.playingLoops)+1
+  Sounds.playingLoops[Sounds.playingTrack]:play()
 end
 
 
@@ -561,7 +597,7 @@ function  client.update(dt) ---(but now delaying client init!)
     -- anything else (play/vote)
     elseif gameState >0 then
       -- Play/Vote state check
-      if not share.game_ended then
+      if not share.game_ended then        
         gameState = GAME_STATE.LVL_PLAY 
       else
         gameState = GAME_STATE.ROUND_OVER
@@ -571,7 +607,7 @@ function  client.update(dt) ---(but now delaying client init!)
       -- Gameplay
       -- --------------------------
       if gameState == GAME_STATE.LVL_PLAY then
-        
+              
         -- TODO: put player back to title
         if client.connected
         and not homePlayer.dead  then
@@ -679,6 +715,9 @@ function  client.update(dt) ---(but now delaying client init!)
 
       end
     end
+
+    -- remember
+    lastGameState = gameState
 end
 
 function  client.draw() --(but now delaying client init!)

@@ -123,14 +123,16 @@ function server.load()
     -- create level
     serverPrivate.level = createLevel(START_LEVEL, 512, true) --game size (square)
     serverPrivate.levelName = LEVEL_LIST[START_LEVEL]
+    serverPrivate.lastTime = love.timer.getTime()
     share.levelSize = serverPrivate.level.levelSize
     -- create players
     share.players = {}
     -- create message notifications/history (kills/deaths/etc.)
     share.messages={}
     share.messageCount=0
-    share.timer = GAME_LENGTH
-    serverPrivate.lastTime = love.timer.getTime()
+    -- start in "round ended" mode, so can select starting level
+    share.timer = VOTE_LENGTH/2
+    share.game_ended = true    
 end
 
 function server.update(dt)
