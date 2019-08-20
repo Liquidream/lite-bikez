@@ -312,9 +312,7 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
           and gameState ~= GAME_STATE.ROUND_OVER 
           or arg[7] ~= levelName then
             -- start game        
-            initGameplay()
-            log(">>>>>>>>>>>>>  1")
-            
+            initGameplay()            
             -- pick a new track at random
             ChangeTrack()
         end
@@ -658,6 +656,8 @@ function  client.update(dt) ---(but now delaying client init!)
                 if homePlayer.dead then
                     -- TODO(jason): maybe diff sound for hitting walls vs. player trails
                     Sounds.die:play()
+                    -- make sure boost sound doesn't play while dead/dying
+                    Sounds.speedBoost:stop()
                     -- tell the server we died
                     client.send("player_dead", homePlayer.killedBy)
                     -- clear local player grid data

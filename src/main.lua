@@ -6,7 +6,7 @@
 
 if CASTLE_PREFETCH then
   CASTLE_PREFETCH({
-    "assets/MatchupPro.ttf",
+    "assets/SoftballGold.ttf",
     "assets/title-text.png",
     "assets/splash.png",
     "assets/level-1-bg.png",
@@ -23,8 +23,6 @@ if CASTLE_PREFETCH then
     "assets/level-3-gfx-b.png",
     "assets/level-3-gfx-c.png",
     "assets/level-3-gfx-d.png",
-    -- "assets/bounce.mp3",
-    -- "assets/bounce_2.mp3",
     "network/cs.lua",
     "network/state.lua",
     "network/tests.lua",
