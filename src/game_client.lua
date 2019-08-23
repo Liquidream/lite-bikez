@@ -419,7 +419,7 @@ function initSounds()
   Sounds.earnFrag:setVolume(0.5)
 
   Sounds.speedBoost = Sound:new('speed_boost.mp3', 3)
-  Sounds.speedBoost:setVolume(0.5)
+  Sounds.speedBoost:setVolume(0.4)
 end
 
 function initGameplay()

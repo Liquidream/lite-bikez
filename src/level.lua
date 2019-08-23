@@ -120,6 +120,7 @@ function updatePlayerPos(player, dt)
         -- Boost pressed
         player.boostCount = player.boostCount+1
         if player.boostCount < PLAYER_MAX_BOOST then
+            Sounds.speedBoost:stop()
             Sounds.speedBoost:play()
             player.boost = true
         end
