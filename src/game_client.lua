@@ -355,7 +355,6 @@ function client.receive(...) -- Called when server does `server.send(id, ...)` w
 
         Sounds.bikeBirth:play()
         Sounds.bikeStart:play()
-        Sounds.bikeCruising:play()
 
         -- Only create level once (on connection)
         if clientPrivate.level == nil then
@@ -404,10 +403,6 @@ function initSounds()
 
   Sounds.bikeStart = Sound:new('bike_start.mp3', 1)
   Sounds.bikeStart:setVolume(0.5)
-
-  Sounds.bikeCruising = Sound:new('bike_cruising.mp3', 1)
-  Sounds.bikeCruising:setVolume(0.14)
-  Sounds.bikeCruising:setLooping(true)
 
   Sounds.bikeTurn = Sound:new('bike_turn.mp3', 5)
   Sounds.bikeTurn:setVolume(0.3)
@@ -666,7 +661,6 @@ function  client.update(dt) ---(but now delaying client init!)
                     Sounds.die:play()
                     -- make sure boost sound doesn't play while dead/dying
                     Sounds.speedBoost:stop()
-                    Sounds.bikeCruising:stop()
                     -- tell the server we died
                     client.send("player_dead", homePlayer.killedBy)
                     -- clear local player grid data

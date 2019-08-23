@@ -44,7 +44,6 @@ if CASTLE_PREFETCH then
     "assets/snd/music_zima_hangover.mp3",
     "assets/snd/title_loop.mp3",
     "assets/snd/bike_birth.mp3",
-    "assets/snd/bike_cruising.mp3",
     "assets/snd/bike_start.mp3",
     "assets/snd/bike_turn.mp3",
     "assets/snd/speed_boost.mp3",
