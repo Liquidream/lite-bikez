@@ -418,7 +418,7 @@ function initSounds()
   Sounds.earnFrag = Sound:new('earn_frag.mp3', 3)
   Sounds.earnFrag:setVolume(0.5)
 
-  Sounds.speedBoost = Sound:new('speed_boost.mp3', 3)
+  Sounds.speedBoost = Sound:new('speed_boost.mp3', 5)
   Sounds.speedBoost:setVolume(0.4)
 end
 

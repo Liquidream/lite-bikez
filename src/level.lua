@@ -120,10 +120,13 @@ function updatePlayerPos(player, dt)
         -- Boost pressed
         player.boostCount = player.boostCount+1
         if player.boostCount < PLAYER_MAX_BOOST then
-            Sounds.speedBoost:stop()
             Sounds.speedBoost:play()
             player.boost = true
         end
+    end
+
+    if love.keyboard.isUp("space") then
+      Sounds.speedBoost:stop()
     end
 
     -- Boost comedown
