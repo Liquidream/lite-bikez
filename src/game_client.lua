@@ -410,7 +410,7 @@ function initSounds()
   Sounds.bikeCruising:setLooping(true)
 
   Sounds.bikeTurn = Sound:new('bike_turn.mp3', 5)
-  Sounds.bikeTurn:setVolume(0.2)
+  Sounds.bikeTurn:setVolume(0.3)
 
   Sounds.die = Sound:new('die.mp3', 1)
   Sounds.die:setVolume(0.5)
