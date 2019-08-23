@@ -123,9 +123,7 @@ function updatePlayerPos(player, dt)
             Sounds.speedBoost:play()
             player.boost = true
         end
-    end
-
-    if love.keyboard.isUp("space") then
+    else
       Sounds.speedBoost:stop()
     end
 
