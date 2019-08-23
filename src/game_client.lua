@@ -406,7 +406,7 @@ function initSounds()
   Sounds.bikeStart:setVolume(0.5)
 
   Sounds.bikeCruising = Sound:new('bike_cruising.mp3', 1)
-  Sounds.bikeCruising:setVolume(0.2)
+  Sounds.bikeCruising:setVolume(0.14)
   Sounds.bikeCruising:setLooping(true)
 
   Sounds.bikeTurn = Sound:new('bike_turn.mp3', 5)
@@ -1077,7 +1077,7 @@ function love.keypressed( key, scancode, isrepeat )
         and homePlayer.yDir ~= homePlayer.last_yDir then
             -- Now record player pos-change
             addWaypoint(homePlayer)
-            Sounds.bikeTurn:play()
+            Sounds.bikeTurn:playWithPitch(0.85 + 0.3 * math.random())
 
             -- test to try to reduce latency
             -- (Sends the player's input DIRECTLY to server
