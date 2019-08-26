@@ -432,7 +432,10 @@ function ChangeTrack()
     Sounds.playingLoops[Sounds.playingTrack]:stop()
   end
   -- Pick a song from mixtape
-  Sounds.playingTrack = irnd(#Sounds.playingLoops)+1
+  resetRNG(false)
+  local songNum = irnd(#Sounds.playingLoops)+1
+  log("---- songNum = "..songNum)
+  Sounds.playingTrack = songNum
   Sounds.playingLoops[Sounds.playingTrack]:play()
 end
 

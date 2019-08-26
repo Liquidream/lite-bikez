@@ -35,6 +35,10 @@ function Sound:setVolume(vlm)
   end
 end
 
+function Sound:getVolume()
+  return self.sources[self.index]:getVolume()
+end
+
 function Sound:playWithPitch(pitch)
   self.sources[self.index]:setPitch(pitch)
   self:play()

@@ -184,10 +184,11 @@ end
 -- so that if called quickly (sub-seconds)
 -- it'll still be random
 _incSeed=0
-function resetRNG()
+function resetRNG(IS_SERVER)
     _incSeed = _incSeed + 1
     local seed=os.time() + _incSeed
     math.randomseed(seed)
+    if not IS_SERVER then srand(seed) end
     --print("Re-seeding RNG="..seed)
 end
 

@@ -120,11 +120,19 @@ function updatePlayerPos(player, dt)
         -- Boost pressed
         player.boostCount = player.boostCount+1
         if player.boostCount < PLAYER_MAX_BOOST then
-            Sounds.speedBoost:play()
+            Sounds.speedBoost:setVolume(0.23)
+            Sounds.speedBoost:play()            
             player.boost = true
         end
+    
     else
-      Sounds.speedBoost:stop()
+      -- reduce speedboost sound (and eventually stop)
+      local vol = Sounds.speedBoost:getVolume()
+      vol = vol * 0.93
+      Sounds.speedBoost:setVolume(vol)
+      if vol <= 0.01 then
+        Sounds.speedBoost:stop()
+      end
     end
 
     -- Boost comedown

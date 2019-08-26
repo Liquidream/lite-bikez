@@ -56,7 +56,7 @@ function resetPlayer(player, share, IS_SERVER)
     player.dead = false
     
     -- Start at a random position
-    resetRNG()
+    resetRNG(IS_SERVER)
     log("Resetting player "..(player.id or "<new>").."IS_SERVER="..tostring(IS_SERVER))--..", seed="..seed)
     
     player.waypoints={}
