@@ -21,18 +21,9 @@ The GOAL is... to survive!
 
 ui.section("Controls", function()
 
-    ui.markdown([[
-### Player Controls
-**⬆⬇⬅➡** = *Turn*
-
-**\[SPACE\]** = *Boost!*
-
-### Advanced controls
-**S** = *Toggle GFX Shader*
-]])
+  ui.markdown('![](assets/controls.png)') 
 
 end)
-
 
     --log("gameState = "..gameState)
 

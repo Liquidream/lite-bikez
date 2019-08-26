@@ -9,6 +9,7 @@ if CASTLE_PREFETCH then
     "assets/SoftballGold.ttf",
     "assets/title-text.png",
     "assets/splash.png",
+    "assets/controls.png",
     "assets/level-1-bg.png",
     "assets/level-1-data.png",
     "assets/level-1-gfx-ab.png",
