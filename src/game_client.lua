@@ -1,4 +1,7 @@
+-- updated ver with player info for each Castle multiplayer session
 local cs = require 'https://raw.githubusercontent.com/castle-games/share.lua/b94c77cacc9e842877e7d8dd71c17792bd8cbc32/cs.lua'
+-- prev ver
+--local cs = require 'https://raw.githubusercontent.com/castle-games/share.lua/b94c77cacc9e842877e7d8dd71c17792bd8cbc32/cs.lua'
 
 --local gfx = require 'src/gfx'
 require("sugarcoat/sugarcoat")
