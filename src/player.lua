@@ -68,10 +68,14 @@ function resetPlayer(player, share, IS_SERVER)
         -- (and tells the client)
         local attemptCount=0
         local r, g, b = 0,0,0
+
+        ------------------------------------------------------------------------
+        -- keep retrying player positions until has enough room to start
+        ------------------------------------------------------------------------        
         repeat 
             log("allocating player start position")
-            player.x = math.random(share.levelSize-1)
-            player.y = math.random(share.levelSize-1)
+            player.x = math.random(share.levelSize-3)+1
+            player.y = math.random(share.levelSize-3)+1
             player.gridX = player.x
             player.gridY = player.y
             player.lastGridX = player.gridX
@@ -79,32 +83,57 @@ function resetPlayer(player, share, IS_SERVER)
             player.speed = PLAYER_START_SPEED
             player.boostCount = 0
             
-            r, g, b = 0,0,0
-            -- in case player connects before server ready...
-            if levelData then 
-                r, g, b = levelData:getPixel(player.x, player.y) 
+    
+            -- now face "inward"
+            if math.random(2)>1 then
+                player.xDir = (player.x < share.levelSize/2) and 1 or -1
+                player.yDir = 0
+            else
+                player.xDir = 0
+                player.yDir = (player.y < share.levelSize/2) and 1 or -1
             end
+
+            r, g, b = 0,0,0
             
-            -- check we're in the "safe" zone                        
-            local hitObstacle = r > 0 -- red means level obstacles/boundary
-            local inSafeZone = g > 0 -- red means level obstacles/boundary
+            
+            ------------------------------------------------------------------------            
+            -- check that there are at least X amount of free pixels ahead
+            --
+            local safeDistLength = 30
+            local currDist = 1            
+            local xPosCheck = player.x
+            local yPosCheck = player.y
+            local hitObstacle = false
+            local hitOccupiedCell = false
+
+            repeat
+              
+              -- in case player connects before server ready...
+              if levelData then 
+                r, g, b = levelData:getPixel(xPosCheck, yPosCheck)                
+              end
+
+              -- check we've not hit a level obstacle/boundary
+              hitObstacle = r > 0 -- red means level obstacles/boundary              
+              hitOccupiedCell = share.level.grid[xPosCheck][yPosCheck] > 0
+                            
+              --log(">>> r,g,b ="..tostring(r)..","..tostring(g)..","..tostring(b).."| hitObstacle="..tostring(hitObstacle)..", hitOccupiedCell="..tostring(hitOccupiedCell)..", currDist="..currDist)              
+
+              -- move ahead to next pixel in face dir
+              xPosCheck = xPosCheck + player.xDir
+              yPosCheck = yPosCheck + player.yDir
+              currDist = currDist + 1
+
+            until hitObstacle or hitOccupiedCell or currDist > safeDistLength
+
+            ------------------------------------------------------------------------
+            
 
             attemptCount = attemptCount + 1 -- (don't let this loop infinitely!)
 
-        until (not hitObstacle) and (levelData) and inSafeZone or attemptCount > 20
+        until ((not hitObstacle) and (not hitOccupiedCell)) or (attemptCount > 100)
 
-        -- log("attemptCount="..attemptCount)
-        -- log("r, g, b="..r..","..g..","..b)
-        -- log("levelData="..tostring(levelData))
-
-        -- now face "inward"
-        if math.random(2)>1 then
-            player.xDir = (player.x < share.levelSize/2) and 1 or -1
-            player.yDir = 0
-        else
-            player.xDir = 0
-            player.yDir = (player.y < share.levelSize/2) and 1 or -1
-        end
+        log(".attemptCount="..attemptCount.."| r, g, b="..r..","..g..","..b)
 
         -- col based on id
         player.col = player.id * 2
@@ -113,7 +142,6 @@ function resetPlayer(player, share, IS_SERVER)
         -- CLIENT only 
         if deathParticles[player.id] then 
             table.remove(deathParticles, player.id)
-            --deathParticles[player.id].lifetime = 0
         end
     end
 
